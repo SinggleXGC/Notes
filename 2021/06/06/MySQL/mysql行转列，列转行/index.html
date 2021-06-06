@@ -20,15 +20,25 @@
     var CONFIG = {"hostname":"singglexgc.github.io","root":"/notes/","scheme":"Gemini","version":"7.8.0","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12,"onmobile":false},"copycode":{"enable":false,"show_result":false,"style":null},"back2top":{"enable":true,"sidebar":false,"scrollpercent":false},"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":false,"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"algolia":{"hits":{"per_page":10},"labels":{"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}},"localsearch":{"enable":false,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}}};
   </script>
 
-  <meta property="og:type" content="website">
-<meta property="og:title" content="Notes">
-<meta property="og:url" content="https://singglexgc.github.io/notes/archives/2021/index.html">
+  <meta name="description" content="MySQL行转列现有学生成绩表记录如下：  查询数据并按以下格式显示：  SQL语句如下： 123456select user_name,	max(case course when &amp;#x27;数学&amp;#x27; then score end) &amp;#x27;数学&amp;#x27;,	max(case course when &amp;#x27;语文&amp;#x27; then score end) &amp;#x27;语文&amp;#">
+<meta property="og:type" content="article">
+<meta property="og:title" content="MySQL行转列，列转行">
+<meta property="og:url" content="https://singglexgc.github.io/notes/2021/06/06/MySQL/mysql%E8%A1%8C%E8%BD%AC%E5%88%97%EF%BC%8C%E5%88%97%E8%BD%AC%E8%A1%8C/index.html">
 <meta property="og:site_name" content="Notes">
+<meta property="og:description" content="MySQL行转列现有学生成绩表记录如下：  查询数据并按以下格式显示：  SQL语句如下： 123456select user_name,	max(case course when &amp;#x27;数学&amp;#x27; then score end) &amp;#x27;数学&amp;#x27;,	max(case course when &amp;#x27;语文&amp;#x27; then score end) &amp;#x27;语文&amp;#">
 <meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="https://singglexgc.github.io/notes/.io//image-20210606200046340.png">
+<meta property="og:image" content="https://singglexgc.github.io/notes/.io//image-20210606201006634.png">
+<meta property="og:image" content="https://singglexgc.github.io/notes/.io//image-20210606203134769.png">
+<meta property="og:image" content="https://singglexgc.github.io/notes/.io//image-20210606204952463.png">
+<meta property="article:published_time" content="2021-06-06T13:08:26.000Z">
+<meta property="article:modified_time" content="2021-06-06T13:54:27.258Z">
 <meta property="article:author" content="Sinngle">
+<meta property="article:tag" content="MySQL">
 <meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://singglexgc.github.io/notes/.io//image-20210606200046340.png">
 
-<link rel="canonical" href="https://singglexgc.github.io/notes/archives/2021/">
+<link rel="canonical" href="https://singglexgc.github.io/notes/2021/06/06/MySQL/mysql%E8%A1%8C%E8%BD%AC%E5%88%97%EF%BC%8C%E5%88%97%E8%BD%AC%E8%A1%8C/">
 
 
 <script id="page-configurations">
@@ -36,12 +46,12 @@
   CONFIG.page = {
     sidebar: "",
     isHome : false,
-    isPost : false,
+    isPost : true,
     lang   : 'zh-CN'
   };
 </script>
 
-  <title>归档 | Notes</title>
+  <title>MySQL行转列，列转行 | Notes</title>
   
 
 
@@ -139,150 +149,107 @@
         <div class="content-wrap">
           
 
-          <div class="content archive">
+          <div class="content post posts-expand">
             
 
+    
   
   
-  
-  <div class="post-block">
-    <div class="posts-collapse">
-      <div class="collection-title">
-        <span class="collection-header">嗯..! 目前共计 6 篇日志。 继续努力。</span>
-      </div>
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="https://singglexgc.github.io/notes/2021/06/06/MySQL/mysql%E8%A1%8C%E8%BD%AC%E5%88%97%EF%BC%8C%E5%88%97%E8%BD%AC%E8%A1%8C/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/notes/images/avatar.gif">
+      <meta itemprop="name" content="Sinngle">
+      <meta itemprop="description" content="">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Notes">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          MySQL行转列，列转行
+        </h1>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+              
+
+              <time title="创建时间：2021-06-06 21:08:26 / 修改时间：21:54:27" itemprop="dateCreated datePublished" datetime="2021-06-06T21:08:26+08:00">2021-06-06</time>
+            </span>
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-folder"></i>
+              </span>
+              <span class="post-meta-item-text">分类于</span>
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/notes/categories/MySQL/" itemprop="url" rel="index"><span itemprop="name">MySQL</span></a>
+                </span>
+            </span>
+
+          
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
 
       
-    <div class="collection-year">
-      <span class="collection-header">2021</span>
-    </div>
+        <h2 id="MySQL行转列"><a href="#MySQL行转列" class="headerlink" title="MySQL行转列"></a>MySQL行转列</h2><p>现有学生成绩表记录如下：</p>
+<p><img src="/notes/.io//image-20210606200046340.png" alt="image-20210606200046340"></p>
+<p>查询数据并按以下格式显示：</p>
+<p><img src="/notes/.io//image-20210606201006634.png" alt="image-20210606201006634"></p>
+<p>SQL语句如下：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">select user_name,</span><br><span class="line">	max(case course when &#x27;数学&#x27; then score end) &#x27;数学&#x27;,</span><br><span class="line">	max(case course when &#x27;语文&#x27; then score end) &#x27;语文&#x27;,</span><br><span class="line">	max(case course when &#x27;英语&#x27; then score end) &#x27;英语&#x27;</span><br><span class="line">from score</span><br><span class="line">group by user_name</span><br></pre></td></tr></table></figure>
 
-  <article itemscope itemtype="http://schema.org/Article">
-    <header class="post-header">
 
-      <div class="post-meta">
-        <time itemprop="dateCreated"
-              datetime="2021-06-06T21:08:26+08:00"
-              content="2021-06-06">
-          06-06
-        </time>
-      </div>
 
-      <div class="post-title">
-          <a class="post-title-link" href="/notes/2021/06/06/MySQL/mysql%E8%A1%8C%E8%BD%AC%E5%88%97%EF%BC%8C%E5%88%97%E8%BD%AC%E8%A1%8C/" itemprop="url">
-            <span itemprop="name">MySQL行转列，列转行</span>
-          </a>
-      </div>
+<h2 id="MySQL列转行"><a href="#MySQL列转行" class="headerlink" title="MySQL列转行"></a>MySQL列转行</h2><p>现有学生成绩表如下：</p>
+<p><img src="/notes/.io//image-20210606203134769.png" alt="image-20210606203134769"></p>
+<p>查询成如下格式：</p>
+<p><img src="/notes/.io//image-20210606204952463.png" alt="image-20210606204952463"></p>
+<p>SQL语句：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line">select user_name, &#x27;语文&#x27; as course, ch_score as score</span><br><span class="line">from score</span><br><span class="line">union</span><br><span class="line">select user_name, &#x27;数学&#x27; as course, math_score as score</span><br><span class="line">from score</span><br><span class="line">union</span><br><span class="line">select user_name, &#x27;英语&#x27; as course, en_score as score</span><br><span class="line">from score</span><br><span class="line">order by user_name</span><br></pre></td></tr></table></figure>
 
-    </header>
-  </article>
 
-  <article itemscope itemtype="http://schema.org/Article">
-    <header class="post-header">
 
-      <div class="post-meta">
-        <time itemprop="dateCreated"
-              datetime="2021-06-05T17:20:59+08:00"
-              content="2021-06-05">
-          06-05
-        </time>
-      </div>
-
-      <div class="post-title">
-          <a class="post-title-link" href="/notes/2021/06/05/%E9%9D%A2%E8%AF%95%E9%A2%98/MyBatis%E9%9D%A2%E8%AF%95%E9%A2%98/mybatis%E9%9D%A2%E8%AF%95%E9%A2%98/" itemprop="url">
-            <span itemprop="name">MyBatis面试题</span>
-          </a>
-      </div>
-
-    </header>
-  </article>
-
-  <article itemscope itemtype="http://schema.org/Article">
-    <header class="post-header">
-
-      <div class="post-meta">
-        <time itemprop="dateCreated"
-              datetime="2021-05-30T12:24:37+08:00"
-              content="2021-05-30">
-          05-30
-        </time>
-      </div>
-
-      <div class="post-title">
-          <a class="post-title-link" href="/notes/2021/05/30/MyBatis/%E5%A6%82%E4%BD%95%E6%89%A7%E8%A1%8C%E6%89%B9%E9%87%8F%E5%A4%84%E7%90%86%EF%BC%9F/" itemprop="url">
-            <span itemprop="name">如何执行批量处理？</span>
-          </a>
-      </div>
-
-    </header>
-  </article>
-
-  <article itemscope itemtype="http://schema.org/Article">
-    <header class="post-header">
-
-      <div class="post-meta">
-        <time itemprop="dateCreated"
-              datetime="2021-05-29T22:31:52+08:00"
-              content="2021-05-29">
-          05-29
-        </time>
-      </div>
-
-      <div class="post-title">
-          <a class="post-title-link" href="/notes/2021/05/29/JavaSE/JDBC/jdbc%E6%89%B9%E5%A4%84%E7%90%86/" itemprop="url">
-            <span itemprop="name">JDBC批处理</span>
-          </a>
-      </div>
-
-    </header>
-  </article>
-
-  <article itemscope itemtype="http://schema.org/Article">
-    <header class="post-header">
-
-      <div class="post-meta">
-        <time itemprop="dateCreated"
-              datetime="2021-05-29T21:25:39+08:00"
-              content="2021-05-29">
-          05-29
-        </time>
-      </div>
-
-      <div class="post-title">
-          <a class="post-title-link" href="/notes/2021/05/29/JavaSE/JDBC/jdbc%E4%BD%BF%E7%94%A8%E6%AD%A5%E9%AA%A4/" itemprop="url">
-            <span itemprop="name">JDBC使用步骤</span>
-          </a>
-      </div>
-
-    </header>
-  </article>
-
-  <article itemscope itemtype="http://schema.org/Article">
-    <header class="post-header">
-
-      <div class="post-meta">
-        <time itemprop="dateCreated"
-              datetime="2021-05-29T17:49:38+08:00"
-              content="2021-05-29">
-          05-29
-        </time>
-      </div>
-
-      <div class="post-title">
-          <a class="post-title-link" href="/notes/2021/05/29/JavaSE/%E6%B3%9B%E5%9E%8B%E7%B1%BB%E5%92%8C%E6%B3%9B%E5%9E%8B%E6%96%B9%E6%B3%95/" itemprop="url">
-            <span itemprop="name">泛型类和泛型方法</span>
-          </a>
-      </div>
-
-    </header>
-  </article>
 
 
     </div>
-  </div>
-  
-  
-  
 
+    
+    
+    
+
+      <footer class="post-footer">
+          <div class="post-tags">
+              <a href="/notes/tags/MySQL/" rel="tag"># MySQL</a>
+          </div>
+
+        
+
+
+        
+    <div class="post-nav">
+      <div class="post-nav-item">
+    <a href="/notes/2021/06/05/%E9%9D%A2%E8%AF%95%E9%A2%98/MyBatis%E9%9D%A2%E8%AF%95%E9%A2%98/mybatis%E9%9D%A2%E8%AF%95%E9%A2%98/" rel="prev" title="MyBatis面试题">
+      <i class="fa fa-chevron-left"></i> MyBatis面试题
+    </a></div>
+      <div class="post-nav-item"></div>
+    </div>
+      </footer>
+    
+  </article>
+  
+  
   
 
 
@@ -335,6 +302,7 @@
 
       <!--noindex-->
       <div class="post-toc-wrap sidebar-panel">
+          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#MySQL%E8%A1%8C%E8%BD%AC%E5%88%97"><span class="nav-number">1.</span> <span class="nav-text">MySQL行转列</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#MySQL%E5%88%97%E8%BD%AC%E8%A1%8C"><span class="nav-number">2.</span> <span class="nav-text">MySQL列转行</span></a></li></ol></div>
       </div>
       <!--/noindex-->
 

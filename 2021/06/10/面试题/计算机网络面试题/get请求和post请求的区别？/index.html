@@ -20,15 +20,22 @@
     var CONFIG = {"hostname":"singglexgc.github.io","root":"/notes/","scheme":"Gemini","version":"7.8.0","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12,"onmobile":false},"copycode":{"enable":false,"show_result":false,"style":null},"back2top":{"enable":true,"sidebar":false,"scrollpercent":false},"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":false,"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"algolia":{"hits":{"per_page":10},"labels":{"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}},"localsearch":{"enable":false,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}}};
   </script>
 
-  <meta property="og:type" content="website">
-<meta property="og:title" content="Notes">
-<meta property="og:url" content="https://singglexgc.github.io/notes/categories/%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%BD%91%E7%BB%9C/index.html">
+  <meta name="description" content="GET把参数包含在URL中，POST把参数放在请求体中。这样，POST能够发送的数据更大。(URL有长度限制) GET请求比POST请求快 POST请求包含更多的请求头(但可忽略不计) 最重要的是：POST在真正发送数据的时候，会先将请求头发送给服务器进行确认，然后才发送数据   GET将数据缓存起来，而POST不会 POST请求一般用于修改和写入操作，而GET请求用来获取资源操作。 POST请">
+<meta property="og:type" content="article">
+<meta property="og:title" content="GET请求和POST请求的区别？">
+<meta property="og:url" content="https://singglexgc.github.io/notes/2021/06/10/%E9%9D%A2%E8%AF%95%E9%A2%98/%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%BD%91%E7%BB%9C%E9%9D%A2%E8%AF%95%E9%A2%98/get%E8%AF%B7%E6%B1%82%E5%92%8Cpost%E8%AF%B7%E6%B1%82%E7%9A%84%E5%8C%BA%E5%88%AB%EF%BC%9F/index.html">
 <meta property="og:site_name" content="Notes">
+<meta property="og:description" content="GET把参数包含在URL中，POST把参数放在请求体中。这样，POST能够发送的数据更大。(URL有长度限制) GET请求比POST请求快 POST请求包含更多的请求头(但可忽略不计) 最重要的是：POST在真正发送数据的时候，会先将请求头发送给服务器进行确认，然后才发送数据   GET将数据缓存起来，而POST不会 POST请求一般用于修改和写入操作，而GET请求用来获取资源操作。 POST请">
 <meta property="og:locale" content="zh_CN">
+<meta property="article:published_time" content="2021-06-10T08:11:43.000Z">
+<meta property="article:modified_time" content="2021-06-10T08:38:28.205Z">
 <meta property="article:author" content="Sinngle">
+<meta property="article:tag" content="面试题">
+<meta property="article:tag" content="GET请求">
+<meta property="article:tag" content="POST请求">
 <meta name="twitter:card" content="summary">
 
-<link rel="canonical" href="https://singglexgc.github.io/notes/categories/%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%BD%91%E7%BB%9C/">
+<link rel="canonical" href="https://singglexgc.github.io/notes/2021/06/10/%E9%9D%A2%E8%AF%95%E9%A2%98/%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%BD%91%E7%BB%9C%E9%9D%A2%E8%AF%95%E9%A2%98/get%E8%AF%B7%E6%B1%82%E5%92%8Cpost%E8%AF%B7%E6%B1%82%E7%9A%84%E5%8C%BA%E5%88%AB%EF%BC%9F/">
 
 
 <script id="page-configurations">
@@ -36,12 +43,12 @@
   CONFIG.page = {
     sidebar: "",
     isHome : false,
-    isPost : false,
+    isPost : true,
     lang   : 'zh-CN'
   };
 </script>
 
-  <title>分类: 计算机网络 | Notes</title>
+  <title>GET请求和POST请求的区别？ | Notes</title>
   
 
 
@@ -139,51 +146,122 @@
         <div class="content-wrap">
           
 
-          <div class="content category">
+          <div class="content post posts-expand">
             
 
+    
   
   
-  
-  <div class="post-block">
-    <div class="posts-collapse">
-      <div class="collection-title">
-        <h2 class="collection-header">计算机网络
-          <small>分类</small>
-        </h2>
-      </div>
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="https://singglexgc.github.io/notes/2021/06/10/%E9%9D%A2%E8%AF%95%E9%A2%98/%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%BD%91%E7%BB%9C%E9%9D%A2%E8%AF%95%E9%A2%98/get%E8%AF%B7%E6%B1%82%E5%92%8Cpost%E8%AF%B7%E6%B1%82%E7%9A%84%E5%8C%BA%E5%88%AB%EF%BC%9F/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/notes/images/avatar.gif">
+      <meta itemprop="name" content="Sinngle">
+      <meta itemprop="description" content="">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Notes">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          GET请求和POST请求的区别？
+        </h1>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+              
+
+              <time title="创建时间：2021-06-10 16:11:43 / 修改时间：16:38:28" itemprop="dateCreated datePublished" datetime="2021-06-10T16:11:43+08:00">2021-06-10</time>
+            </span>
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-folder"></i>
+              </span>
+              <span class="post-meta-item-text">分类于</span>
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/notes/categories/%E9%9D%A2%E8%AF%95%E9%A2%98/" itemprop="url" rel="index"><span itemprop="name">面试题</span></a>
+                </span>
+                  ，
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/notes/categories/%E9%9D%A2%E8%AF%95%E9%A2%98/%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%BD%91%E7%BB%9C%E9%9D%A2%E8%AF%95%E9%A2%98/" itemprop="url" rel="index"><span itemprop="name">计算机网络面试题</span></a>
+                </span>
+            </span>
+
+          
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
 
       
-    <div class="collection-year">
-      <span class="collection-header">2021</span>
+        <ol>
+<li>GET把参数包含在URL中，POST把参数放在请求体中。这样，POST能够发送的数据更大。(URL有长度限制)</li>
+<li>GET请求比POST请求快<ul>
+<li>POST请求包含更多的请求头(但可忽略不计)</li>
+<li><strong>最重要的是：</strong>POST在真正发送数据的时候，会先将请求头发送给服务器进行确认，然后才发送数据</li>
+</ul>
+</li>
+<li>GET将数据缓存起来，而POST不会</li>
+<li>POST请求一般用于修改和写入操作，而GET请求用来获取资源操作。</li>
+<li>POST请求更加安全(参数不放在URL、数据不缓存)</li>
+<li>POST能够发送更多的数据类型(GET只能发送ASCII字符)</li>
+</ol>
+<hr>
+<p><strong>POST请求的过程：</strong></p>
+<ol>
+<li>在TCP的第三次握手，浏览器会进行确认并发送POST请求头。</li>
+<li>服务器返回100 Continue响应</li>
+<li>浏览器发送数据</li>
+<li>服务器返回200 OK响应</li>
+</ol>
+<hr>
+<p><strong>GET请求的过程：</strong></p>
+<ol>
+<li>在TCP第三次握手，浏览器就会进行确认并发送GET请求头和数据</li>
+<li>服务器返回200 OK响应</li>
+</ol>
+<hr>
+<p>这样GET的总耗是POST的2/3左右。</p>
+
     </div>
 
-  <article itemscope itemtype="http://schema.org/Article">
-    <header class="post-header">
+    
+    
+    
 
-      <div class="post-meta">
-        <time itemprop="dateCreated"
-              datetime="2021-06-09T23:56:51+08:00"
-              content="2021-06-09">
-          06-09
-        </time>
-      </div>
+      <footer class="post-footer">
+          <div class="post-tags">
+              <a href="/notes/tags/%E9%9D%A2%E8%AF%95%E9%A2%98/" rel="tag"># 面试题</a>
+              <a href="/notes/tags/GET%E8%AF%B7%E6%B1%82/" rel="tag"># GET请求</a>
+              <a href="/notes/tags/POST%E8%AF%B7%E6%B1%82/" rel="tag"># POST请求</a>
+          </div>
 
-      <div class="post-title">
-          <a class="post-title-link" href="/notes/2021/06/09/%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%BD%91%E7%BB%9C/tcp%E4%B8%89%E6%AC%A1%E6%8F%A1%E6%89%8B%E5%92%8C%E5%9B%9B%E6%AC%A1%E6%8C%A5%E6%89%8B/" itemprop="url">
-            <span itemprop="name">TCP三次握手和四次挥手</span>
-          </a>
-      </div>
+        
 
-    </header>
+
+        
+    <div class="post-nav">
+      <div class="post-nav-item">
+    <a href="/notes/2021/06/09/%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%BD%91%E7%BB%9C/tcp%E4%B8%89%E6%AC%A1%E6%8F%A1%E6%89%8B%E5%92%8C%E5%9B%9B%E6%AC%A1%E6%8C%A5%E6%89%8B/" rel="prev" title="TCP三次握手和四次挥手">
+      <i class="fa fa-chevron-left"></i> TCP三次握手和四次挥手
+    </a></div>
+      <div class="post-nav-item"></div>
+    </div>
+      </footer>
+    
   </article>
-
-    </div>
-  </div>
   
   
-  
-
   
 
 

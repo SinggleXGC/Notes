@@ -20,22 +20,22 @@
     var CONFIG = {"hostname":"singglexgc.github.io","root":"/notes/","scheme":"Gemini","version":"7.8.0","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12,"onmobile":false},"copycode":{"enable":false,"show_result":false,"style":null},"back2top":{"enable":true,"sidebar":false,"scrollpercent":false},"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":false,"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"algolia":{"hits":{"per_page":10},"labels":{"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}},"localsearch":{"enable":false,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}}};
   </script>
 
-  <meta name="description" content="GET把参数包含在URL中，POST把参数放在请求体中。这样，POST能够发送的数据更大。(URL有长度限制) GET请求比POST请求快 POST请求包含更多的请求头(但可忽略不计) 最重要的是：POST在真正发送数据的时候，会先将请求头发送给服务器进行确认，然后才发送数据   GET将数据缓存起来，而POST不会 POST请求一般用于修改和写入操作，而GET请求用来获取资源操作。 POST请">
+  <meta name="description" content="MyBatis的执行流程及核心组件图 ConfigurationConfiguration对象描述MyBatis主配置信息，同时Mapper配置信息，类型别名，TypeHandler也会注册到Configuration中。当其他组件需要获取这些配置信息的时候，可以从中获取。 同时Configuration也提供了创建Executor、StatementHandler、ParameterHandle">
 <meta property="og:type" content="article">
-<meta property="og:title" content="GET请求和POST请求的区别？">
-<meta property="og:url" content="https://singglexgc.github.io/notes/2021/06/10/%E9%9D%A2%E8%AF%95%E9%A2%98/%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%BD%91%E7%BB%9C%E9%9D%A2%E8%AF%95%E9%A2%98/get%E8%AF%B7%E6%B1%82%E5%92%8Cpost%E8%AF%B7%E6%B1%82%E7%9A%84%E5%8C%BA%E5%88%AB%EF%BC%9F/index.html">
+<meta property="og:title" content="MyBatis核心组件介绍">
+<meta property="og:url" content="https://singglexgc.github.io/notes/2021/06/23/MyBatis/mybatis%E6%A0%B8%E5%BF%83%E7%BB%84%E4%BB%B6%E4%BB%8B%E7%BB%8D/index.html">
 <meta property="og:site_name" content="Notes">
-<meta property="og:description" content="GET把参数包含在URL中，POST把参数放在请求体中。这样，POST能够发送的数据更大。(URL有长度限制) GET请求比POST请求快 POST请求包含更多的请求头(但可忽略不计) 最重要的是：POST在真正发送数据的时候，会先将请求头发送给服务器进行确认，然后才发送数据   GET将数据缓存起来，而POST不会 POST请求一般用于修改和写入操作，而GET请求用来获取资源操作。 POST请">
+<meta property="og:description" content="MyBatis的执行流程及核心组件图 ConfigurationConfiguration对象描述MyBatis主配置信息，同时Mapper配置信息，类型别名，TypeHandler也会注册到Configuration中。当其他组件需要获取这些配置信息的时候，可以从中获取。 同时Configuration也提供了创建Executor、StatementHandler、ParameterHandle">
 <meta property="og:locale" content="zh_CN">
-<meta property="article:published_time" content="2021-06-10T08:11:43.000Z">
-<meta property="article:modified_time" content="2021-06-11T09:25:39.883Z">
+<meta property="og:image" content="https://singglexgc.github.io/notes/2021/06/23/MyBatis/mybatis%E6%A0%B8%E5%BF%83%E7%BB%84%E4%BB%B6%E4%BB%8B%E7%BB%8D/epub_27563388_132.png">
+<meta property="article:published_time" content="2021-06-23T14:10:45.000Z">
+<meta property="article:modified_time" content="2021-06-23T14:58:23.315Z">
 <meta property="article:author" content="Sinngle">
-<meta property="article:tag" content="GET请求">
-<meta property="article:tag" content="面试题">
-<meta property="article:tag" content="POST请求">
+<meta property="article:tag" content="MyBatis">
 <meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://singglexgc.github.io/notes/2021/06/23/MyBatis/mybatis%E6%A0%B8%E5%BF%83%E7%BB%84%E4%BB%B6%E4%BB%8B%E7%BB%8D/epub_27563388_132.png">
 
-<link rel="canonical" href="https://singglexgc.github.io/notes/2021/06/10/%E9%9D%A2%E8%AF%95%E9%A2%98/%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%BD%91%E7%BB%9C%E9%9D%A2%E8%AF%95%E9%A2%98/get%E8%AF%B7%E6%B1%82%E5%92%8Cpost%E8%AF%B7%E6%B1%82%E7%9A%84%E5%8C%BA%E5%88%AB%EF%BC%9F/">
+<link rel="canonical" href="https://singglexgc.github.io/notes/2021/06/23/MyBatis/mybatis%E6%A0%B8%E5%BF%83%E7%BB%84%E4%BB%B6%E4%BB%8B%E7%BB%8D/">
 
 
 <script id="page-configurations">
@@ -48,7 +48,7 @@
   };
 </script>
 
-  <title>GET请求和POST请求的区别？ | Notes</title>
+  <title>MyBatis核心组件介绍 | Notes</title>
   
 
 
@@ -153,7 +153,7 @@
   
   
   <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
-    <link itemprop="mainEntityOfPage" href="https://singglexgc.github.io/notes/2021/06/10/%E9%9D%A2%E8%AF%95%E9%A2%98/%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%BD%91%E7%BB%9C%E9%9D%A2%E8%AF%95%E9%A2%98/get%E8%AF%B7%E6%B1%82%E5%92%8Cpost%E8%AF%B7%E6%B1%82%E7%9A%84%E5%8C%BA%E5%88%AB%EF%BC%9F/">
+    <link itemprop="mainEntityOfPage" href="https://singglexgc.github.io/notes/2021/06/23/MyBatis/mybatis%E6%A0%B8%E5%BF%83%E7%BB%84%E4%BB%B6%E4%BB%8B%E7%BB%8D/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
       <meta itemprop="image" content="/notes/images/avatar.gif">
@@ -166,7 +166,7 @@
     </span>
       <header class="post-header">
         <h1 class="post-title" itemprop="name headline">
-          GET请求和POST请求的区别？
+          MyBatis核心组件介绍
         </h1>
 
         <div class="post-meta">
@@ -175,27 +175,17 @@
                 <i class="far fa-calendar"></i>
               </span>
               <span class="post-meta-item-text">发表于</span>
+              
 
-              <time title="创建时间：2021-06-10 16:11:43" itemprop="dateCreated datePublished" datetime="2021-06-10T16:11:43+08:00">2021-06-10</time>
+              <time title="创建时间：2021-06-23 22:10:45 / 修改时间：22:58:23" itemprop="dateCreated datePublished" datetime="2021-06-23T22:10:45+08:00">2021-06-23</time>
             </span>
-              <span class="post-meta-item">
-                <span class="post-meta-item-icon">
-                  <i class="far fa-calendar-check"></i>
-                </span>
-                <span class="post-meta-item-text">更新于</span>
-                <time title="修改时间：2021-06-11 17:25:39" itemprop="dateModified" datetime="2021-06-11T17:25:39+08:00">2021-06-11</time>
-              </span>
             <span class="post-meta-item">
               <span class="post-meta-item-icon">
                 <i class="far fa-folder"></i>
               </span>
               <span class="post-meta-item-text">分类于</span>
                 <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-                  <a href="/notes/categories/%E9%9D%A2%E8%AF%95%E9%A2%98/" itemprop="url" rel="index"><span itemprop="name">面试题</span></a>
-                </span>
-                  ，
-                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-                  <a href="/notes/categories/%E9%9D%A2%E8%AF%95%E9%A2%98/%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%BD%91%E7%BB%9C%E9%9D%A2%E8%AF%95%E9%A2%98/" itemprop="url" rel="index"><span itemprop="name">计算机网络面试题</span></a>
+                  <a href="/notes/categories/MyBatis/" itemprop="url" rel="index"><span itemprop="name">MyBatis</span></a>
                 </span>
             </span>
 
@@ -210,34 +200,16 @@
     <div class="post-body" itemprop="articleBody">
 
       
-        <ol>
-<li>GET把参数包含在URL中，POST把参数放在请求体中。这样，POST能够发送的数据更大。(URL有长度限制)</li>
-<li>GET请求比POST请求快<ul>
-<li>POST请求包含更多的请求头(但可忽略不计)</li>
-<li><strong>最重要的是：</strong>POST在真正发送数据的时候，会先将请求头发送给服务器进行确认，然后才发送数据</li>
-</ul>
-</li>
-<li>GET将数据缓存起来，而POST不会</li>
-<li>POST请求一般用于修改和写入操作，而GET请求用来获取资源操作。</li>
-<li>POST请求更加安全(参数不放在URL、数据不缓存)</li>
-<li>对参数的数据类型，POST能够发送更多的数据类型(GET只能发送ASCII字符)</li>
-</ol>
-<hr>
-<p><strong>POST请求的过程：</strong></p>
-<ol>
-<li>在TCP的第三次握手，浏览器会进行确认并发送POST请求头。</li>
-<li>服务器返回100 Continue响应</li>
-<li>浏览器发送数据</li>
-<li>服务器返回200 OK响应</li>
-</ol>
-<hr>
-<p><strong>GET请求的过程：</strong></p>
-<ol>
-<li>在TCP第三次握手，浏览器就会进行确认并发送GET请求头和数据</li>
-<li>服务器返回200 OK响应</li>
-</ol>
-<hr>
-<p>这样GET的总耗是POST的2/3左右。</p>
+        <h2 id="MyBatis的执行流程及核心组件图"><a href="#MyBatis的执行流程及核心组件图" class="headerlink" title="MyBatis的执行流程及核心组件图"></a>MyBatis的执行流程及核心组件图</h2><p><img src="/notes/2021/06/23/MyBatis/mybatis%E6%A0%B8%E5%BF%83%E7%BB%84%E4%BB%B6%E4%BB%8B%E7%BB%8D/epub_27563388_132.png" alt="img"></p>
+<h2 id="Configuration"><a href="#Configuration" class="headerlink" title="Configuration"></a>Configuration</h2><p>Configuration对象描述MyBatis主配置信息，同时Mapper配置信息，类型别名，TypeHandler也会注册到Configuration中。当其他组件需要获取这些配置信息的时候，可以从中获取。</p>
+<p>同时Configuration也提供了创建Executor、StatementHandler、ParameterHandler、ResultSetHandler的工厂方法。</p>
+<h2 id="MappedStatement"><a href="#MappedStatement" class="headerlink" title="MappedStatement"></a>MappedStatement</h2><p>MappedStatement是对mapper中SQL配置信息的描述，是对Mapper配置文件中insert、update、delete、select等标签，或者@Select、@Update注解配置信息的封装。</p>
+<h2 id="SqlSession"><a href="#SqlSession" class="headerlink" title="SqlSession"></a>SqlSession</h2><p>SqlSession是MyBatis提供的用户层面的接口，用来完成数据增删改查操作。SqlSession是Executor的外观，目的是为了减少操作数据库的复杂度，向用户提供简单易懂的操作接口。</p>
+<h2 id="Executor"><a href="#Executor" class="headerlink" title="Executor"></a>Executor</h2><p>Executor是MyBatis的执行器。MyBatis中所有对数据库的增删查改操作都是通过Executor来完成的。</p>
+<h2 id="StatementHandler"><a href="#StatementHandler" class="headerlink" title="StatementHandler"></a>StatementHandler</h2><p>StatementHandler是对JDBC中的Statement操作的封装。比如为Statement对象设置参数，调用Statement接口提供的方法与数据库交互。</p>
+<h2 id="ParameterHandler"><a href="#ParameterHandler" class="headerlink" title="ParameterHandler"></a>ParameterHandler</h2><p>当MyBatis使用的Statement类型为PreparedStatement或CallableStatement类型时，ParameterHandler为Statement对象的参数占位符设置值。</p>
+<h2 id="TypeHandler"><a href="#TypeHandler" class="headerlink" title="TypeHandler"></a>TypeHandler</h2><p>TypeHandler是MyBatis中的类型处理器，用于处理Java类型和SQL类型的映射。比如：TypeHandler能够根据Java类型调用PreparedStatement或CallableStatement对象相应的setXXX()来设置值，并且能够根据Java类型调用ResultSet对象相应的getXXX()方法来获取SQL执行结果。</p>
+<h2 id="ResultSetHandler"><a href="#ResultSetHandler" class="headerlink" title="ResultSetHandler"></a>ResultSetHandler</h2><p>ResultSet封装了对JDBC中的ResultSet的操作。当执行的SQL语句类型为select时，会将查询结果封装成Java对象。</p>
 
     </div>
 
@@ -247,9 +219,7 @@
 
       <footer class="post-footer">
           <div class="post-tags">
-              <a href="/notes/tags/GET%E8%AF%B7%E6%B1%82/" rel="tag"># GET请求</a>
-              <a href="/notes/tags/%E9%9D%A2%E8%AF%95%E9%A2%98/" rel="tag"># 面试题</a>
-              <a href="/notes/tags/POST%E8%AF%B7%E6%B1%82/" rel="tag"># POST请求</a>
+              <a href="/notes/tags/MyBatis/" rel="tag"># MyBatis</a>
           </div>
 
         
@@ -258,13 +228,10 @@
         
     <div class="post-nav">
       <div class="post-nav-item">
-    <a href="/notes/2021/06/09/%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%BD%91%E7%BB%9C/tcp%E4%B8%89%E6%AC%A1%E6%8F%A1%E6%89%8B%E5%92%8C%E5%9B%9B%E6%AC%A1%E6%8C%A5%E6%89%8B/" rel="prev" title="TCP三次握手和四次挥手">
-      <i class="fa fa-chevron-left"></i> TCP三次握手和四次挥手
+    <a href="/notes/2021/06/23/%E8%AE%BE%E8%AE%A1%E6%A8%A1%E5%BC%8F/%E5%A4%96%E8%A7%82%E6%A8%A1%E5%BC%8F-facade-pattern/" rel="prev" title="外观模式(Facade Pattern)">
+      <i class="fa fa-chevron-left"></i> 外观模式(Facade Pattern)
     </a></div>
-      <div class="post-nav-item">
-    <a href="/notes/2021/06/10/MySQL/mysql%E6%9F%A5%E8%AF%A2%E6%9C%80%E8%BF%91%E4%B8%80%E6%9D%A1%E8%AE%B0%E5%BD%95%E7%9A%84sql%EF%BC%88%E4%BC%98%E5%8C%96%E7%AF%87%EF%BC%89/" rel="next" title="MySQL查询最近一条记录的SQL（优化篇）">
-      MySQL查询最近一条记录的SQL（优化篇） <i class="fa fa-chevron-right"></i>
-    </a></div>
+      <div class="post-nav-item"></div>
     </div>
       </footer>
     
@@ -323,6 +290,7 @@
 
       <!--noindex-->
       <div class="post-toc-wrap sidebar-panel">
+          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#MyBatis%E7%9A%84%E6%89%A7%E8%A1%8C%E6%B5%81%E7%A8%8B%E5%8F%8A%E6%A0%B8%E5%BF%83%E7%BB%84%E4%BB%B6%E5%9B%BE"><span class="nav-number">1.</span> <span class="nav-text">MyBatis的执行流程及核心组件图</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Configuration"><span class="nav-number">2.</span> <span class="nav-text">Configuration</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#MappedStatement"><span class="nav-number">3.</span> <span class="nav-text">MappedStatement</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#SqlSession"><span class="nav-number">4.</span> <span class="nav-text">SqlSession</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Executor"><span class="nav-number">5.</span> <span class="nav-text">Executor</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#StatementHandler"><span class="nav-number">6.</span> <span class="nav-text">StatementHandler</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#ParameterHandler"><span class="nav-number">7.</span> <span class="nav-text">ParameterHandler</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#TypeHandler"><span class="nav-number">8.</span> <span class="nav-text">TypeHandler</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#ResultSetHandler"><span class="nav-number">9.</span> <span class="nav-text">ResultSetHandler</span></a></li></ol></div>
       </div>
       <!--/noindex-->
 

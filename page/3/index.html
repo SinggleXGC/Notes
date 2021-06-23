@@ -145,6 +145,109 @@
   
   
   <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="https://singglexgc.github.io/notes/2021/06/13/%E8%BD%AF%E4%BB%B6%E5%B7%A5%E7%A8%8B/%E7%B1%BB%E5%9B%BE/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/notes/images/avatar.gif">
+      <meta itemprop="name" content="Sinngle">
+      <meta itemprop="description" content="">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Notes">
+    </span>
+      <header class="post-header">
+        <h2 class="post-title" itemprop="name headline">
+          
+            <a href="/notes/2021/06/13/%E8%BD%AF%E4%BB%B6%E5%B7%A5%E7%A8%8B/%E7%B1%BB%E5%9B%BE/" class="post-title-link" itemprop="url">类图</a>
+        </h2>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+              
+
+              <time title="创建时间：2021-06-13 16:52:02 / 修改时间：16:55:35" itemprop="dateCreated datePublished" datetime="2021-06-13T16:52:02+08:00">2021-06-13</time>
+            </span>
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-folder"></i>
+              </span>
+              <span class="post-meta-item-text">分类于</span>
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/notes/categories/%E8%BD%AF%E4%BB%B6%E5%B7%A5%E7%A8%8B/" itemprop="url" rel="index"><span itemprop="name">软件工程</span></a>
+                </span>
+            </span>
+
+          
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+          <h2 id="什么是类图？"><a href="#什么是类图？" class="headerlink" title="什么是类图？"></a>什么是类图？</h2><p>UML类图是显示类、接口以及它们之间的静态结构和关系。</p>
+<h2 id="类之间的关系"><a href="#类之间的关系" class="headerlink" title="类之间的关系"></a>类之间的关系</h2><p><img src="/notes/2021/06/13/%E8%BD%AF%E4%BB%B6%E5%B7%A5%E7%A8%8B/%E7%B1%BB%E5%9B%BE/807775-20160723144134247-1743796764.png" alt="img"></p>
+<h3 id="关联关系-Association"><a href="#关联关系-Association" class="headerlink" title="关联关系(Association)"></a>关联关系(Association)</h3><p>关联关系是一个<strong>“HAS”关系</strong>。</p>
+<p>一个对象作为另一个对象的属性，这就是关联关系。</p>
+<p>关联关系可以是单向的也可以是双向的。双向的符号是没有方向标的，只是一条直线。</p>
+<p><strong>例：</strong></p>
+<p>单向：</p>
+<p><img src="/notes/2021/06/13/%E8%BD%AF%E4%BB%B6%E5%B7%A5%E7%A8%8B/%E7%B1%BB%E5%9B%BE/807775-20160723144237560-523170503.png" alt="img"></p>
+<p>双向：</p>
+<p><img src="/notes/2021/06/13/%E8%BD%AF%E4%BB%B6%E5%B7%A5%E7%A8%8B/%E7%B1%BB%E5%9B%BE/807775-20160723144249232-258531063.png" alt="img"></p>
+<p>自关联：</p>
+<p><img src="/notes/2021/06/13/%E8%BD%AF%E4%BB%B6%E5%B7%A5%E7%A8%8B/%E7%B1%BB%E5%9B%BE/807775-20160723144303419-630408989.png" alt="img"></p>
+<p>多重性关联关系：</p>
+<p><img src="/notes/2021/06/13/%E8%BD%AF%E4%BB%B6%E5%B7%A5%E7%A8%8B/%E7%B1%BB%E5%9B%BE/807775-20160723144350529-855486099.png" alt="img"></p>
+<p><strong>例：</strong></p>
+<p><img src="/notes/2021/06/13/%E8%BD%AF%E4%BB%B6%E5%B7%A5%E7%A8%8B/%E7%B1%BB%E5%9B%BE/807775-20160723144434013-1500135858.png" alt="img"></p>
+<h3 id="依赖关系-Dependency"><a href="#依赖关系-Dependency" class="headerlink" title="依赖关系(Dependency)"></a>依赖关系(Dependency)</h3><p>依赖是<strong>“USE”关系</strong>。</p>
+<p>一个类A使用到了另一个类B，这就是依赖关系。</p>
+<p>具体表现形式有：</p>
+<ul>
+<li>一个类作为另一个类的方法的<strong>形式参数</strong></li>
+<li>一个类作为另一个类的方法的<strong>局部变量</strong></li>
+<li>一个类作为另一个类的方法的<strong>返回值</strong></li>
+<li>一个类的方法调用了另一个类的<strong>静态变量</strong></li>
+</ul>
+<p><img src="/notes/2021/06/13/%E8%BD%AF%E4%BB%B6%E5%B7%A5%E7%A8%8B/%E7%B1%BB%E5%9B%BE/807775-20160723144633185-87772206.png" alt="img"></p>
+<h3 id="聚合关系-Aggregation"><a href="#聚合关系-Aggregation" class="headerlink" title="聚合关系(Aggregation)"></a>聚合关系(Aggregation)</h3><p>整体与部分的关系，即成员变量是整体对象的一部分，但是成员对象能够脱离整体单独存在。</p>
+<p><img src="/notes/2021/06/13/%E8%BD%AF%E4%BB%B6%E5%B7%A5%E7%A8%8B/%E7%B1%BB%E5%9B%BE/807775-20160723144510279-1844358604.png" alt="img"></p>
+<p>聚合关系有一个特点就是<strong>可替换</strong>。</p>
+<h3 id="组合关系-Composition"><a href="#组合关系-Composition" class="headerlink" title="组合关系(Composition)"></a>组合关系(Composition)</h3><p>整体与部分的关系，即成员变量是整体对象的一部分，但是部分对象不能脱离整体存在。当整体对象销毁的时候，部分对象也会销毁。</p>
+<p><img src="/notes/2021/06/13/%E8%BD%AF%E4%BB%B6%E5%B7%A5%E7%A8%8B/%E7%B1%BB%E5%9B%BE/807775-20160723144538529-541997244.png" alt="img"></p>
+<h3 id="泛化关系-Generalization"><a href="#泛化关系-Generalization" class="headerlink" title="泛化关系(Generalization)"></a>泛化关系(Generalization)</h3><p>泛化关系就是继承关系，即父类和子类的关系。</p>
+<p><img src="/notes/2021/06/13/%E8%BD%AF%E4%BB%B6%E5%B7%A5%E7%A8%8B/%E7%B1%BB%E5%9B%BE/807775-20160723144659935-1934295664.png" alt="img"></p>
+<h3 id="实现关系-Realization"><a href="#实现关系-Realization" class="headerlink" title="实现关系(Realization)"></a>实现关系(Realization)</h3><p>具体类和接口的关系，就是实现关系。</p>
+<p><img src="/notes/2021/06/13/%E8%BD%AF%E4%BB%B6%E5%B7%A5%E7%A8%8B/%E7%B1%BB%E5%9B%BE/807775-20160723144730763-1113801133.png" alt="img"></p>
+<h2 id="参考资料"><a href="#参考资料" class="headerlink" title="参考资料"></a>参考资料</h2><p><a target="_blank" rel="noopener" href="https://www.cnblogs.com/ubuntu1/p/9140055.html">类图 - 吴小凯 - 博客园 (cnblogs.com)</a></p>
+
+      
+    </div>
+
+    
+    
+    
+      <footer class="post-footer">
+        <div class="post-eof"></div>
+      </footer>
+  </article>
+  
+  
+  
+
+      
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
     <link itemprop="mainEntityOfPage" href="https://singglexgc.github.io/notes/2021/06/11/MySQL/%E4%BB%80%E4%B9%88%E6%98%AFmysql%E7%9A%84only-full-group-by%E6%A8%A1%E5%BC%8F%EF%BC%9F/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
@@ -238,85 +341,10 @@
   
   
 
-      
-  
-  
-  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
-    <link itemprop="mainEntityOfPage" href="https://singglexgc.github.io/notes/2021/06/11/HTTP%E5%8D%8F%E8%AE%AE/%E4%B8%BA%E4%BB%80%E4%B9%88%E8%AF%B4-%E5%AF%B9%E5%8F%82%E6%95%B0%E7%9A%84%E6%95%B0%E6%8D%AE%E7%B1%BB%E5%9E%8B%EF%BC%8Cget%E8%AF%B7%E6%B1%82%E4%BB%85%E6%94%AF%E6%8C%81ascii%E5%AD%97%E7%AC%A6%EF%BC%9F/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="image" content="/notes/images/avatar.gif">
-      <meta itemprop="name" content="Sinngle">
-      <meta itemprop="description" content="">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="Notes">
-    </span>
-      <header class="post-header">
-        <h2 class="post-title" itemprop="name headline">
-          
-            <a href="/notes/2021/06/11/HTTP%E5%8D%8F%E8%AE%AE/%E4%B8%BA%E4%BB%80%E4%B9%88%E8%AF%B4-%E5%AF%B9%E5%8F%82%E6%95%B0%E7%9A%84%E6%95%B0%E6%8D%AE%E7%B1%BB%E5%9E%8B%EF%BC%8Cget%E8%AF%B7%E6%B1%82%E4%BB%85%E6%94%AF%E6%8C%81ascii%E5%AD%97%E7%AC%A6%EF%BC%9F/" class="post-title-link" itemprop="url">为什么说 对参数的数据类型，GET请求仅支持ASCII字符？</a>
-        </h2>
-
-        <div class="post-meta">
-            <span class="post-meta-item">
-              <span class="post-meta-item-icon">
-                <i class="far fa-calendar"></i>
-              </span>
-              <span class="post-meta-item-text">发表于</span>
-              
-
-              <time title="创建时间：2021-06-11 17:59:22 / 修改时间：21:54:21" itemprop="dateCreated datePublished" datetime="2021-06-11T17:59:22+08:00">2021-06-11</time>
-            </span>
-            <span class="post-meta-item">
-              <span class="post-meta-item-icon">
-                <i class="far fa-folder"></i>
-              </span>
-              <span class="post-meta-item-text">分类于</span>
-                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-                  <a href="/notes/categories/HTTP%E5%8D%8F%E8%AE%AE/" itemprop="url" rel="index"><span itemprop="name">HTTP协议</span></a>
-                </span>
-            </span>
-
-          
-
-        </div>
-      </header>
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-
-      
-          <p>为什么说对参数的数据类型，GET请求仅支持ASCII字符？</p>
-<p>首先，我们先来看看HTTP报文格式。</p>
-<p><img src="/notes/2021/06/11/HTTP%E5%8D%8F%E8%AE%AE/%E4%B8%BA%E4%BB%80%E4%B9%88%E8%AF%B4-%E5%AF%B9%E5%8F%82%E6%95%B0%E7%9A%84%E6%95%B0%E6%8D%AE%E7%B1%BB%E5%9E%8B%EF%BC%8Cget%E8%AF%B7%E6%B1%82%E4%BB%85%E6%94%AF%E6%8C%81ascii%E5%AD%97%E7%AC%A6%EF%BC%9F/131033083082889.png" alt="HTTP报文格式"></p>
-<p>可以看到HTTP报文分为<strong>请求行、请求头、请求体</strong>三部分。</p>
-<p>重点来了，其中<strong>请求行和请求头统一采用ASCII编码</strong>。</p>
-<hr>
-<p>对于参数的处理，GET请求将参数拼接在URL，POST将参数放在请求体。</p>
-<p>然而，<strong>URL在HTTP报文的请求行中，结合请求行使用ASCII编码</strong>，这样，我们就知道了为什么对于参数的数据类型，GET请求仅支持ASCII字符了。</p>
-
-      
-    </div>
-
-    
-    
-    
-      <footer class="post-footer">
-        <div class="post-eof"></div>
-      </footer>
-  </article>
-  
-  
-  
-
 
   
   <nav class="pagination">
-    <a class="extend prev" rel="prev" href="/notes/page/2/"><i class="fa fa-angle-left" aria-label="上一页"></i></a><a class="page-number" href="/notes/">1</a><a class="page-number" href="/notes/page/2/">2</a><span class="page-number current">3</span><a class="page-number" href="/notes/page/4/">4</a><span class="space">&hellip;</span><a class="page-number" href="/notes/page/8/">8</a><a class="extend next" rel="next" href="/notes/page/4/"><i class="fa fa-angle-right" aria-label="下一页"></i></a>
+    <a class="extend prev" rel="prev" href="/notes/page/2/"><i class="fa fa-angle-left" aria-label="上一页"></i></a><a class="page-number" href="/notes/">1</a><a class="page-number" href="/notes/page/2/">2</a><span class="page-number current">3</span><a class="page-number" href="/notes/page/4/">4</a><span class="space">&hellip;</span><a class="page-number" href="/notes/page/9/">9</a><a class="extend next" rel="next" href="/notes/page/4/"><i class="fa fa-angle-right" aria-label="下一页"></i></a>
   </nav>
 
 
@@ -382,7 +410,7 @@
       <div class="site-state-item site-state-posts">
           <a href="/notes/archives/">
         
-          <span class="site-state-item-count">16</span>
+          <span class="site-state-item-count">17</span>
           <span class="site-state-item-name">日志</span>
         </a>
       </div>

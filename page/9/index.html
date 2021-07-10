@@ -145,6 +145,194 @@
   
   
   <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="https://singglexgc.github.io/notes/2021/06/05/%E9%9D%A2%E8%AF%95%E9%A2%98/MyBatis%E9%9D%A2%E8%AF%95%E9%A2%98/mybatis%E9%9D%A2%E8%AF%95%E9%A2%98/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/notes/images/avatar.gif">
+      <meta itemprop="name" content="Sinngle">
+      <meta itemprop="description" content="">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Notes">
+    </span>
+      <header class="post-header">
+        <h2 class="post-title" itemprop="name headline">
+          
+            <a href="/notes/2021/06/05/%E9%9D%A2%E8%AF%95%E9%A2%98/MyBatis%E9%9D%A2%E8%AF%95%E9%A2%98/mybatis%E9%9D%A2%E8%AF%95%E9%A2%98/" class="post-title-link" itemprop="url">MyBatis面试题</a>
+        </h2>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+              
+
+              <time title="创建时间：2021-06-05 17:20:59 / 修改时间：17:31:39" itemprop="dateCreated datePublished" datetime="2021-06-05T17:20:59+08:00">2021-06-05</time>
+            </span>
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-folder"></i>
+              </span>
+              <span class="post-meta-item-text">分类于</span>
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/notes/categories/%E9%9D%A2%E8%AF%95%E9%A2%98/" itemprop="url" rel="index"><span itemprop="name">面试题</span></a>
+                </span>
+                  ，
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/notes/categories/%E9%9D%A2%E8%AF%95%E9%A2%98/MyBatis%E9%9D%A2%E8%AF%95%E9%A2%98/" itemprop="url" rel="index"><span itemprop="name">MyBatis面试题</span></a>
+                </span>
+            </span>
+
+          
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+          <h2 id="什么是MyBatis"><a href="#什么是MyBatis" class="headerlink" title="什么是MyBatis?"></a>什么是MyBatis?</h2><ol>
+<li>MyBatis是持久层框架，对JDBC进行封装，开发时只需要关注SQL本身，不需要花费精力去处理加载驱动、创建连接、创建statement对象等繁琐的过程。省去了几乎所有的JDBC代码，不需要手动设置参数以及处理结果集。</li>
+<li>MyBatis可以通过XML或注解进行配置，能够将POJO映射为数据库的记录。</li>
+<li>MyBatis可以通过XML或注解的方式对需要执行的statement进行配置，生成最终执行的SQL语句。MyBatis执行SQL之后，自动将结果集映射为Java对象并返回。</li>
+</ol>
+<h2 id="MyBatis的优点"><a href="#MyBatis的优点" class="headerlink" title="MyBatis的优点"></a>MyBatis的优点</h2><ol>
+<li>基于SQL编程，非常灵活，不会对应用程序和数据库的现有设计造成任何影响。</li>
+<li>与JDBC相比，减少了大量冗余的代码。不需要手动创建和销毁连接。</li>
+<li>能够很好的与各种数据库兼容。</li>
+<li>与Spring能够很好的集成。</li>
+</ol>
+<h2 id="MyBatis的缺点"><a href="#MyBatis的缺点" class="headerlink" title="MyBatis的缺点"></a>MyBatis的缺点</h2><ol>
+<li>当SQL的编写工作量大的时候，对开发人员的SQL功底有一定要求。</li>
+<li>SQL语句依赖于数据库，导致MyBatis数据库移植性差，不能随便切换数据库。</li>
+</ol>
+<h2 id="MyBatis框架使用场合"><a href="#MyBatis框架使用场合" class="headerlink" title="MyBatis框架使用场合"></a>MyBatis框架使用场合</h2><ol>
+<li>MyBatis是一个DAO层解决方案</li>
+<li>对性能要求高、需求变化较多的项目，如互联网项目</li>
+</ol>
+<h2 id="MyBatis中-和-的区别"><a href="#MyBatis中-和-的区别" class="headerlink" title="MyBatis中#{}和${}的区别"></a>MyBatis中#{}和${}的区别</h2><p><code>#&#123;&#125;</code>是预编译处理，<code>$&#123;&#125;</code>是字符串替换。</p>
+<p>MyBatis在处理<code>#&#123;&#125;</code>的时候，会将SQL中的<code>#&#123;&#125;</code>替换成占位符<code>?</code>，通过调用<code>PreparedStatement</code>的<code>setXxx</code>方法来替换占位符。</p>
+<p>MyBatis在处理<code>$&#123;&#125;</code>的时候，就是直接将<code>$&#123;&#125;</code>替换成变量的值。</p>
+<p>使用<code>#&#123;&#125;</code>可以有效的避免SQL注入，提高系统的安全性。</p>
+<h2 id="当实体类的属性名和表中的字段名不相同，怎么办？"><a href="#当实体类的属性名和表中的字段名不相同，怎么办？" class="headerlink" title="当实体类的属性名和表中的字段名不相同，怎么办？"></a>当实体类的属性名和表中的字段名不相同，怎么办？</h2><ol>
+<li><p>通过在查询的SQL语句中定义字段名的别名，使得别名和属性名一致</p>
+<figure class="highlight xml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="tag">&lt;<span class="name">select</span> <span class="attr">id</span>=<span class="string">&quot;selectorder&quot;</span> <span class="attr">parameterType</span>=<span class="string">&quot;int&quot;</span> <span class="attr">resultType</span>=<span class="string">&quot;com.xgc.entity.Order&quot;</span>&gt;</span></span><br><span class="line">    select order_id id, order_no orderno, order_price price</span><br><span class="line">    from orders</span><br><span class="line">    where order_id = #&#123;id&#125;</span><br><span class="line"><span class="tag">&lt;/<span class="name">select</span>&gt;</span></span><br></pre></td></tr></table></figure></li>
+<li><p>通过resultMap标签映射属性名和字段名的关系</p>
+<figure class="highlight xml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="tag">&lt;<span class="name">resultMap</span> <span class="attr">id</span>=<span class="string">&quot;orderResultMap&quot;</span> <span class="attr">type</span>=<span class="string">&quot;com.xgc.entity.Order&quot;</span>&gt;</span></span><br><span class="line">    <span class="comment">&lt;!-- 用id标签来映射主键字段 --&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">id</span> <span class="attr">property</span>=<span class="string">&quot;id&quot;</span> <span class="attr">column</span>=<span class="string">&quot;order_id&quot;</span> /&gt;</span></span><br><span class="line">    <span class="comment">&lt;!-- 用result标签来映射非主键字段 --&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">result</span> <span class="attr">property</span>=<span class="string">&quot;orderno&quot;</span> <span class="attr">column</span>=<span class="string">&quot;order_no&quot;</span> /&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">result</span> <span class="attr">property</span>=<span class="string">&quot;price&quot;</span> <span class="attr">column</span>=<span class="string">&quot;order_price&quot;</span> /&gt;</span></span><br><span class="line"><span class="tag">&lt;/<span class="name">resultMap</span>&gt;</span></span><br></pre></td></tr></table></figure></li>
+</ol>
+<h2 id="通常一个XML映射文件都会有一个DAO接口与之对应。请问这个DAO接口的工作原理是什么？DAO接口里的方法能重载吗？"><a href="#通常一个XML映射文件都会有一个DAO接口与之对应。请问这个DAO接口的工作原理是什么？DAO接口里的方法能重载吗？" class="headerlink" title="通常一个XML映射文件都会有一个DAO接口与之对应。请问这个DAO接口的工作原理是什么？DAO接口里的方法能重载吗？"></a>通常一个XML映射文件都会有一个DAO接口与之对应。请问这个DAO接口的工作原理是什么？DAO接口里的方法能重载吗？</h2><p><strong>DAO接口的工作原理</strong>：MyBatis在运行时会使用JDK动态代理为DAO接口生成一个代理对象，代理对象会拦截接口方法，进而执行XML中配置的对应的SQL语句，然后将SQL执行结果封装返回。</p>
+<p><strong>DAO接口中的方法不能重载。</strong>这是因为MyBatis使用<strong>接口全限定名+方法名</strong>的保存和查找策略。</p>
+<h2 id="MyBatis是如何进行分页的？分页插件的原理是什么？"><a href="#MyBatis是如何进行分页的？分页插件的原理是什么？" class="headerlink" title="MyBatis是如何进行分页的？分页插件的原理是什么？"></a>MyBatis是如何进行分页的？分页插件的原理是什么？</h2><p>MyBatis使用<code>RowBounds</code>对象进行分页，它是针对结果集ResultSet进行的内存分页，而不是物理分页。我们可以在SQL中直接书写分页参数来实现物理分页，也可以通过分页插件来实现物理分页。</p>
+<p>分页插件通过MyBatis提供的插件接口，实现自定义插件，在插件的拦截方法中拦截需要执行的SQL语句，重写SQL，根据dialect方言，添加对应的物理分页语句和物理分页参数。</p>
+<h2 id="MyBatis如何将SQL执行结果封装成目标对象并返回？都有哪一些映射形式？"><a href="#MyBatis如何将SQL执行结果封装成目标对象并返回？都有哪一些映射形式？" class="headerlink" title="MyBatis如何将SQL执行结果封装成目标对象并返回？都有哪一些映射形式？"></a>MyBatis如何将SQL执行结果封装成目标对象并返回？都有哪一些映射形式？</h2><p>映射形式有两种：</p>
+<ol>
+<li>通过<code>&lt;resultMap&gt;</code>标签来定义表的列名和对象属性名之间的映射关系。</li>
+<li>在SQL语句中为列名起别名，使得别名和对象属性名一致。</li>
+</ol>
+<p>在拥有了列名和属性名的映射关系下，MyBatis通过反射创建对象并为对象属性赋值，最终将对象返回。</p>
+<h2 id="如何获取自动生成的-主-键值？"><a href="#如何获取自动生成的-主-键值？" class="headerlink" title="如何获取自动生成的(主)键值？"></a>如何获取自动生成的(主)键值？</h2><p>insert方法会返回一个值，这个值就是插入的行数。</p>
+<p>MyBatis可以通过useGeneratedKeys、keyProperty属性来将生成的键值设置到传入的参数对象中。</p>
+<figure class="highlight xml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="tag">&lt;<span class="name">insert</span> <span class="attr">id</span>=<span class="string">&quot;insertUser&quot;</span> <span class="attr">useGeneratedKeys</span>=<span class="string">&quot;true&quot;</span> <span class="attr">keyProperty</span>=<span class="string">&quot;id&quot;</span>&gt;</span></span><br><span class="line">    insert into user (username, age) values (#&#123;username&#125;, #&#123;age&#125;)</span><br><span class="line"><span class="tag">&lt;/<span class="name">insert</span>&gt;</span></span><br></pre></td></tr></table></figure>
+
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">//在这条语句执行之后，MyBatis会将insert返回的自增键值id 设置到我们传入的对象user的id属性中</span></span><br><span class="line">userMapper.insertUser(user);</span><br></pre></td></tr></table></figure>
+
+
+
+<h2 id="MyBatis动态SQL有什么用？执行原理是什么？有哪些动态SQL？"><a href="#MyBatis动态SQL有什么用？执行原理是什么？有哪些动态SQL？" class="headerlink" title="MyBatis动态SQL有什么用？执行原理是什么？有哪些动态SQL？"></a>MyBatis动态SQL有什么用？执行原理是什么？有哪些动态SQL？</h2><p>MyBatis动态SQL可以在XML映射文件中，以标签的形式编写动态SQL。</p>
+<p>执行原理：根据表达式的值 进行逻辑判断，完成动态拼接SQL的功能。</p>
+<p>动态SQL标签(9种)：</p>
+<ul>
+<li>if、choose、when、otherwise</li>
+<li>where、trim、set、foreach</li>
+<li>bind</li>
+</ul>
+<h2 id="xml映射文件中，除了常见的select、update、delete、insert标签之外，还有哪些标签？"><a href="#xml映射文件中，除了常见的select、update、delete、insert标签之外，还有哪些标签？" class="headerlink" title="xml映射文件中，除了常见的select、update、delete、insert标签之外，还有哪些标签？"></a>xml映射文件中，除了常见的select、update、delete、insert标签之外，还有哪些标签？</h2><ul>
+<li>resultMap、parameterMap</li>
+<li>sql、include</li>
+<li>selectKey</li>
+<li>9个动态SQL标签</li>
+</ul>
+<h2 id="MyBatis的xml映射文件中，不同的xml映射文件，id可不可以重复？"><a href="#MyBatis的xml映射文件中，不同的xml映射文件，id可不可以重复？" class="headerlink" title="MyBatis的xml映射文件中，不同的xml映射文件，id可不可以重复？"></a>MyBatis的xml映射文件中，不同的xml映射文件，id可不可以重复？</h2><p>不同的xml映射文件，如果设置了namespace属性，那么id可以重复。否则，不可以重复。</p>
+<p>因为MyBatis使用 namespace+id 的存储查找策略。</p>
+<h2 id="为什么说MyBatis是半orm映射工具？它和全自动的有什么区别？"><a href="#为什么说MyBatis是半orm映射工具？它和全自动的有什么区别？" class="headerlink" title="为什么说MyBatis是半orm映射工具？它和全自动的有什么区别？"></a>为什么说MyBatis是半orm映射工具？它和全自动的有什么区别？</h2><p>MyBatis是半orm映射工具，它需要在xml或注解中编写SQL语句。Hibernate是全自动orm映射工具，可以自动生成SQL语句，不需要手动编写。</p>
+<h2 id="一对一、一对多的关联查询"><a href="#一对一、一对多的关联查询" class="headerlink" title="一对一、一对多的关联查询?"></a>一对一、一对多的关联查询?</h2><p><strong>一对一的关联查询：</strong></p>
+<p>学生和课室是一对一的关系。当我们需要查询学生的同时，也将对应学生的课室信息也查询出来时，可以使用关联查询。如下，我们输入学生id就可以获取对应学生和课室信息。</p>
+<figure class="highlight xml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br></pre></td><td class="code"><pre><span class="line"><span class="tag">&lt;<span class="name">mapper</span> <span class="attr">namespace</span>=<span class="string">&quot;com.xgc.mapper.StudentMapper&quot;</span>&gt;</span></span><br><span class="line">    <span class="comment">&lt;!-- 一对一关联查询 association --&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">resultMap</span> <span class="attr">id</span>=<span class="string">&quot;studentClassroomsResultMap&quot;</span> <span class="attr">type</span>=<span class="string">&quot;com.xgc.entity.Student&quot;</span>&gt;</span></span><br><span class="line">        <span class="tag">&lt;<span class="name">id</span> <span class="attr">property</span>=<span class="string">&quot;id&quot;</span> <span class="attr">column</span>=<span class="string">&quot;id&quot;</span> /&gt;</span></span><br><span class="line">        <span class="tag">&lt;<span class="name">result</span> <span class="attr">property</span>=<span class="string">&quot;name&quot;</span> <span class="attr">column</span>=<span class="string">&quot;name&quot;</span> /&gt;</span></span><br><span class="line">        </span><br><span class="line">        <span class="tag">&lt;<span class="name">association</span> <span class="attr">property</span>=<span class="string">&quot;classroom&quot;</span> <span class="attr">javaType</span>=<span class="string">&quot;com.xgc.entity.Classroom&quot;</span>&gt;</span></span><br><span class="line">            <span class="tag">&lt;<span class="name">id</span> <span class="attr">property</span>=<span class="string">&quot;id&quot;</span> <span class="attr">column</span>=<span class="string">&quot;cid&quot;</span> /&gt;</span></span><br><span class="line">            <span class="tag">&lt;<span class="name">result</span> <span class="attr">property</span>=<span class="string">&quot;name&quot;</span> <span class="attr">column</span>=<span class="string">&quot;cname&quot;</span> /&gt;</span></span><br><span class="line">        <span class="tag">&lt;/<span class="name">association</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;/<span class="name">resultMap</span>&gt;</span></span><br><span class="line">    </span><br><span class="line">    <span class="tag">&lt;<span class="name">select</span> <span class="attr">id</span>=<span class="string">&quot;selectStudentClassroom&quot;</span> <span class="attr">parameterType</span>=<span class="string">&quot;int&quot;</span> </span></span><br><span class="line"><span class="tag">            <span class="attr">resultMap</span>=<span class="string">&quot;studentClassroomsResultMap&quot;</span>&gt;</span></span><br><span class="line">        select s.id, s.name, c.id cid, c.name cname from student s, classroom c</span><br><span class="line">        where s.classroomId = c.id</span><br><span class="line">        and s.id = #&#123;id&#125;</span><br><span class="line">    <span class="tag">&lt;/<span class="name">select</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;/<span class="name">mapper</span>&gt;</span></span><br></pre></td></tr></table></figure>
+
+
+
+<p><strong>一对多的关联查询：</strong></p>
+<p>课室和学生是一对多的关系。一个课室可以有多个学生。如下：我们输入课室id，可以将课室和课室内的学生信息全部获取出来。</p>
+<figure class="highlight xml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br></pre></td><td class="code"><pre><span class="line"><span class="tag">&lt;<span class="name">mapper</span> <span class="attr">namespace</span>=<span class="string">&quot;com.xgc.mapper.ClassroomMapper&quot;</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">resultMap</span> <span class="attr">id</span>=<span class="string">&quot;classroomStudentResultMap&quot;</span> <span class="attr">type</span>=<span class="string">&quot;com.xgc.entity.Classroom&quot;</span>&gt;</span></span><br><span class="line">        <span class="tag">&lt;<span class="name">id</span> <span class="attr">property</span>=<span class="string">&quot;id&quot;</span> <span class="attr">column</span>=<span class="string">&quot;id&quot;</span> /&gt;</span></span><br><span class="line">        <span class="tag">&lt;<span class="name">result</span> <span class="attr">property</span>=<span class="string">&quot;name&quot;</span> <span class="attr">column</span>=<span class="string">&quot;name&quot;</span> /&gt;</span></span><br><span class="line">        </span><br><span class="line">        <span class="tag">&lt;<span class="name">collection</span> <span class="attr">property</span>=<span class="string">&quot;students&quot;</span> <span class="attr">ofType</span>=<span class="string">&quot;com.xgc.entity.Student&quot;</span>&gt;</span></span><br><span class="line">            <span class="tag">&lt;<span class="name">id</span> <span class="attr">property</span>=<span class="string">&quot;id&quot;</span> <span class="attr">column</span>=<span class="string">&quot;sid&quot;</span> /&gt;</span></span><br><span class="line">            <span class="tag">&lt;<span class="name">result</span> <span class="attr">property</span>=<span class="string">&quot;name&quot;</span> <span class="attr">column</span>=<span class="string">&quot;sname&quot;</span> /&gt;</span></span><br><span class="line">        <span class="tag">&lt;/<span class="name">collection</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;/<span class="name">resultMap</span>&gt;</span></span><br><span class="line">    </span><br><span class="line">    <span class="tag">&lt;<span class="name">select</span> <span class="attr">id</span>=<span class="string">&quot;selectClassroomStudent&quot;</span> <span class="attr">parameterType</span>=<span class="string">&quot;int&quot;</span> </span></span><br><span class="line"><span class="tag">            <span class="attr">resultMap</span>=<span class="string">&quot;classroomStudentResultMap&quot;</span>&gt;</span></span><br><span class="line">        select c.id, c.name, s.id sid, s.name sname from classroom c, student s</span><br><span class="line">        where c.id = s.classroomId</span><br><span class="line">        and c.id = #&#123;id&#125;</span><br><span class="line">    <span class="tag">&lt;/<span class="name">select</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;/<span class="name">mapper</span>&gt;</span></span><br></pre></td></tr></table></figure>
+
+
+
+<h2 id="MyBatis实现一对一有几种方式？具体怎么操作？"><a href="#MyBatis实现一对一有几种方式？具体怎么操作？" class="headerlink" title="MyBatis实现一对一有几种方式？具体怎么操作？"></a>MyBatis实现一对一有几种方式？具体怎么操作？</h2><p>MyBatis实现一对一有两种方式：嵌套查询和连接查询。</p>
+<p>关系：丈夫和妻子(一对一关系)</p>
+<p>实现效果：通过丈夫的id查询丈夫和妻子的信息。</p>
+<p><strong>连接查询：</strong></p>
+<figure class="highlight xml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br></pre></td><td class="code"><pre><span class="line"><span class="tag">&lt;<span class="name">mapper</span> <span class="attr">namespace</span>=<span class="string">&quot;com.xgc.mapper.Husband&quot;</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">resultMap</span> <span class="attr">id</span>=<span class="string">&quot;husbandWifeResultMap&quot;</span> <span class="attr">type</span>=<span class="string">&quot;com.xgc.entity.Husband&quot;</span>&gt;</span></span><br><span class="line">        <span class="tag">&lt;<span class="name">id</span> <span class="attr">property</span>=<span class="string">&quot;id&quot;</span> <span class="attr">column</span>=<span class="string">&quot;id&quot;</span> /&gt;</span></span><br><span class="line">        <span class="tag">&lt;<span class="name">result</span> <span class="attr">property</span>=<span class="string">&quot;name&quot;</span> <span class="attr">column</span>=<span class="string">&quot;name&quot;</span> /&gt;</span></span><br><span class="line">        </span><br><span class="line">        <span class="tag">&lt;<span class="name">association</span> <span class="attr">property</span>=<span class="string">&quot;wife&quot;</span> <span class="attr">javaType</span>=<span class="string">&quot;com.xgc.entity.Wife&quot;</span>&gt;</span></span><br><span class="line">            <span class="tag">&lt;<span class="name">id</span> <span class="attr">property</span>=<span class="string">&quot;id&quot;</span> <span class="attr">column</span>=<span class="string">&quot;wid&quot;</span> /&gt;</span></span><br><span class="line">            <span class="tag">&lt;<span class="name">result</span> <span class="attr">property</span>=<span class="string">&quot;name&quot;</span> <span class="attr">column</span>=<span class="string">&quot;wname&quot;</span> /&gt;</span></span><br><span class="line">        <span class="tag">&lt;/<span class="name">association</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;/<span class="name">resultMap</span>&gt;</span></span><br><span class="line">    </span><br><span class="line">    <span class="tag">&lt;<span class="name">select</span> <span class="attr">id</span>=<span class="string">&quot;selectHusbandWife&quot;</span> <span class="attr">parameterType</span>=<span class="string">&quot;int&quot;</span> </span></span><br><span class="line"><span class="tag">            <span class="attr">resultMap</span>=<span class="string">&quot;husbandWifeResultMap&quot;</span>&gt;</span></span><br><span class="line">        select h.id, h.name, w.id wid, w.name wname from husband h, wife w</span><br><span class="line">        where h.id = w.id</span><br><span class="line">        and h.id = #&#123;id&#125;</span><br><span class="line">    <span class="tag">&lt;/<span class="name">select</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;/<span class="name">mapper</span>&gt;</span></span><br></pre></td></tr></table></figure>
+
+
+
+<p><strong>嵌套查询：</strong></p>
+<figure class="highlight xml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br></pre></td><td class="code"><pre><span class="line"><span class="tag">&lt;<span class="name">mapper</span> <span class="attr">namespace</span>=<span class="string">&quot;com.xgc.mapper.HusbandMapper&quot;</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">resultMap</span> <span class="attr">id</span>=<span class="string">&quot;husbandWifeResultMap&quot;</span> <span class="attr">type</span>=<span class="string">&quot;com.xgc.entity.Husband&quot;</span>&gt;</span></span><br><span class="line">        <span class="tag">&lt;<span class="name">id</span> <span class="attr">property</span>=<span class="string">&quot;id&quot;</span> <span class="attr">column</span>=<span class="string">&quot;id&quot;</span> /&gt;</span></span><br><span class="line">        <span class="tag">&lt;<span class="name">result</span> <span class="attr">property</span>=<span class="string">&quot;name&quot;</span> <span class="attr">column</span>=<span class="string">&quot;name&quot;</span> /&gt;</span></span><br><span class="line">        </span><br><span class="line">        <span class="comment">&lt;!-- column属性指定的是 selectWife 查询语句的参数 --&gt;</span></span><br><span class="line">        <span class="comment">&lt;!--</span></span><br><span class="line"><span class="comment">			如果selectWife是另一个Mapper文件指定的，select属性这么取值：</span></span><br><span class="line"><span class="comment">			com.xgc.mapper.WifeMapper.selectWife</span></span><br><span class="line"><span class="comment">		--&gt;</span></span><br><span class="line">        <span class="tag">&lt;<span class="name">association</span> <span class="attr">property</span>=<span class="string">&quot;wife&quot;</span></span></span><br><span class="line"><span class="tag">                     <span class="attr">javaType</span>=<span class="string">&quot;com.xgc.entity.Wife&quot;</span></span></span><br><span class="line"><span class="tag">                     <span class="attr">select</span>=<span class="string">&quot;selectWife&quot;</span></span></span><br><span class="line"><span class="tag">                     <span class="attr">column</span>=<span class="string">&quot;id&quot;</span>&gt;</span></span><br><span class="line">        <span class="tag">&lt;/<span class="name">association</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;/<span class="name">resultMap</span>&gt;</span></span><br><span class="line">    </span><br><span class="line">    <span class="tag">&lt;<span class="name">select</span> <span class="attr">id</span>=<span class="string">&quot;selectHusband&quot;</span> <span class="attr">parameterType</span>=<span class="string">&quot;int&quot;</span> </span></span><br><span class="line"><span class="tag">            <span class="attr">resultMap</span>=<span class="string">&quot;husbandWifeResultMap&quot;</span>&gt;</span></span><br><span class="line">        select * from husband</span><br><span class="line">        where id = #&#123;id&#125;</span><br><span class="line">    <span class="tag">&lt;/<span class="name">select</span>&gt;</span></span><br><span class="line">    </span><br><span class="line">    <span class="tag">&lt;<span class="name">select</span> <span class="attr">id</span>=<span class="string">&quot;selectWife&quot;</span> <span class="attr">parameterType</span>=<span class="string">&quot;int&quot;</span> </span></span><br><span class="line"><span class="tag">            <span class="attr">resultType</span>=<span class="string">&quot;com.xgc.entity.Wife&quot;</span>&gt;</span></span><br><span class="line">        select * from wife</span><br><span class="line">        where id = #&#123;id&#125;</span><br><span class="line">    <span class="tag">&lt;/<span class="name">select</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;/<span class="name">mapper</span>&gt;</span></span><br></pre></td></tr></table></figure>
+
+
+
+<h2 id="MyBatis实现一对多有几种方式？具体如何操作？"><a href="#MyBatis实现一对多有几种方式？具体如何操作？" class="headerlink" title="MyBatis实现一对多有几种方式？具体如何操作？"></a>MyBatis实现一对多有几种方式？具体如何操作？</h2><p>MyBatis实现一对多有两种方式：嵌套查询和连接查询。</p>
+<p>关系：课室和学生(一对多)</p>
+<p><strong>连接查询：</strong></p>
+<figure class="highlight xml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br></pre></td><td class="code"><pre><span class="line"><span class="tag">&lt;<span class="name">mapper</span> <span class="attr">namespace</span>=<span class="string">&quot;com.xgc.mapper.ClassroomMapper&quot;</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">resultMap</span> <span class="attr">id</span>=<span class="string">&quot;classroomStudentResultMap&quot;</span> <span class="attr">type</span>=<span class="string">&quot;com.xgc.entity.Classroom&quot;</span>&gt;</span></span><br><span class="line">        <span class="tag">&lt;<span class="name">id</span> <span class="attr">property</span>=<span class="string">&quot;id&quot;</span> <span class="attr">column</span>=<span class="string">&quot;id&quot;</span> /&gt;</span></span><br><span class="line">        <span class="tag">&lt;<span class="name">result</span> <span class="attr">property</span>=<span class="string">&quot;name&quot;</span> <span class="attr">column</span>=<span class="string">&quot;name&quot;</span> /&gt;</span></span><br><span class="line">        </span><br><span class="line">        <span class="tag">&lt;<span class="name">collection</span> <span class="attr">property</span>=<span class="string">&quot;students&quot;</span> <span class="attr">ofType</span>=<span class="string">&quot;com.xgc.entity.Student&quot;</span>&gt;</span></span><br><span class="line">            <span class="tag">&lt;<span class="name">id</span> <span class="attr">property</span>=<span class="string">&quot;id&quot;</span> <span class="attr">column</span>=<span class="string">&quot;sid&quot;</span> /&gt;</span></span><br><span class="line">            <span class="tag">&lt;<span class="name">result</span> <span class="attr">property</span>=<span class="string">&quot;name&quot;</span> <span class="attr">column</span>=<span class="string">&quot;sname&quot;</span> /&gt;</span></span><br><span class="line">        <span class="tag">&lt;/<span class="name">collection</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;/<span class="name">resultMap</span>&gt;</span></span><br><span class="line">    </span><br><span class="line">    <span class="tag">&lt;<span class="name">select</span> <span class="attr">id</span>=<span class="string">&quot;selectClassroomStudent&quot;</span> <span class="attr">parameterType</span>=<span class="string">&quot;int&quot;</span> </span></span><br><span class="line"><span class="tag">            <span class="attr">resultMap</span>=<span class="string">&quot;classroomStudentResultMap&quot;</span>&gt;</span></span><br><span class="line">        select c.id, c.name, s.id sid, s.name sname from classroom c, student s</span><br><span class="line">        where c.id = s.classroomId</span><br><span class="line">        and c.id = #&#123;id&#125;</span><br><span class="line">    <span class="tag">&lt;/<span class="name">select</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;/<span class="name">mapper</span>&gt;</span></span><br></pre></td></tr></table></figure>
+
+
+
+<p><strong>嵌套查询：</strong></p>
+<figure class="highlight xml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br></pre></td><td class="code"><pre><span class="line"><span class="tag">&lt;<span class="name">mapper</span> <span class="attr">namespace</span>=<span class="string">&quot;com.xgc.mapper.ClassroomMapper&quot;</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">resultMap</span> <span class="attr">id</span>=<span class="string">&quot;classroomStudentResultMap&quot;</span> <span class="attr">type</span>=<span class="string">&quot;com.xgc.entity.Classroom&quot;</span>&gt;</span></span><br><span class="line">        <span class="tag">&lt;<span class="name">id</span> <span class="attr">property</span>=<span class="string">&quot;id&quot;</span> <span class="attr">column</span>=<span class="string">&quot;id&quot;</span> /&gt;</span></span><br><span class="line">        <span class="tag">&lt;<span class="name">result</span> <span class="attr">property</span>=<span class="string">&quot;name&quot;</span> <span class="attr">column</span>=<span class="string">&quot;name&quot;</span> /&gt;</span></span><br><span class="line"></span><br><span class="line">        <span class="tag">&lt;<span class="name">collection</span> <span class="attr">property</span>=<span class="string">&quot;students&quot;</span></span></span><br><span class="line"><span class="tag">                    <span class="attr">ofType</span>=<span class="string">&quot;com.xgc.entity.Student&quot;</span></span></span><br><span class="line"><span class="tag">                    <span class="attr">select</span>=<span class="string">&quot;selectStudents&quot;</span></span></span><br><span class="line"><span class="tag">                    <span class="attr">column</span>=<span class="string">&quot;id&quot;</span>&gt;</span></span><br><span class="line">        <span class="tag">&lt;/<span class="name">collection</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;/<span class="name">resultMap</span>&gt;</span></span><br><span class="line"></span><br><span class="line">    <span class="tag">&lt;<span class="name">select</span> <span class="attr">id</span>=<span class="string">&quot;selectClassroomStudent&quot;</span> <span class="attr">parameterType</span>=<span class="string">&quot;int&quot;</span></span></span><br><span class="line"><span class="tag">            <span class="attr">resultMap</span>=<span class="string">&quot;classroomStudentResultMap&quot;</span>&gt;</span></span><br><span class="line">        select * from classroom</span><br><span class="line">        where id = #&#123;id&#125;</span><br><span class="line">    <span class="tag">&lt;/<span class="name">select</span>&gt;</span></span><br><span class="line"></span><br><span class="line">    <span class="tag">&lt;<span class="name">select</span> <span class="attr">id</span>=<span class="string">&quot;selectStudents&quot;</span> <span class="attr">parameterType</span>=<span class="string">&quot;int&quot;</span></span></span><br><span class="line"><span class="tag">            <span class="attr">resultType</span>=<span class="string">&quot;com.xgc.entity.Student&quot;</span>&gt;</span></span><br><span class="line">        select * from student</span><br><span class="line">        where classroomId = #&#123;id&#125;;</span><br><span class="line">    <span class="tag">&lt;/<span class="name">select</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;/<span class="name">mapper</span>&gt;</span></span><br></pre></td></tr></table></figure>
+
+
+
+<h2 id="MyBatis是否支持延迟加载？实现原理是什么？"><a href="#MyBatis是否支持延迟加载？实现原理是什么？" class="headerlink" title="MyBatis是否支持延迟加载？实现原理是什么？"></a>MyBatis是否支持延迟加载？实现原理是什么？</h2><p>MyBatis仅支持association关联对象和collection关联集合对象的延迟加载。</p>
+<p><strong>实现原理：</strong>通过cglib为目标对象创建代理对象。当目标方法被调用时，会进入拦截器方法。如：<code>a.getB().getName()</code>，当发现<code>a.getB()</code>的值为null时，执行事先存储的查询关联B对象的SQL语句，查询到结果后，调用<code>a.setB()</code>方法将对象B赋值给a的B属性。接着，执行<code>a.getB().getName()</code>方法。这就是MyBatis的延迟加载。</p>
+<h2 id="介绍一下MyBatis的一级缓存和二级缓存？"><a href="#介绍一下MyBatis的一级缓存和二级缓存？" class="headerlink" title="介绍一下MyBatis的一级缓存和二级缓存？"></a>介绍一下MyBatis的一级缓存和二级缓存？</h2><p><strong>一级缓存：</strong>借助<code>PerpetualCache</code>实现，能够将查询结果缓存起来，作用范围是session。当session flush或close的时候，session内的缓存全部清空。默认开启一级缓存。</p>
+<p><strong>二级缓存：</strong>跟一级缓存的实现机制类似，都是借助于<code>PerpetualCache</code>，作用范围是mapper，并且可以自定义缓存源。MyBatis要求二级缓存返回的对象必须可以序列化，而且mapper文件要添加<code>&lt;cache /&gt;</code>。默认不开启二级缓存。</p>
+<p><strong>缓存数据更新机制：</strong>当某个作用范围内进行了C|U|D操作，那么该作用范围内的所有缓存都会被清空。</p>
+<h2 id="什么是MyBatis的接口绑定，有哪些实现方式？"><a href="#什么是MyBatis的接口绑定，有哪些实现方式？" class="headerlink" title="什么是MyBatis的接口绑定，有哪些实现方式？"></a>什么是MyBatis的接口绑定，有哪些实现方式？</h2><p><strong>MyBatis的接口绑定：</strong>在程序中创建一个接口，并使得该接口的方法和对应SQL进行绑定。那么，当调用接口方法的时候，就可以执行对应的SQL语句。</p>
+<p>实现方式有注解和xml文件两种方式：</p>
+<ul>
+<li>注解。在接口的方法上标注<code>@Select</code>，<code>@Update</code>等注解，并且注解包含对应的SQL语句。</li>
+<li>xml文件。在mapper映射文件中编写SQL语句，通过namespace + id的方式对应mapper接口中的方法。</li>
+</ul>
+<h2 id="使用MyBatis的mapper接口调用有哪些要求？"><a href="#使用MyBatis的mapper接口调用有哪些要求？" class="headerlink" title="使用MyBatis的mapper接口调用有哪些要求？"></a>使用MyBatis的mapper接口调用有哪些要求？</h2><ol>
+<li>xml映射文件的namespace属性要指定绑定的接口</li>
+<li>xml映射文件的id要与mapper接口的方法名对应</li>
+<li>mapper接口方法的入参和出参类型要与xml映射文件中一致。</li>
+</ol>
+
+      
+    </div>
+
+    
+    
+    
+      <footer class="post-footer">
+        <div class="post-eof"></div>
+      </footer>
+  </article>
+  
+  
+  
+
+      
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
     <link itemprop="mainEntityOfPage" href="https://singglexgc.github.io/notes/2021/05/30/MyBatis/%E5%A6%82%E4%BD%95%E6%89%A7%E8%A1%8C%E6%89%B9%E9%87%8F%E5%A4%84%E7%90%86%EF%BC%9F/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
@@ -259,86 +447,10 @@
   
   
 
-      
-  
-  
-  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
-    <link itemprop="mainEntityOfPage" href="https://singglexgc.github.io/notes/2021/05/29/JavaSE/JDBC/jdbc%E6%89%B9%E5%A4%84%E7%90%86/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="image" content="/notes/images/avatar.gif">
-      <meta itemprop="name" content="Sinngle">
-      <meta itemprop="description" content="">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="Notes">
-    </span>
-      <header class="post-header">
-        <h2 class="post-title" itemprop="name headline">
-          
-            <a href="/notes/2021/05/29/JavaSE/JDBC/jdbc%E6%89%B9%E5%A4%84%E7%90%86/" class="post-title-link" itemprop="url">JDBC批处理</a>
-        </h2>
-
-        <div class="post-meta">
-            <span class="post-meta-item">
-              <span class="post-meta-item-icon">
-                <i class="far fa-calendar"></i>
-              </span>
-              <span class="post-meta-item-text">发表于</span>
-              
-
-              <time title="创建时间：2021-05-29 22:31:52 / 修改时间：22:32:41" itemprop="dateCreated datePublished" datetime="2021-05-29T22:31:52+08:00">2021-05-29</time>
-            </span>
-            <span class="post-meta-item">
-              <span class="post-meta-item-icon">
-                <i class="far fa-folder"></i>
-              </span>
-              <span class="post-meta-item-text">分类于</span>
-                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-                  <a href="/notes/categories/JavaSE/" itemprop="url" rel="index"><span itemprop="name">JavaSE</span></a>
-                </span>
-                  ，
-                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-                  <a href="/notes/categories/JavaSE/JDBC/" itemprop="url" rel="index"><span itemprop="name">JDBC</span></a>
-                </span>
-            </span>
-
-          
-
-        </div>
-      </header>
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-
-      
-          <p>JDBC支持批处理，可以减少通信的消耗，提高性能。</p>
-<p>通过JDBC的批处理，我们不再像之前一样，每执行一条SQL语句就要提交一次。我们只需要在设置完需要提交的数据后，通过<code>PreparedStatement</code>对象的<code>executeBatch</code>方法同时将多条SQL同时提交，进而减少了通信的次数，从而提高了性能。</p>
-<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br></pre></td><td class="code"><pre><span class="line">Connection conn = DriverManager.getConnection(url, username, pass);</span><br><span class="line"><span class="comment">//关闭自动提交</span></span><br><span class="line">conn.setAutoCommit(<span class="keyword">false</span>);</span><br><span class="line"><span class="comment">//创建PreparedStatment对象</span></span><br><span class="line">String sql = <span class="string">&quot;insert into user values (?,?)&quot;</span>;</span><br><span class="line">PreparedStatement pstmt = conn.prepareStatement(sql);</span><br><span class="line"></span><br><span class="line"><span class="comment">//设置参数</span></span><br><span class="line">pstmt.setString(<span class="number">1</span>, <span class="string">&quot;user1&quot;</span>);</span><br><span class="line">pstmt.setInt(<span class="number">2</span>, <span class="number">17</span>);</span><br><span class="line">pstmt.addBatch();</span><br><span class="line"></span><br><span class="line">pstmt.setString(<span class="number">1</span>, <span class="string">&quot;user2&quot;</span>);</span><br><span class="line">pstmt.setInt(<span class="number">2</span>, <span class="number">17</span>);</span><br><span class="line">pstmt.addBatch();</span><br><span class="line"></span><br><span class="line">pstmt.setString(<span class="number">1</span>, <span class="string">&quot;user3&quot;</span>);</span><br><span class="line">pstmt.setInt(<span class="number">2</span>, <span class="number">17</span>);</span><br><span class="line">pstmt.addBatch();</span><br><span class="line"></span><br><span class="line"><span class="comment">//提交上面3条语句</span></span><br><span class="line"><span class="keyword">int</span>[] counts = pstmt.executeBatch();</span><br><span class="line">conn.commit();</span><br></pre></td></tr></table></figure>
-
-
-
-      
-    </div>
-
-    
-    
-    
-      <footer class="post-footer">
-        <div class="post-eof"></div>
-      </footer>
-  </article>
-  
-  
-  
-
 
   
   <nav class="pagination">
-    <a class="extend prev" rel="prev" href="/notes/page/8/"><i class="fa fa-angle-left" aria-label="上一页"></i></a><a class="page-number" href="/notes/">1</a><span class="space">&hellip;</span><a class="page-number" href="/notes/page/8/">8</a><span class="page-number current">9</span><a class="page-number" href="/notes/page/10/">10</a><a class="extend next" rel="next" href="/notes/page/10/"><i class="fa fa-angle-right" aria-label="下一页"></i></a>
+    <a class="extend prev" rel="prev" href="/notes/page/8/"><i class="fa fa-angle-left" aria-label="上一页"></i></a><a class="page-number" href="/notes/">1</a><span class="space">&hellip;</span><a class="page-number" href="/notes/page/8/">8</a><span class="page-number current">9</span><a class="page-number" href="/notes/page/10/">10</a><a class="page-number" href="/notes/page/11/">11</a><a class="extend next" rel="next" href="/notes/page/10/"><i class="fa fa-angle-right" aria-label="下一页"></i></a>
   </nav>
 
 
@@ -404,18 +516,18 @@
       <div class="site-state-item site-state-posts">
           <a href="/notes/archives/">
         
-          <span class="site-state-item-count">20</span>
+          <span class="site-state-item-count">21</span>
           <span class="site-state-item-name">日志</span>
         </a>
       </div>
       <div class="site-state-item site-state-categories">
             <a href="/notes/categories/">
-        <span class="site-state-item-count">11</span>
+        <span class="site-state-item-count">12</span>
         <span class="site-state-item-name">分类</span></a>
       </div>
       <div class="site-state-item site-state-tags">
             <a href="/notes/tags/">
-        <span class="site-state-item-count">18</span>
+        <span class="site-state-item-count">19</span>
         <span class="site-state-item-name">标签</span></a>
       </div>
   </nav>

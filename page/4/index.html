@@ -145,6 +145,159 @@
   
   
   <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="https://singglexgc.github.io/notes/2021/06/23/%E8%AE%BE%E8%AE%A1%E6%A8%A1%E5%BC%8F/%E5%BB%BA%E9%80%A0%E8%80%85%E6%A8%A1%E5%BC%8F-builder-pattern/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/notes/images/avatar.gif">
+      <meta itemprop="name" content="Sinngle">
+      <meta itemprop="description" content="">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Notes">
+    </span>
+      <header class="post-header">
+        <h2 class="post-title" itemprop="name headline">
+          
+            <a href="/notes/2021/06/23/%E8%AE%BE%E8%AE%A1%E6%A8%A1%E5%BC%8F/%E5%BB%BA%E9%80%A0%E8%80%85%E6%A8%A1%E5%BC%8F-builder-pattern/" class="post-title-link" itemprop="url">建造者模式(Builder Pattern)</a>
+        </h2>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+              
+
+              <time title="创建时间：2021-06-23 17:36:47 / 修改时间：20:25:21" itemprop="dateCreated datePublished" datetime="2021-06-23T17:36:47+08:00">2021-06-23</time>
+            </span>
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-folder"></i>
+              </span>
+              <span class="post-meta-item-text">分类于</span>
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/notes/categories/%E8%AE%BE%E8%AE%A1%E6%A8%A1%E5%BC%8F/" itemprop="url" rel="index"><span itemprop="name">设计模式</span></a>
+                </span>
+            </span>
+
+          
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+          <h2 id="类图"><a href="#类图" class="headerlink" title="类图"></a>类图</h2><p><img src="/notes/2021/06/23/%E8%AE%BE%E8%AE%A1%E6%A8%A1%E5%BC%8F/%E5%BB%BA%E9%80%A0%E8%80%85%E6%A8%A1%E5%BC%8F-builder-pattern/epub_679952_23.png" alt="建造者模式类图"></p>
+<p>建造者模式包含的角色如下：</p>
+<ul>
+<li>导演者(Director)角色：安排产品各部分的构建顺序，并通知Builder进行构建。</li>
+<li>抽象构建者(Builder)角色：规范产品的组成部分，并进行抽象。</li>
+<li>具体构建者(ConcreteBuilder)角色：实现抽象构建者，实现产品各部分的构建方法，并返回构建好的产品。</li>
+<li>产品(Product)角色：该角色为系统中需要构建的复杂对象。</li>
+</ul>
+<p><strong>注：</strong>导演者角色是对产品构建的封装，减少耦合。导演者对象可以有多个，也可以没有，需要根据实际需求判断。</p>
+<h2 id="构建者模式的作用"><a href="#构建者模式的作用" class="headerlink" title="构建者模式的作用"></a>构建者模式的作用</h2><p><strong>定义：</strong>将复杂对象的构建与其表示分离，使得相同的构建过程可以构建出不同的表示。</p>
+<p><strong>使用场景：</strong>在系统中需要构建一个复杂对象，该复杂对象有多个部分。根据需求不同，该复杂对象的部分会发生变化，但是组合这些部分的算法基本不变。</p>
+<h2 id="代码示例-一个导演者角色"><a href="#代码示例-一个导演者角色" class="headerlink" title="代码示例(一个导演者角色)"></a>代码示例(一个导演者角色)</h2><p>以构建一个计算机为例，需要组装主板，安装操作系统，安装显示器。</p>
+<h3 id="产品角色"><a href="#产品角色" class="headerlink" title="产品角色"></a>产品角色</h3><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">@ToString</span></span><br><span class="line"><span class="keyword">public</span> <span class="keyword">abstract</span> <span class="class"><span class="keyword">class</span> <span class="title">Computer</span> </span>&#123;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">protected</span> String board;</span><br><span class="line">    <span class="keyword">protected</span> String display;</span><br><span class="line">    <span class="keyword">protected</span> String os;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">setBoard</span><span class="params">(String board)</span> </span>&#123;</span><br><span class="line">        <span class="keyword">this</span>.board = board;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">setDisplay</span><span class="params">(String display)</span> </span>&#123;</span><br><span class="line">        <span class="keyword">this</span>.display = display;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">abstract</span> <span class="keyword">void</span> <span class="title">setOs</span><span class="params">()</span></span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">MacBook</span> <span class="keyword">extends</span> <span class="title">Computer</span> </span>&#123;</span><br><span class="line"></span><br><span class="line">    <span class="meta">@Override</span></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">setOs</span><span class="params">()</span> </span>&#123;</span><br><span class="line">        os = <span class="string">&quot;Mac OS&quot;</span>;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+
+
+<h3 id="抽象构建者角色"><a href="#抽象构建者角色" class="headerlink" title="抽象构建者角色"></a>抽象构建者角色</h3><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="keyword">abstract</span> <span class="class"><span class="keyword">class</span> <span class="title">Builder</span> </span>&#123;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">abstract</span> <span class="keyword">void</span> <span class="title">buildBoard</span><span class="params">(String board)</span></span>;</span><br><span class="line">    <span class="function"><span class="keyword">abstract</span> <span class="keyword">void</span> <span class="title">buildDisplay</span><span class="params">(String display)</span></span>;</span><br><span class="line">    <span class="function"><span class="keyword">abstract</span> <span class="keyword">void</span> <span class="title">buildOs</span><span class="params">()</span></span>;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">abstract</span> Computer <span class="title">build</span><span class="params">()</span></span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+
+
+<h3 id="具体构建者角色"><a href="#具体构建者角色" class="headerlink" title="具体构建者角色"></a>具体构建者角色</h3><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">MacBookBuilder</span> <span class="keyword">extends</span> <span class="title">Builder</span> </span>&#123;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">private</span> Computer computer = <span class="keyword">new</span> MacBook();</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">    <span class="meta">@Override</span></span><br><span class="line">    <span class="function"><span class="keyword">void</span> <span class="title">buildBoard</span><span class="params">(String board)</span> </span>&#123;</span><br><span class="line">        computer.setBoard(board);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="meta">@Override</span></span><br><span class="line">    <span class="function"><span class="keyword">void</span> <span class="title">buildDisplay</span><span class="params">(String display)</span> </span>&#123;</span><br><span class="line">        computer.setDisplay(display);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="meta">@Override</span></span><br><span class="line">    <span class="function"><span class="keyword">void</span> <span class="title">buildOs</span><span class="params">()</span> </span>&#123;</span><br><span class="line">        computer.setOs();</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="meta">@Override</span></span><br><span class="line">    <span class="function">Computer <span class="title">build</span><span class="params">()</span> </span>&#123;</span><br><span class="line">        <span class="keyword">return</span> computer;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+
+
+<h3 id="导演者角色"><a href="#导演者角色" class="headerlink" title="导演者角色"></a>导演者角色</h3><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">Director</span> </span>&#123;</span><br><span class="line"></span><br><span class="line">    Builder builder = <span class="keyword">null</span>;</span><br><span class="line"></span><br><span class="line">    Director(Builder builder) &#123;</span><br><span class="line">        <span class="keyword">this</span>.builder = builder;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">construct</span><span class="params">(String board, String display)</span> </span>&#123;</span><br><span class="line">        builder.buildBoard(board);</span><br><span class="line">        builder.buildDisplay(display);</span><br><span class="line">        builder.buildOs();</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+
+
+<h3 id="Client"><a href="#Client" class="headerlink" title="Client"></a>Client</h3><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">Client</span> </span>&#123;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">main</span><span class="params">(String[] args)</span> </span>&#123;</span><br><span class="line">        Builder builder = <span class="keyword">new</span> MacBookBuilder();</span><br><span class="line">        Director director = <span class="keyword">new</span> Director(builder);</span><br><span class="line">        director.construct(<span class="string">&quot;主板A&quot;</span>, <span class="string">&quot;显示屏A&quot;</span>);</span><br><span class="line"></span><br><span class="line">        Computer computer = builder.build();</span><br><span class="line">        System.out.println(computer.toString());</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>执行结果：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">Computer(board=主板A, display=显示屏A, os=Mac OS)</span><br></pre></td></tr></table></figure>
+
+
+
+
+
+<h2 id="代码示例-无导演者"><a href="#代码示例-无导演者" class="headerlink" title="代码示例(无导演者)"></a>代码示例(无导演者)</h2><p>在有些时候，为了简化系统结构，可以将导演者和抽象构建者Builder角色进行合并，在Builder中提供创建复杂对象的construct方法。</p>
+<p><strong>场景：</strong></p>
+<p>一个快餐店案例。</p>
+<p>一个套餐由一个汉堡Burger和冷饮ColdDrink组成。</p>
+<p>一个汉堡可以是素食汉堡VegBurger，也可以是鸡肉汉堡ChickenBurger，它们使用纸盒Wrapper包装。</p>
+<p>一杯冷饮可以是可口可乐Coke，也可以是百事可乐Pepsi，它们用瓶子Bottle装着。</p>
+<h3 id="食品条目和食品包装接口定义"><a href="#食品条目和食品包装接口定义" class="headerlink" title="食品条目和食品包装接口定义"></a>食品条目和食品包装接口定义</h3><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">interface</span> <span class="title">Item</span> </span>&#123;</span><br><span class="line">    <span class="function">String <span class="title">name</span><span class="params">()</span></span>;</span><br><span class="line">    <span class="function">Packing <span class="title">packing</span><span class="params">()</span></span>;</span><br><span class="line">    <span class="function"><span class="keyword">float</span> <span class="title">price</span><span class="params">()</span></span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">interface</span> <span class="title">Packing</span> </span>&#123;</span><br><span class="line">    <span class="function">String <span class="title">pack</span><span class="params">()</span></span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+
+
+<h3 id="实现Packing-接口的实体类：Wrapper和Bottle"><a href="#实现Packing-接口的实体类：Wrapper和Bottle" class="headerlink" title="实现Packing 接口的实体类：Wrapper和Bottle"></a>实现Packing 接口的实体类：Wrapper和Bottle</h3><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">Wrapper</span> <span class="keyword">implements</span> <span class="title">Packing</span> </span>&#123;</span><br><span class="line">    </span><br><span class="line">    <span class="meta">@Override</span></span><br><span class="line">    <span class="function"><span class="keyword">public</span> String <span class="title">pack</span><span class="params">()</span> </span>&#123;</span><br><span class="line">    	<span class="keyword">return</span> <span class="string">&quot;Wrapper&quot;</span>;</span><br><span class="line">    &#125;</span><br><span class="line">    </span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">Bottle</span> <span class="keyword">implements</span> <span class="title">Packing</span> </span>&#123;</span><br><span class="line">    </span><br><span class="line">    <span class="meta">@Override</span></span><br><span class="line">    <span class="function"><span class="keyword">public</span> String <span class="title">pack</span><span class="params">()</span> </span>&#123;</span><br><span class="line">        <span class="keyword">return</span> <span class="string">&quot;Bottle&quot;</span>;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+
+
+<h3 id="实现Item接口的抽象类：Burger和ColdDrink"><a href="#实现Item接口的抽象类：Burger和ColdDrink" class="headerlink" title="实现Item接口的抽象类：Burger和ColdDrink"></a>实现Item接口的抽象类：Burger和ColdDrink</h3><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="keyword">abstract</span> <span class="class"><span class="keyword">class</span> <span class="title">Burger</span> <span class="keyword">implements</span> <span class="title">Item</span> </span>&#123;</span><br><span class="line">    </span><br><span class="line">    <span class="meta">@Override</span></span><br><span class="line">    <span class="function"><span class="keyword">public</span> Packing <span class="title">packing</span><span class="params">()</span> </span>&#123;</span><br><span class="line">        <span class="keyword">return</span> <span class="keyword">new</span> Wrapper();</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="keyword">abstract</span> <span class="class"><span class="keyword">class</span> <span class="title">ColdDrink</span> <span class="keyword">implements</span> <span class="title">Item</span> </span>&#123;</span><br><span class="line">    </span><br><span class="line">    <span class="meta">@Override</span></span><br><span class="line">    <span class="function"><span class="keyword">public</span> Packing <span class="title">packing</span><span class="params">()</span> </span>&#123;</span><br><span class="line">        <span class="keyword">return</span> <span class="keyword">new</span> Bottle();</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+
+
+<h3 id="创建扩展了Burger和ColdDrink的实体类"><a href="#创建扩展了Burger和ColdDrink的实体类" class="headerlink" title="创建扩展了Burger和ColdDrink的实体类"></a>创建扩展了Burger和ColdDrink的实体类</h3><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">VegBurger</span> <span class="keyword">extends</span> <span class="title">Burger</span> </span>&#123;</span><br><span class="line">    </span><br><span class="line">    <span class="meta">@Override</span></span><br><span class="line">    <span class="function"><span class="keyword">public</span> String <span class="title">name</span><span class="params">()</span> </span>&#123;</span><br><span class="line">        <span class="keyword">return</span> <span class="string">&quot;VegBurger&quot;</span>;</span><br><span class="line">    &#125;</span><br><span class="line">    </span><br><span class="line">    <span class="meta">@Override</span></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">float</span> <span class="title">price</span><span class="params">()</span> </span>&#123;</span><br><span class="line">        <span class="keyword">return</span> <span class="number">50f</span>;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">ChickenBurger</span> <span class="keyword">extends</span> <span class="title">Burger</span> </span>&#123;</span><br><span class="line">    </span><br><span class="line">    <span class="meta">@Override</span></span><br><span class="line">    <span class="function"><span class="keyword">public</span> String <span class="title">name</span><span class="params">()</span> </span>&#123;</span><br><span class="line">        <span class="keyword">return</span> <span class="string">&quot;Chicken Burger&quot;</span>;</span><br><span class="line">    &#125;</span><br><span class="line">    </span><br><span class="line">    <span class="meta">@Override</span></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">float</span> <span class="title">price</span><span class="params">()</span> </span>&#123;</span><br><span class="line">        <span class="keyword">return</span> <span class="number">55f</span>;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">Coke</span> <span class="keyword">extends</span> <span class="title">ColdDrink</span> </span>&#123;</span><br><span class="line">    </span><br><span class="line">    <span class="meta">@Override</span></span><br><span class="line">    <span class="function"><span class="keyword">public</span> String <span class="title">name</span><span class="params">()</span> </span>&#123;</span><br><span class="line">        <span class="keyword">return</span> <span class="string">&quot;Coke&quot;</span>;</span><br><span class="line">    &#125;</span><br><span class="line">    </span><br><span class="line">    <span class="meta">@Override</span></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">float</span> <span class="title">price</span><span class="params">()</span> </span>&#123;</span><br><span class="line">        <span class="keyword">return</span> <span class="number">20f</span>;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">Pepsi</span> <span class="keyword">extends</span> <span class="title">ColdDrink</span> </span>&#123;</span><br><span class="line">    </span><br><span class="line">    <span class="meta">@Override</span></span><br><span class="line">    <span class="function"><span class="keyword">public</span> String <span class="title">name</span><span class="params">()</span> </span>&#123;</span><br><span class="line">        <span class="keyword">return</span> <span class="string">&quot;Pepsi&quot;</span>;</span><br><span class="line">    &#125;</span><br><span class="line">    </span><br><span class="line">    <span class="meta">@Override</span></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">float</span> <span class="title">price</span><span class="params">()</span> </span>&#123;</span><br><span class="line">        <span class="keyword">return</span> <span class="number">25f</span>;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+
+
+<h3 id="Meal"><a href="#Meal" class="headerlink" title="Meal"></a>Meal</h3><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">Meal</span> </span>&#123;</span><br><span class="line">    </span><br><span class="line">    <span class="keyword">private</span> List&lt;Item&gt; items = <span class="keyword">new</span> ArrayList&lt;Item&gt;();</span><br><span class="line">    </span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">addItem</span><span class="params">(Item item)</span> </span>&#123;</span><br><span class="line">        items.add(item);</span><br><span class="line">    &#125;</span><br><span class="line">    </span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">float</span> <span class="title">getPrice</span><span class="params">()</span> </span>&#123;</span><br><span class="line">        <span class="keyword">float</span> cost = <span class="number">0f</span>;</span><br><span class="line">        <span class="keyword">for</span>(Item item : items) &#123;</span><br><span class="line">            cost+=item.price();</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="keyword">return</span> cost;</span><br><span class="line">    &#125;</span><br><span class="line">    </span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">showItems</span><span class="params">()</span> </span>&#123;</span><br><span class="line">        <span class="keyword">for</span>(Item item : items) &#123;</span><br><span class="line">            System.out.print(<span class="string">&quot;Item : &quot;</span>+item.name());</span><br><span class="line">         	System.out.print(<span class="string">&quot;, Packing : &quot;</span>+item.packing().pack());</span><br><span class="line">         	System.out.println(<span class="string">&quot;, Price : &quot;</span>+item.price());</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+
+
+<h3 id="MealBuilder"><a href="#MealBuilder" class="headerlink" title="MealBuilder"></a>MealBuilder</h3><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">MealBuilder</span> </span>&#123;</span><br><span class="line">    </span><br><span class="line">    <span class="function"><span class="keyword">public</span> Meal <span class="title">prepareVegMeal</span><span class="params">()</span> </span>&#123;</span><br><span class="line">        Meal meal = <span class="keyword">new</span> Meal();</span><br><span class="line">        meal.addItem(<span class="keyword">new</span> VegBurger());</span><br><span class="line">        meal.addItem(<span class="keyword">new</span> Coke());</span><br><span class="line">        <span class="keyword">return</span> meal;</span><br><span class="line">    &#125;</span><br><span class="line">    </span><br><span class="line">    <span class="function"><span class="keyword">public</span> Meal <span class="title">prepareNonVegMeal</span><span class="params">()</span> </span>&#123;</span><br><span class="line">        Meal meal = <span class="keyword">new</span> Meal();</span><br><span class="line">        meal.addItem(<span class="keyword">new</span> VegBurger());</span><br><span class="line">        meal.addItem(<span class="keyword">new</span> Pepsi());</span><br><span class="line">        <span class="keyword">return</span> meal;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+
+
+<h3 id="Client-1"><a href="#Client-1" class="headerlink" title="Client"></a>Client</h3><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">Client</span> </span>&#123;</span><br><span class="line">    </span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">main</span><span class="params">(String[] args)</span> </span>&#123;</span><br><span class="line">        MealBuilder mealBuilder = <span class="keyword">new</span> MealBuilder();</span><br><span class="line">        </span><br><span class="line">        Meal vegMeal = mealBuilder.prepareVegMeal();</span><br><span class="line">        vegMeal.showItems();</span><br><span class="line">        </span><br><span class="line">        System.out.println();</span><br><span class="line">        </span><br><span class="line">        Meal nonVegMeal = mealBuilder.prepareNonVegMeal();</span><br><span class="line">        nonVegMeal.showItems();</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>执行结果：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">Item : VegBurger, Packing : Wrapper, Price : 50.0</span><br><span class="line">Item : Coke, Packing : Bottle, Price : 20.0</span><br><span class="line"></span><br><span class="line">Item : VegBurger, Packing : Wrapper, Price : 50.0</span><br><span class="line">Item : Pepsi, Packing : Bottle, Price : 25.0</span><br></pre></td></tr></table></figure>
+
+
+      
+    </div>
+
+    
+    
+    
+      <footer class="post-footer">
+        <div class="post-eof"></div>
+      </footer>
+  </article>
+  
+  
+  
+
+      
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
     <link itemprop="mainEntityOfPage" href="https://singglexgc.github.io/notes/2021/06/15/JavaSE/java%E5%8A%A8%E6%80%81%E4%BB%A3%E7%90%86/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
@@ -254,104 +407,6 @@
   
   
 
-      
-  
-  
-  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
-    <link itemprop="mainEntityOfPage" href="https://singglexgc.github.io/notes/2021/06/13/%E8%AE%BE%E8%AE%A1%E6%A8%A1%E5%BC%8F/%E8%81%8C%E8%B4%A3%E9%93%BE%E6%A8%A1%E5%BC%8F-chain-of-responsibility/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="image" content="/notes/images/avatar.gif">
-      <meta itemprop="name" content="Sinngle">
-      <meta itemprop="description" content="">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="Notes">
-    </span>
-      <header class="post-header">
-        <h2 class="post-title" itemprop="name headline">
-          
-            <a href="/notes/2021/06/13/%E8%AE%BE%E8%AE%A1%E6%A8%A1%E5%BC%8F/%E8%81%8C%E8%B4%A3%E9%93%BE%E6%A8%A1%E5%BC%8F-chain-of-responsibility/" class="post-title-link" itemprop="url">职责链模式(Chain of Responsibility)</a>
-        </h2>
-
-        <div class="post-meta">
-            <span class="post-meta-item">
-              <span class="post-meta-item-icon">
-                <i class="far fa-calendar"></i>
-              </span>
-              <span class="post-meta-item-text">发表于</span>
-              
-
-              <time title="创建时间：2021-06-13 18:17:08 / 修改时间：18:17:55" itemprop="dateCreated datePublished" datetime="2021-06-13T18:17:08+08:00">2021-06-13</time>
-            </span>
-            <span class="post-meta-item">
-              <span class="post-meta-item-icon">
-                <i class="far fa-folder"></i>
-              </span>
-              <span class="post-meta-item-text">分类于</span>
-                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-                  <a href="/notes/categories/%E8%AE%BE%E8%AE%A1%E6%A8%A1%E5%BC%8F/" itemprop="url" rel="index"><span itemprop="name">设计模式</span></a>
-                </span>
-            </span>
-
-          
-
-        </div>
-      </header>
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-
-      
-          <h2 id="类图"><a href="#类图" class="headerlink" title="类图"></a>类图</h2><p>职责链的类图如下：</p>
-<p><img src="/notes/2021/06/13/%E8%AE%BE%E8%AE%A1%E6%A8%A1%E5%BC%8F/%E8%81%8C%E8%B4%A3%E9%93%BE%E6%A8%A1%E5%BC%8F-chain-of-responsibility/20210601301.png" alt="职责链模式类图"></p>
-<p>职责链模式包含如下角色：</p>
-<ul>
-<li>抽象处理者(AbstractHandler)角色：定义一个处理请求的接口，包含抽象处理方法和后继连接</li>
-<li>具体处理者(ConcreteHandler)角色：实现抽象处理者的处理方法，判断能够处理本次请求，如果能处理则处理请求，否则将请求转给它的后继者。</li>
-<li>客户端(Client)角色：创建处理链，并将请求提交给链头的具体处理者</li>
-</ul>
-<h2 id="实例"><a href="#实例" class="headerlink" title="实例"></a>实例</h2><p>公司有两个角色，manager和boss。</p>
-<p>当员工需要报销，需要向manager提交申请。</p>
-<p>manager在500元以下可以同意报销。金额超出或等于500元，需要将报销请求提交给boss。</p>
-<p>boss在5000以下可以同意报销。</p>
-<h3 id="Handler"><a href="#Handler" class="headerlink" title="Handler"></a>Handler</h3><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">@Data</span></span><br><span class="line"><span class="keyword">public</span> <span class="keyword">abstract</span> <span class="class"><span class="keyword">class</span> <span class="title">Handler</span> </span>&#123;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">private</span> Handler processor;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">abstract</span> <span class="keyword">void</span> <span class="title">handleRequest</span><span class="params">(<span class="keyword">int</span> price)</span></span>;</span><br><span class="line"></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-
-
-
-<h3 id="Manager"><a href="#Manager" class="headerlink" title="Manager"></a>Manager</h3><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">Manager</span> <span class="keyword">extends</span> <span class="title">Handler</span> </span>&#123;</span><br><span class="line"></span><br><span class="line">    <span class="meta">@Override</span></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">handleRequest</span><span class="params">(<span class="keyword">int</span> price)</span> </span>&#123;</span><br><span class="line">        <span class="keyword">if</span> (price &lt; <span class="number">500</span>) &#123;</span><br><span class="line">            System.out.println(<span class="string">&quot;经理同意报销成功&quot;</span>);</span><br><span class="line">        &#125; <span class="keyword">else</span> &#123;</span><br><span class="line">            <span class="keyword">if</span> (getProcessor() != <span class="keyword">null</span>) &#123;</span><br><span class="line">                getProcessor().handleRequest(price);</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-
-
-
-<h3 id="Boss"><a href="#Boss" class="headerlink" title="Boss"></a>Boss</h3><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">Boss</span> <span class="keyword">extends</span>  <span class="title">Handler</span> </span>&#123;</span><br><span class="line"></span><br><span class="line">    <span class="meta">@Override</span></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">handleRequest</span><span class="params">(<span class="keyword">int</span> price)</span> </span>&#123;</span><br><span class="line">        <span class="keyword">if</span> (price &lt; <span class="number">5000</span>) &#123;</span><br><span class="line">            System.out.println(<span class="string">&quot;boss同意报销&quot;</span>);</span><br><span class="line">        &#125; <span class="keyword">else</span> &#123;</span><br><span class="line">            System.out.println(<span class="string">&quot;boss不允许报销&quot;</span>);</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-
-
-
-<h3 id="Client"><a href="#Client" class="headerlink" title="Client"></a>Client</h3><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">Client</span> </span>&#123;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">main</span><span class="params">(String[] args)</span> </span>&#123;</span><br><span class="line"></span><br><span class="line">        <span class="comment">//创建职责链</span></span><br><span class="line">        Handler manager = <span class="keyword">new</span> Manager();</span><br><span class="line">        manager.setProcessor(<span class="keyword">new</span> Boss());</span><br><span class="line"></span><br><span class="line">        <span class="comment">//请求报销 100 元</span></span><br><span class="line">        manager.handleRequest(<span class="number">100</span>);</span><br><span class="line"></span><br><span class="line">        <span class="comment">//请求报销 600 元</span></span><br><span class="line">        manager.handleRequest(<span class="number">600</span>);</span><br><span class="line"></span><br><span class="line">        <span class="comment">//请求报销 5100 元</span></span><br><span class="line">        manager.handleRequest(<span class="number">5100</span>);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-
-
-
-<h3 id="执行结果"><a href="#执行结果" class="headerlink" title="执行结果"></a>执行结果</h3><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">经理同意报销成功</span><br><span class="line">boss同意报销</span><br><span class="line">boss不允许报销</span><br></pre></td></tr></table></figure>
-
-
-
-      
-    </div>
-
-    
-    
-    
-      <footer class="post-footer">
-        <div class="post-eof"></div>
-      </footer>
-  </article>
-  
-  
-  
-
 
   
   <nav class="pagination">
@@ -421,18 +476,18 @@
       <div class="site-state-item site-state-posts">
           <a href="/notes/archives/">
         
-          <span class="site-state-item-count">21</span>
+          <span class="site-state-item-count">22</span>
           <span class="site-state-item-name">日志</span>
         </a>
       </div>
       <div class="site-state-item site-state-categories">
             <a href="/notes/categories/">
-        <span class="site-state-item-count">12</span>
+        <span class="site-state-item-count">13</span>
         <span class="site-state-item-name">分类</span></a>
       </div>
       <div class="site-state-item site-state-tags">
             <a href="/notes/tags/">
-        <span class="site-state-item-count">19</span>
+        <span class="site-state-item-count">20</span>
         <span class="site-state-item-name">标签</span></a>
       </div>
   </nav>

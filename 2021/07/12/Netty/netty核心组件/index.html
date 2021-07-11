@@ -1,0 +1,526 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
+<meta name="theme-color" content="#222">
+<meta name="generator" content="Hexo 5.4.0">
+  <link rel="apple-touch-icon" sizes="180x180" href="/notes/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/notes/images/favicon-32x32-next.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/notes/images/favicon-16x16-next.png">
+  <link rel="mask-icon" href="/notes/images/logo.svg" color="#222">
+
+<link rel="stylesheet" href="/notes/css/main.css">
+
+
+<link rel="stylesheet" href="/notes/lib/font-awesome/css/all.min.css">
+
+<script id="hexo-configurations">
+    var NexT = window.NexT || {};
+    var CONFIG = {"hostname":"singglexgc.github.io","root":"/notes/","scheme":"Gemini","version":"7.8.0","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12,"onmobile":false},"copycode":{"enable":false,"show_result":false,"style":null},"back2top":{"enable":true,"sidebar":false,"scrollpercent":false},"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":false,"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"algolia":{"hits":{"per_page":10},"labels":{"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}},"localsearch":{"enable":false,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}}};
+  </script>
+
+  <meta name="description" content="Bootstrap、ServerBootstrap一个Netty应用通常由一个Bootstrap开始，主要作用是配置整个Netty程序，串联各个组件，Netty中Bootstrap类是客户端程序的启动引导类，ServerBootstrap是服务器启动引导类。 Future、ChannelFutureNetty中所有IO操作都是异步的，会立即返回一个ChannelFuture对象。通过这个对象可以注">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Netty核心组件">
+<meta property="og:url" content="https://singglexgc.github.io/notes/2021/07/12/Netty/netty%E6%A0%B8%E5%BF%83%E7%BB%84%E4%BB%B6/index.html">
+<meta property="og:site_name" content="Notes">
+<meta property="og:description" content="Bootstrap、ServerBootstrap一个Netty应用通常由一个Bootstrap开始，主要作用是配置整个Netty程序，串联各个组件，Netty中Bootstrap类是客户端程序的启动引导类，ServerBootstrap是服务器启动引导类。 Future、ChannelFutureNetty中所有IO操作都是异步的，会立即返回一个ChannelFuture对象。通过这个对象可以注">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="https://singglexgc.github.io/notes/2021/07/12/Netty/netty%E6%A0%B8%E5%BF%83%E7%BB%84%E4%BB%B6/image-20210206181034239.png">
+<meta property="og:image" content="https://singglexgc.github.io/notes/2021/07/12/Netty/netty%E6%A0%B8%E5%BF%83%E7%BB%84%E4%BB%B6/image-20210206183613550.png">
+<meta property="article:published_time" content="2021-07-11T16:25:06.000Z">
+<meta property="article:modified_time" content="2021-07-11T16:36:42.243Z">
+<meta property="article:author" content="Sinngle">
+<meta property="article:tag" content="Netty">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://singglexgc.github.io/notes/2021/07/12/Netty/netty%E6%A0%B8%E5%BF%83%E7%BB%84%E4%BB%B6/image-20210206181034239.png">
+
+<link rel="canonical" href="https://singglexgc.github.io/notes/2021/07/12/Netty/netty%E6%A0%B8%E5%BF%83%E7%BB%84%E4%BB%B6/">
+
+
+<script id="page-configurations">
+  // https://hexo.io/docs/variables.html
+  CONFIG.page = {
+    sidebar: "",
+    isHome : false,
+    isPost : true,
+    lang   : 'zh-CN'
+  };
+</script>
+
+  <title>Netty核心组件 | Notes</title>
+  
+
+
+
+
+
+
+  <noscript>
+  <style>
+  .use-motion .brand,
+  .use-motion .menu-item,
+  .sidebar-inner,
+  .use-motion .post-block,
+  .use-motion .pagination,
+  .use-motion .comments,
+  .use-motion .post-header,
+  .use-motion .post-body,
+  .use-motion .collection-header { opacity: initial; }
+
+  .use-motion .site-title,
+  .use-motion .site-subtitle {
+    opacity: initial;
+    top: initial;
+  }
+
+  .use-motion .logo-line-before i { left: initial; }
+  .use-motion .logo-line-after i { right: initial; }
+  </style>
+</noscript>
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage">
+  <div class="container use-motion">
+    <div class="headband"></div>
+
+    <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="切换导航栏">
+      <span class="toggle-line toggle-line-first"></span>
+      <span class="toggle-line toggle-line-middle"></span>
+      <span class="toggle-line toggle-line-last"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/notes/" class="brand" rel="start">
+      <span class="logo-line-before"><i></i></span>
+      <h1 class="site-title">Notes</h1>
+      <span class="logo-line-after"><i></i></span>
+    </a>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger">
+    </div>
+  </div>
+</div>
+
+
+
+
+<nav class="site-nav">
+  <ul id="menu" class="main-menu menu">
+        <li class="menu-item menu-item-home">
+
+    <a href="/notes/" rel="section"><i class="fa fa-home fa-fw"></i>首页</a>
+
+  </li>
+        <li class="menu-item menu-item-archives">
+
+    <a href="/notes/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>归档</a>
+
+  </li>
+  </ul>
+</nav>
+
+
+
+
+</div>
+    </header>
+
+    
+  <div class="back-to-top">
+    <i class="fa fa-arrow-up"></i>
+    <span>0%</span>
+  </div>
+
+
+    <main class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          
+
+          <div class="content post posts-expand">
+            
+
+    
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="https://singglexgc.github.io/notes/2021/07/12/Netty/netty%E6%A0%B8%E5%BF%83%E7%BB%84%E4%BB%B6/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/notes/images/avatar.gif">
+      <meta itemprop="name" content="Sinngle">
+      <meta itemprop="description" content="">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Notes">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          Netty核心组件
+        </h1>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+              
+
+              <time title="创建时间：2021-07-12 00:25:06 / 修改时间：00:36:42" itemprop="dateCreated datePublished" datetime="2021-07-12T00:25:06+08:00">2021-07-12</time>
+            </span>
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-folder"></i>
+              </span>
+              <span class="post-meta-item-text">分类于</span>
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/notes/categories/Netty/" itemprop="url" rel="index"><span itemprop="name">Netty</span></a>
+                </span>
+            </span>
+
+          
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+        <h2 id="Bootstrap、ServerBootstrap"><a href="#Bootstrap、ServerBootstrap" class="headerlink" title="Bootstrap、ServerBootstrap"></a>Bootstrap、ServerBootstrap</h2><p>一个Netty应用通常由一个Bootstrap开始，主要作用是配置整个Netty程序，串联各个组件，Netty中Bootstrap类是客户端程序的启动引导类，ServerBootstrap是服务器启动引导类。</p>
+<h2 id="Future、ChannelFuture"><a href="#Future、ChannelFuture" class="headerlink" title="Future、ChannelFuture"></a>Future、ChannelFuture</h2><p>Netty中所有IO操作都是异步的，会立即返回一个ChannelFuture对象。通过这个对象可以注册一个监听，当操作执行成功或失败时监听会自动触发注册的监听事件</p>
+<h3 id="常见的方法"><a href="#常见的方法" class="headerlink" title="常见的方法"></a>常见的方法</h3><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="function">Channel <span class="title">channel</span><span class="params">()</span></span>; <span class="comment">//返回当前正在进行IO操作的通道</span></span><br><span class="line"><span class="function">ChannelFuture <span class="title">sync</span><span class="params">()</span></span>; <span class="comment">//等待异步操作执行完毕</span></span><br></pre></td></tr></table></figure>
+
+
+
+<h2 id="Channel"><a href="#Channel" class="headerlink" title="Channel"></a>Channel</h2><ol>
+<li>Netty网络通信的组件，能够用于执行网络IO操作</li>
+<li>通过Channel可获得当前网络连接的通道的状态</li>
+<li>通过Channel可获得网络连接的配置参数(例如接收缓冲区大小)</li>
+<li>Channel提供异步的网络IO操作(如建立连接，读写，绑定端口)</li>
+<li>调用立即返回一个ChannelFuture对象，可以通过注册监听到ChannelFuture对象</li>
+<li>支持关联IO操作与对应的处理程序</li>
+<li>不同协议，不同阻塞类型的连接都有不同的Channel类型与之对应，常用的Channel类型有：<ul>
+<li>NioSocketChannel：异步的客户端TCP连接</li>
+<li>NioServerSocketChannel：异步的服务器端TCP连接</li>
+<li>NioDatagramChannel：异步的UDP连接</li>
+<li>NioSctpChannel：异步的客户端Sctp连接</li>
+<li>NioSctpServerChannel：异步的服务器端Sctp连接，这些通道涵盖了UDP和TCP网络IO以及文件IO</li>
+</ul>
+</li>
+</ol>
+<h2 id="Selecor"><a href="#Selecor" class="headerlink" title="Selecor"></a>Selecor</h2><ol>
+<li>Netty基于Selector实现IO多路复用，通过Selctor一个线程可以监听多个连接的Channel事件</li>
+<li>当向一个Selector中注册Channel后，Selector内部的机制就可以自动不断地查询(select)这些注册的Channel是否有就绪写IO事件，这样就可以实现一个线程高效的管理多个Channel</li>
+</ol>
+<h2 id="ChannelHandler及其实现类"><a href="#ChannelHandler及其实现类" class="headerlink" title="ChannelHandler及其实现类"></a>ChannelHandler及其实现类</h2><ol>
+<li>ChannelHandler是一个接口，处理IO事件或拦截IO操作，并将其转发到其ChannelPipeline(业务处理链)中的下一个处理程序</li>
+<li>ChannelHandler本身没有提供很多方法，因为这个接口有许多的方法需要实现，方便使用期间，可以继承它的子类</li>
+</ol>
+<p><img src="/notes/2021/07/12/Netty/netty%E6%A0%B8%E5%BF%83%E7%BB%84%E4%BB%B6/image-20210206181034239.png"></p>
+<ul>
+<li>ChannelInboundHandler：用于处理入站IO事件</li>
+<li>ChannelOutboundHandler：用于处理出站IO事件</li>
+</ul>
+<p>//适配器</p>
+<ul>
+<li>ChannelInboundHandlerAdapter：用于处理入站IO事件</li>
+<li>ChannelOutboundHandlerAdapter：用于处理出站IO事件</li>
+<li>ChannelDuplexHandler：用于处理入站和出站IO事件</li>
+</ul>
+<ol start="3">
+<li>ChannelPipeline提供了ChannelHandler链的容器，以客户端应用程序为例，如果事件的运动方向是从客户端到服务器端的，那么我们称这些事件为出站。即客户端发送给客户端的数据会通过Pipeline中的一系列ChannelOutboundHandler处理。</li>
+</ol>
+<h2 id="Pipeline和ChannelPipeline"><a href="#Pipeline和ChannelPipeline" class="headerlink" title="Pipeline和ChannelPipeline"></a>Pipeline和ChannelPipeline</h2><ol>
+<li><p>ChannelPipeline是一个Handler的集合，它负责处理和拦截inbound或者outbound事件和操作，相当于一个贯穿Netty的链。</p>
+</li>
+<li><p>ChannelPipeline实现了一种高级形式的拦截过滤器模式，使用户可以完全控制事件的处理方式，以及Channel中的各个ChannelHandler如何相互交互</p>
+</li>
+<li><p>在Netty中每个Channel都有且仅有一个ChannelPipeline与之对应，它们的组成关系如下：</p>
+<p><img src="/notes/2021/07/12/Netty/netty%E6%A0%B8%E5%BF%83%E7%BB%84%E4%BB%B6/image-20210206183613550.png"></p>
+<ul>
+<li>一个Channel包括了一个ChannelPipeline，而ChannelPipeline中又维护了一个由ChannelHandlerContext组成的双向链表，并且每个ChannelHandlerContext中又关联着一个ChannelHandler。</li>
+<li>入站事件和出站事件在一个双向链表中，入站事件会从链表head往后传递到最后一个入站的handler，出站事件会从链表tail向前传递到最前一个出站的handler。两种类型的handler互不干扰。</li>
+</ul>
+</li>
+</ol>
+<h3 id="常见方法"><a href="#常见方法" class="headerlink" title="常见方法"></a>常见方法</h3><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="function">ChannelPipeline <span class="title">addFirst</span><span class="params">(ChannelHandler... handlers)</span></span>;</span><br><span class="line"><span class="function">ChannelPipeline <span class="title">addLast</span><span class="params">(ChannelHandler... handlers)</span></span>;</span><br></pre></td></tr></table></figure>
+
+
+
+<h2 id="ChannelHandlerContext"><a href="#ChannelHandlerContext" class="headerlink" title="ChannelHandlerContext"></a>ChannelHandlerContext</h2><ol>
+<li>保存Channel相关的所有上下文对象，同时关联与一个ChannelHandler对象</li>
+<li>即ChannelHandlerContext中包含一个具体的事件处理器ChannelHandler，同时ChannelHandlerContext中也绑定了对应的pipeline和Channel的信息，方便对ChannelHandler进行调用</li>
+</ol>
+<h3 id="常用方法"><a href="#常用方法" class="headerlink" title="常用方法"></a>常用方法</h3><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="function">ChannelFuture <span class="title">close</span><span class="params">()</span></span>; <span class="comment">//关闭通道</span></span><br><span class="line"><span class="function">ChannelOutboundInvoker <span class="title">flush</span><span class="params">()</span></span>; <span class="comment">//刷新</span></span><br><span class="line"><span class="comment">//将数据写到ChannelPipeline中当前ChannelHandler的下一个ChannelHandler开始处理(出站)</span></span><br><span class="line"><span class="function">ChannelFuture <span class="title">writeAndFlush</span><span class="params">(Object msg)</span></span>;</span><br></pre></td></tr></table></figure>
+
+
+
+<h2 id="ChannelOption"><a href="#ChannelOption" class="headerlink" title="ChannelOption"></a>ChannelOption</h2><ol>
+<li><p>Netty在创建Channel实例后，一般都需要设置ChannlOption参数</p>
+</li>
+<li><p>ChannelOption参数如下：</p>
+<ul>
+<li><p>ChannelOption.SO_BACKLOG</p>
+<p>对应TCP/IP协议listen函数中的backlog参数，用于初始化服务器可连接队列大小。服务器处理客户端连接请求是顺序处理的，同一时间只能处理一个客户端连接。多个客户端来的时候，服务器将不能处理的客户端连接请求放在队列中等待处理。backlog参数执行了队列的大小。</p>
+</li>
+<li><p>ChannelOption.SO_KEEPALIVE</p>
+<p>一直保持连接活动状态</p>
+</li>
+</ul>
+</li>
+</ol>
+<h2 id="EventLoopGroup和其实现类NioEventLoopGroup"><a href="#EventLoopGroup和其实现类NioEventLoopGroup" class="headerlink" title="EventLoopGroup和其实现类NioEventLoopGroup"></a>EventLoopGroup和其实现类NioEventLoopGroup</h2><ol>
+<li>EventLoopGroup是一组EventLoop的抽象，Netty为了更好的利用多核CPU资源，一般会有多个EventLoop同时工作，每个EventLoop维护着一个Selector实例</li>
+<li>EventLoopGroup提供next接口，可以从组里面按照一定规则获取一个EventLoop来处理任务。</li>
+<li>通常一个服务端口，即一个ServerSocketChannel对应一个Selector和一个EventLoop线程。BossEventLoop负责接收客户端的连接并将SocketChannel交给WorkerEventLoopGroup来进行IO处理。</li>
+</ol>
+<h2 id="Unpooled类"><a href="#Unpooled类" class="headerlink" title="Unpooled类"></a>Unpooled类</h2><p>Netty提供一个专门用来操作缓冲区(即Netty的数据容器)的工具类</p>
+<h3 id="常用方法-1"><a href="#常用方法-1" class="headerlink" title="常用方法"></a>常用方法</h3><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">//通过给定的数据和字符编码返回一个ByteBuf对象</span></span><br><span class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">static</span> ByteBuf <span class="title">copiedBuffer</span><span class="params">(CharSequence string, Charset charset)</span></span>;</span><br></pre></td></tr></table></figure>
+
+
+
+<h2 id="编码和解码"><a href="#编码和解码" class="headerlink" title="编码和解码"></a>编码和解码</h2><ol>
+<li><p>编写网络应用程序时，因为数据在网络中传输的都是二进制字节码数据，在发送数据时就需要编码，接收数据时就需要解码</p>
+</li>
+<li><p>codec(编解码器)的组成部分有两个：decoder(解码器)和encoder(编码器)</p>
+<p>encoder负责将业务数据转换成字节码数据</p>
+<p>decoder负责将字节码数据转换成业务数据</p>
+</li>
+<li><p>Netty自身提供了一些codec</p>
+<ul>
+<li>StringEncoder，StringDecoder</li>
+<li>ObjectEncoder，ObjectDecoder，对Java对象进行编解码</li>
+</ul>
+</li>
+<li><p>Netty本身自带的ObjectDecoder和ObjectEncoder可以用来实现POJO对象或各种业务对象的编码解码，底层使用的是Java序列化技术，而Java序列化技术本身效率不高，存在如下问题：</p>
+<ul>
+<li>无法跨语言</li>
+<li>序列化的体积太大，是二进制编码的5倍多</li>
+<li>序列化性能太低</li>
+</ul>
+<p>所以出现了新的解决方案：Google的ProtoBuf</p>
+</li>
+</ol>
+<h3 id="常用解码器"><a href="#常用解码器" class="headerlink" title="常用解码器"></a>常用解码器</h3><h4 id="RelayingDecoder"><a href="#RelayingDecoder" class="headerlink" title="RelayingDecoder"></a>RelayingDecoder</h4><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="keyword">abstract</span> <span class="class"><span class="keyword">class</span> <span class="title">RelayingDecoder</span>&lt;<span class="title">S</span>&gt; <span class="keyword">extends</span> <span class="title">ByteToMessageDecoder</span></span></span><br></pre></td></tr></table></figure>
+
+<p>RelayingDecoder扩展了ByteToMessageDecoder类，使用这个类，我们不必调用readableBytes()方法。参数S指定了用户状态管理的类型，其中Void代表不需要状态管理。</p>
+<p>缺点：</p>
+<ol>
+<li>并不是所有的ByteBuf操作被支持</li>
+<li>ReplayingDecoder在某些情况下可能稍慢于ByteToMessageDecoder，例如网络缓慢并且消息格式复杂时，消息会被拆分了多个碎片，速度变慢。</li>
+</ol>
+<h4 id="LineBasedFrameDecoder"><a href="#LineBasedFrameDecoder" class="headerlink" title="LineBasedFrameDecoder"></a>LineBasedFrameDecoder</h4><p>这个类在Netty内部也有使用，它使用行尾控制字符(<code>\n</code>或者<code>\r\n</code>)作为分隔符来解析数据</p>
+<h4 id="DelimiterBasedFrameDecoder"><a href="#DelimiterBasedFrameDecoder" class="headerlink" title="DelimiterBasedFrameDecoder"></a>DelimiterBasedFrameDecoder</h4><p>使用自定义的特殊字符作为消息的分隔符</p>
+<h4 id="HttpObjectDecoder"><a href="#HttpObjectDecoder" class="headerlink" title="HttpObjectDecoder"></a>HttpObjectDecoder</h4><p>一个Http数据的解码器长度来标识整包消息，这样就可以自动的处理粘包和半包消息。</p>
+
+    </div>
+
+    
+    
+    
+
+      <footer class="post-footer">
+          <div class="post-tags">
+              <a href="/notes/tags/Netty/" rel="tag"># Netty</a>
+          </div>
+
+        
+
+
+        
+    <div class="post-nav">
+      <div class="post-nav-item">
+    <a href="/notes/2021/07/12/Netty/%E5%BC%82%E6%AD%A5%E6%A8%A1%E5%9E%8B/" rel="prev" title="异步模型">
+      <i class="fa fa-chevron-left"></i> 异步模型
+    </a></div>
+      <div class="post-nav-item">
+    <a href="/notes/2021/07/12/Netty/protobuf/" rel="next" title="ProtoBuf">
+      ProtoBuf <i class="fa fa-chevron-right"></i>
+    </a></div>
+    </div>
+      </footer>
+    
+  </article>
+  
+  
+  
+
+
+
+          </div>
+          
+
+<script>
+  window.addEventListener('tabs:register', () => {
+    let { activeClass } = CONFIG.comments;
+    if (CONFIG.comments.storage) {
+      activeClass = localStorage.getItem('comments_active') || activeClass;
+    }
+    if (activeClass) {
+      let activeTab = document.querySelector(`a[href="#comment-${activeClass}"]`);
+      if (activeTab) {
+        activeTab.click();
+      }
+    }
+  });
+  if (CONFIG.comments.storage) {
+    window.addEventListener('tabs:click', event => {
+      if (!event.target.matches('.tabs-comment .tab-content .tab-pane')) return;
+      let commentClass = event.target.classList[1];
+      localStorage.setItem('comments_active', commentClass);
+    });
+  }
+</script>
+
+        </div>
+          
+  
+  <div class="toggle sidebar-toggle">
+    <span class="toggle-line toggle-line-first"></span>
+    <span class="toggle-line toggle-line-middle"></span>
+    <span class="toggle-line toggle-line-last"></span>
+  </div>
+
+  <aside class="sidebar">
+    <div class="sidebar-inner">
+
+      <ul class="sidebar-nav motion-element">
+        <li class="sidebar-nav-toc">
+          文章目录
+        </li>
+        <li class="sidebar-nav-overview">
+          站点概览
+        </li>
+      </ul>
+
+      <!--noindex-->
+      <div class="post-toc-wrap sidebar-panel">
+          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#Bootstrap%E3%80%81ServerBootstrap"><span class="nav-number">1.</span> <span class="nav-text">Bootstrap、ServerBootstrap</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Future%E3%80%81ChannelFuture"><span class="nav-number">2.</span> <span class="nav-text">Future、ChannelFuture</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%B8%B8%E8%A7%81%E7%9A%84%E6%96%B9%E6%B3%95"><span class="nav-number">2.1.</span> <span class="nav-text">常见的方法</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Channel"><span class="nav-number">3.</span> <span class="nav-text">Channel</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Selecor"><span class="nav-number">4.</span> <span class="nav-text">Selecor</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#ChannelHandler%E5%8F%8A%E5%85%B6%E5%AE%9E%E7%8E%B0%E7%B1%BB"><span class="nav-number">5.</span> <span class="nav-text">ChannelHandler及其实现类</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Pipeline%E5%92%8CChannelPipeline"><span class="nav-number">6.</span> <span class="nav-text">Pipeline和ChannelPipeline</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%B8%B8%E8%A7%81%E6%96%B9%E6%B3%95"><span class="nav-number">6.1.</span> <span class="nav-text">常见方法</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#ChannelHandlerContext"><span class="nav-number">7.</span> <span class="nav-text">ChannelHandlerContext</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%B8%B8%E7%94%A8%E6%96%B9%E6%B3%95"><span class="nav-number">7.1.</span> <span class="nav-text">常用方法</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#ChannelOption"><span class="nav-number">8.</span> <span class="nav-text">ChannelOption</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#EventLoopGroup%E5%92%8C%E5%85%B6%E5%AE%9E%E7%8E%B0%E7%B1%BBNioEventLoopGroup"><span class="nav-number">9.</span> <span class="nav-text">EventLoopGroup和其实现类NioEventLoopGroup</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Unpooled%E7%B1%BB"><span class="nav-number">10.</span> <span class="nav-text">Unpooled类</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%B8%B8%E7%94%A8%E6%96%B9%E6%B3%95-1"><span class="nav-number">10.1.</span> <span class="nav-text">常用方法</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E7%BC%96%E7%A0%81%E5%92%8C%E8%A7%A3%E7%A0%81"><span class="nav-number">11.</span> <span class="nav-text">编码和解码</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%B8%B8%E7%94%A8%E8%A7%A3%E7%A0%81%E5%99%A8"><span class="nav-number">11.1.</span> <span class="nav-text">常用解码器</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#RelayingDecoder"><span class="nav-number">11.1.1.</span> <span class="nav-text">RelayingDecoder</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#LineBasedFrameDecoder"><span class="nav-number">11.1.2.</span> <span class="nav-text">LineBasedFrameDecoder</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#DelimiterBasedFrameDecoder"><span class="nav-number">11.1.3.</span> <span class="nav-text">DelimiterBasedFrameDecoder</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#HttpObjectDecoder"><span class="nav-number">11.1.4.</span> <span class="nav-text">HttpObjectDecoder</span></a></li></ol></li></ol></li></ol></div>
+      </div>
+      <!--/noindex-->
+
+      <div class="site-overview-wrap sidebar-panel">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+  <p class="site-author-name" itemprop="name">Sinngle</p>
+  <div class="site-description" itemprop="description"></div>
+</div>
+<div class="site-state-wrap motion-element">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+          <a href="/notes/archives/">
+        
+          <span class="site-state-item-count">35</span>
+          <span class="site-state-item-name">日志</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+            <a href="/notes/categories/">
+        <span class="site-state-item-count">13</span>
+        <span class="site-state-item-name">分类</span></a>
+      </div>
+      <div class="site-state-item site-state-tags">
+            <a href="/notes/tags/">
+        <span class="site-state-item-count">20</span>
+        <span class="site-state-item-name">标签</span></a>
+      </div>
+  </nav>
+</div>
+
+
+
+      </div>
+
+    </div>
+  </aside>
+  <div id="sidebar-dimmer"></div>
+
+
+      </div>
+    </main>
+
+    <footer class="footer">
+      <div class="footer-inner">
+        
+
+        
+
+<div class="copyright">
+  
+  &copy; 
+  <span itemprop="copyrightYear">2021</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">Sinngle</span>
+</div>
+  <div class="powered-by">由 <a href="https://hexo.io/" class="theme-link" rel="noopener" target="_blank">Hexo</a> & <a href="https://theme-next.org/" class="theme-link" rel="noopener" target="_blank">NexT.Gemini</a> 强力驱动
+  </div>
+
+        
+
+
+
+
+
+
+
+
+      </div>
+    </footer>
+  </div>
+
+  
+  <script src="/notes/lib/anime.min.js"></script>
+  <script src="/notes/lib/velocity/velocity.min.js"></script>
+  <script src="/notes/lib/velocity/velocity.ui.min.js"></script>
+
+<script src="/notes/js/utils.js"></script>
+
+<script src="/notes/js/motion.js"></script>
+
+
+<script src="/notes/js/schemes/pisces.js"></script>
+
+
+<script src="/notes/js/next-boot.js"></script>
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+  
+
+</body>
+</html>

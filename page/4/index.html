@@ -145,7 +145,7 @@
   
   
   <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
-    <link itemprop="mainEntityOfPage" href="https://singglexgc.github.io/notes/2021/07/10/Spring/autowired%E5%92%8C-resource%E7%9A%84%E5%8C%BA%E5%88%AB/">
+    <link itemprop="mainEntityOfPage" href="https://singglexgc.github.io/notes/2021/07/12/Netty/netty%E7%AE%80%E4%BB%8B/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
       <meta itemprop="image" content="/notes/images/avatar.gif">
@@ -159,7 +159,7 @@
       <header class="post-header">
         <h2 class="post-title" itemprop="name headline">
           
-            <a href="/notes/2021/07/10/Spring/autowired%E5%92%8C-resource%E7%9A%84%E5%8C%BA%E5%88%AB/" class="post-title-link" itemprop="url">@Autowired和@Resource的区别</a>
+            <a href="/notes/2021/07/12/Netty/netty%E7%AE%80%E4%BB%8B/" class="post-title-link" itemprop="url">Netty简介</a>
         </h2>
 
         <div class="post-meta">
@@ -168,23 +168,17 @@
                 <i class="far fa-calendar"></i>
               </span>
               <span class="post-meta-item-text">发表于</span>
+              
 
-              <time title="创建时间：2021-07-10 23:38:38" itemprop="dateCreated datePublished" datetime="2021-07-10T23:38:38+08:00">2021-07-10</time>
+              <time title="创建时间：2021-07-12 00:20:32 / 修改时间：00:21:11" itemprop="dateCreated datePublished" datetime="2021-07-12T00:20:32+08:00">2021-07-12</time>
             </span>
-              <span class="post-meta-item">
-                <span class="post-meta-item-icon">
-                  <i class="far fa-calendar-check"></i>
-                </span>
-                <span class="post-meta-item-text">更新于</span>
-                <time title="修改时间：2021-07-11 00:03:24" itemprop="dateModified" datetime="2021-07-11T00:03:24+08:00">2021-07-11</time>
-              </span>
             <span class="post-meta-item">
               <span class="post-meta-item-icon">
                 <i class="far fa-folder"></i>
               </span>
               <span class="post-meta-item-text">分类于</span>
                 <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-                  <a href="/notes/categories/Spring/" itemprop="url" rel="index"><span itemprop="name">Spring</span></a>
+                  <a href="/notes/categories/Netty/" itemprop="url" rel="index"><span itemprop="name">Netty</span></a>
                 </span>
             </span>
 
@@ -199,38 +193,34 @@
     <div class="post-body" itemprop="articleBody">
 
       
-          <h2 id="联系"><a href="#联系" class="headerlink" title="联系"></a>联系</h2><ol>
-<li>@Autowired和@Resource注解都可以用来bean对象的注入。</li>
-<li>它们都可以标注在变量和setter方法上面。</li>
+          <h2 id="原生NIO存在的问题"><a href="#原生NIO存在的问题" class="headerlink" title="原生NIO存在的问题"></a>原生NIO存在的问题</h2><ol>
+<li>NIO的类库和API繁杂，使用麻烦。需要熟悉掌握Selector、ServerSocketChannel、SocketChannel、ByteBuffer等</li>
+<li>需要具备其他的额外技能：要熟悉Java多线程编程，因为NIO编程需要涉及到Reactor模式，你必须对多线程和网络编程非常熟悉，才能编写出高质量的NIO程序</li>
+<li>开发工作量和难度都非常大：例如客户端面临断连重连、网络闪断、半包读写、失败缓存、网络拥堵和异常流的处理等等</li>
+<li>JDK NIO的bug：例如臭名昭著的Epoll Bug，它会导致Selector空轮询，最终导致CPU 100%，直至JDK 1.7版本该问题仍然存在，没有被根本解决</li>
 </ol>
-<h2 id="区别"><a href="#区别" class="headerlink" title="区别"></a>区别</h2><ol>
-<li>@Autowired注解是Spring提供的注解，@Resource注解是J2EE提供的注解。</li>
-<li>@Autowired默认使用byType方式注入，@Resource默认使用byName方式注入</li>
+<h2 id="什么是Netty"><a href="#什么是Netty" class="headerlink" title="什么是Netty"></a>什么是Netty</h2><ol>
+<li>Netty是JBOSS提供的一个Java开源框架。Netty提供异步的、基于事件驱动的网络应用程序框架，用于快速开发高性能、高可靠性的网络IO程序</li>
+<li>Netty主要针对在TCP协议下，面向Clients端的高并发应用，或者在Peer-to-Peer场景下的大量数据持续传输的应用</li>
+<li>Netty是目前最流行的NIO框架，Netty在互联网领域、大数据分布式计算领域、游戏行业、通信行业等获得了广泛的应用，例如：知名的ElasticSearch、Dubbo框架内部都采用了Netty.</li>
 </ol>
-<h2 id="Autowired注解的使用"><a href="#Autowired注解的使用" class="headerlink" title="@Autowired注解的使用"></a>@Autowired注解的使用</h2><p>@Autowired注解默认使用byType方式注入。当存在多个实现时，使用byName方式注入。</p>
-<p>使用示例如下：</p>
-<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">@Autowired</span></span><br><span class="line">UserService userService;</span><br></pre></td></tr></table></figure>
-
-<p>当没有指定name时，默认注入的是与变量名相同的bean。</p>
-<p>我们也可以使用@Qualifier注解来指定name。</p>
-<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">@Autowired</span></span><br><span class="line"><span class="meta">@Qualifier(value = &quot;userServiceImpl&quot;)</span></span><br><span class="line">UserService userService;</span><br></pre></td></tr></table></figure>
-
-
-
-<h2 id="Resource注解的使用"><a href="#Resource注解的使用" class="headerlink" title="@Resource注解的使用"></a>@Resource注解的使用</h2><p>@Resource注解默认使用byName方式注入。当没有匹配的时候，使用byType方式注入。</p>
-<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">@Resource</span></span><br><span class="line">UserService userService;</span><br></pre></td></tr></table></figure>
-
-<p>同时@Resource注解还有两个重要的属性name和type，可以用来显式指定使用byName还是byType方法进行注入。</p>
-<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">@Resource(name = &quot;userServiceImpl&quot;)</span></span><br><span class="line">UserService userService;</span><br></pre></td></tr></table></figure>
-
-<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">@Resource(type = &quot;UserServiceImpl&quot;)</span></span><br><span class="line">UserService userService;</span><br></pre></td></tr></table></figure>
-
-<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">@Resource(name = &quot;userServiceImpl&quot;, type = &quot;userServiceImpl&quot;)</span></span><br><span class="line">UserService userService;</span><br></pre></td></tr></table></figure>
-
+<h2 id="Netty的应用场景"><a href="#Netty的应用场景" class="headerlink" title="Netty的应用场景"></a>Netty的应用场景</h2><h3 id="互联网行业"><a href="#互联网行业" class="headerlink" title="互联网行业"></a>互联网行业</h3><p>在分布式系统中，各个节点之间需要远程服务调用，高性能的RPC框架必不可少，Netty作为异步高性能的通信框架，往往作为基础通信组件被这些RPC框架使用。</p>
+<p>典型的应用有：阿里分布式服务框架Dubbo的PRC框架使用Dubbo协议进行节点间通信，Dubbo协议默认使用Netty作为基础通信组件，用于实现各进程节点之间的内部通信。</p>
+<h3 id="游戏行业"><a href="#游戏行业" class="headerlink" title="游戏行业"></a>游戏行业</h3><p>Netty作为高性能的基础通信组件，提供了TCP/UDP和HTTP协议栈，方便定制和开发私有协议栈，账号登陆服务器。</p>
+<p>地图服务器之间可以方便的通过Netty进行高性能的通信</p>
+<h3 id="大数据领域"><a href="#大数据领域" class="headerlink" title="大数据领域"></a>大数据领域</h3><p>经典的Hadoop的高性能通信和序列化组件(AVRO 实现数据文件共享)的PRC框架，默认采用Netty进行跨界点通信。</p>
+<p>它的Netty Service基于Netty框架二次封装实现。</p>
+<h2 id="Netty的优点"><a href="#Netty的优点" class="headerlink" title="Netty的优点"></a>Netty的优点</h2><p>Netty对JDK自带的NIO的API进行了封装，解决了上述问题。</p>
 <ol>
-<li>只指定name属性：通过byName方式注入，没有匹配报错</li>
-<li>只指定type属性：通过byType方式注入，没有匹配或匹配多个报错</li>
-<li>同时指定name属性和type属性：同时匹配则成功，否则报错</li>
+<li>设计优雅。适用于各种传输类型的统一API，阻塞和非阻塞Socket；基于灵活且可扩展的事件模型，可以清晰地分离关注点；高度可定制的线程模型：单线程、一个或多个线程池</li>
+<li>使用方便。详细文档，没有其他依赖项，JDK5(Netty 3.x)或6(Netty 4.x)就足够了</li>
+<li>高性能、高吞吐量：延迟更低。减少资源消耗。最小化不必要的内存复制</li>
+<li>安全。完整的SSL/TSL和StartTLS支持</li>
+<li>社区活跃</li>
+</ol>
+<h2 id="Netty版本说明"><a href="#Netty版本说明" class="headerlink" title="Netty版本说明"></a>Netty版本说明</h2><ol>
+<li>Netty版本分为netty3.x和Netty4.x、Netty5.x</li>
+<li>因为Netty5出现重大bug，现在已经被官网废弃了。目前推荐使用的是Netty4.x的稳定版本</li>
 </ol>
 
       
@@ -251,7 +241,7 @@
   
   
   <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
-    <link itemprop="mainEntityOfPage" href="https://singglexgc.github.io/notes/2021/07/05/JavaSE/methodhandle/">
+    <link itemprop="mainEntityOfPage" href="https://singglexgc.github.io/notes/2021/07/12/Netty/%E9%9B%B6%E6%8B%B7%E8%B4%9D/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
       <meta itemprop="image" content="/notes/images/avatar.gif">
@@ -265,7 +255,7 @@
       <header class="post-header">
         <h2 class="post-title" itemprop="name headline">
           
-            <a href="/notes/2021/07/05/JavaSE/methodhandle/" class="post-title-link" itemprop="url">MethodHandle</a>
+            <a href="/notes/2021/07/12/Netty/%E9%9B%B6%E6%8B%B7%E8%B4%9D/" class="post-title-link" itemprop="url">零拷贝</a>
         </h2>
 
         <div class="post-meta">
@@ -274,23 +264,17 @@
                 <i class="far fa-calendar"></i>
               </span>
               <span class="post-meta-item-text">发表于</span>
+              
 
-              <time title="创建时间：2021-07-05 20:59:51" itemprop="dateCreated datePublished" datetime="2021-07-05T20:59:51+08:00">2021-07-05</time>
+              <time title="创建时间：2021-07-12 00:18:49 / 修改时间：00:20:29" itemprop="dateCreated datePublished" datetime="2021-07-12T00:18:49+08:00">2021-07-12</time>
             </span>
-              <span class="post-meta-item">
-                <span class="post-meta-item-icon">
-                  <i class="far fa-calendar-check"></i>
-                </span>
-                <span class="post-meta-item-text">更新于</span>
-                <time title="修改时间：2021-07-10 18:43:11" itemprop="dateModified" datetime="2021-07-10T18:43:11+08:00">2021-07-10</time>
-              </span>
             <span class="post-meta-item">
               <span class="post-meta-item-icon">
                 <i class="far fa-folder"></i>
               </span>
               <span class="post-meta-item-text">分类于</span>
                 <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-                  <a href="/notes/categories/JavaSE/" itemprop="url" rel="index"><span itemprop="name">JavaSE</span></a>
+                  <a href="/notes/categories/Netty/" itemprop="url" rel="index"><span itemprop="name">Netty</span></a>
                 </span>
             </span>
 
@@ -305,89 +289,32 @@
     <div class="post-body" itemprop="articleBody">
 
       
-          <h2 id="JDK何时引入？"><a href="#JDK何时引入？" class="headerlink" title="JDK何时引入？"></a>JDK何时引入？</h2><p>MethodHandle是JDK7引入的API，该包提供了一种新的动态调用方法的 机制。</p>
-<h2 id="什么是MethodHandle？"><a href="#什么是MethodHandle？" class="headerlink" title="什么是MethodHandle？"></a>什么是MethodHandle？</h2><p>MethodHandle是对底层方法、构造函数、字段或类似低级操作的类型化，直接可执行的引用，具有参数或返回值的可选转换。</p>
-<p>简单点来说，MethodHandle就是一个方法句柄，能够通过这个方法句柄调用对应方法。</p>
-<h2 id="使用示例"><a href="#使用示例" class="headerlink" title="使用示例"></a>使用示例</h2><p>先演示String类的replace方法的使用，如下：</p>
-<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">CommonTest</span> </span>&#123;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">main</span><span class="params">(String[] args)</span> </span>&#123;</span><br><span class="line">        String str = <span class="string">&quot;abc&quot;</span>;</span><br><span class="line">        String handleStr = str.replace(<span class="string">&quot;a&quot;</span>, <span class="string">&quot;c&quot;</span>);</span><br><span class="line">        System.out.println(handleStr);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-
-<p>执行结果：</p>
-<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">cbc</span><br></pre></td></tr></table></figure>
-
-<p>在这里，我们演示使用MethodHandle方式来调用String类的replace方法，将abc字符串内的所有a字符替换成c字符。</p>
-<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">MethodHandleTest</span> </span>&#123;</span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">main</span><span class="params">(String[] args)</span> </span>&#123;</span><br><span class="line">        <span class="comment">// 借助MethodHandles创建 方法查找 对象</span></span><br><span class="line">        MethodHandles.Lookup lookup = MethodHandles.lookup();</span><br><span class="line">        <span class="comment">// 创建 MethodType 方法类型 对象,该对象代表方法的返回类型和参数类型</span></span><br><span class="line">        <span class="comment">// 第一个参数是返回类型，后面的参数就是方法的参数类型</span></span><br><span class="line">        MethodType methodType = </span><br><span class="line">            MethodType.methodType(String.class, <span class="keyword">char</span>.class, <span class="keyword">char</span>.class);</span><br><span class="line">        <span class="keyword">try</span> &#123;</span><br><span class="line">            <span class="comment">// 通过MethodHandles.Lookup对象提供的方法查找方法句柄</span></span><br><span class="line">            <span class="comment">// 第一个参数是在String类中查找</span></span><br><span class="line">            <span class="comment">// 第二个参数表示要查找replace方法</span></span><br><span class="line">            MethodHandle methodHandle = </span><br><span class="line">                lookup.findVirtual(String.class, <span class="string">&quot;replace&quot;</span>, methodType);</span><br><span class="line">            <span class="comment">// 通过方法句柄调用对应方法，并获得方法返回值</span></span><br><span class="line">            String handleStr = (String) methodHandle.invoke(<span class="string">&quot;abc&quot;</span>, <span class="string">&#x27;a&#x27;</span>, <span class="string">&#x27;c&#x27;</span>);</span><br><span class="line">            System.out.println(handleStr);</span><br><span class="line">        &#125; <span class="keyword">catch</span> (NoSuchMethodException e) &#123;</span><br><span class="line">            e.printStackTrace();</span><br><span class="line">        &#125; <span class="keyword">catch</span> (IllegalAccessException e) &#123;</span><br><span class="line">            e.printStackTrace();</span><br><span class="line">        &#125; <span class="keyword">catch</span> (Throwable throwable) &#123;</span><br><span class="line">            throwable.printStackTrace();</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-
-<p>执行结果：</p>
-<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">cbc</span><br></pre></td></tr></table></figure>
-
-
-
-<h2 id="使用步骤总结"><a href="#使用步骤总结" class="headerlink" title="使用步骤总结"></a>使用步骤总结</h2><p>总结一下使用MethodHandle的步骤：</p>
-<ol>
-<li>创建查找(MethodHandles.Lookup)</li>
-<li>创建方法类型(MethodType)</li>
-<li>查找方法句柄(MethodHandle)</li>
-<li>调用方法句柄</li>
+          <p>在Java程序中，常见的零拷贝有mmap(内存映射)和sendFile。</p>
+<p>零拷贝是从操作系统的角度来说的，因为内核缓冲区之间，没有数据是重复的(只有kernel buffer有一份数据)。</p>
+<p>零拷贝不仅带来更少的数据复制，还能带来其他性能优势。例如更少的上下文切换，更少的CPU缓存伪共享以及无CPU检验和计算。</p>
+<h2 id="传统IO"><a href="#传统IO" class="headerlink" title="传统IO"></a>传统IO</h2><p><img src="/notes/2021/07/12/Netty/%E9%9B%B6%E6%8B%B7%E8%B4%9D/image-20210203204426738.png"></p>
+<p>传统IO发生了四次拷贝，三次切换。</p>
+<p>拷贝过程：hard drive -&gt; kernel buffer -&gt; user buffer –&gt; socket buffer -&gt; protocol engine</p>
+<p>其中hard drive -&gt; kernel buffer和socket buffer -&gt; protocol engine是DMA copy</p>
+<p>而kernel buffer -&gt; user buffer 和 user buffer -&gt; socket buffer是CPU拷贝</p>
+<h2 id="mmap优化"><a href="#mmap优化" class="headerlink" title="mmap优化"></a>mmap优化</h2><p>mmap通过内存映射，将文件映射在内核缓冲区，同时用户空间可以共享内核空间的数据。这样，在网络传输时，减少内核空间到用户空间的拷贝次数。</p>
+<p><img src="/notes/2021/07/12/Netty/%E9%9B%B6%E6%8B%B7%E8%B4%9D/image-20210203205132444.png"></p>
+<p>mmap发生了三次拷贝，三次切换。</p>
+<p>减少了从kernel buffer -&gt; user buffer的一次CPU copy</p>
+<h2 id="sendFile优化"><a href="#sendFile优化" class="headerlink" title="sendFile优化"></a>sendFile优化</h2><ol>
+<li><p>Linux2.1版本提供了sendFile函数，其基本原理如下：数据不经过用户态，直接从内核缓冲区到SocketBuffer。同时由于和用户态无关，就减少了一次上下文切换。</p>
+<p><img src="/notes/2021/07/12/Netty/%E9%9B%B6%E6%8B%B7%E8%B4%9D/image-20210203205304769.png"></p>
+<p>发生了3次拷贝，2次切换。</p>
+</li>
+<li><p>Linux在2.4版本中，做了一些修改，避免了从内核缓冲区拷贝到SocketBuffer的操作，直接拷贝到协议栈，从而减少了一次数据拷贝。</p>
+<p><img src="/notes/2021/07/12/Netty/%E9%9B%B6%E6%8B%B7%E8%B4%9D/image-20210203205900066.png"></p>
+<p>发生了2次拷贝，2次切换。</p>
+<p>这里其实还有一次CPU拷贝，从kernel buffer -&gt; socket buffer。但是，信息很少，比如length，offset，消耗低，忽略不计。</p>
+</li>
 </ol>
-<h3 id="创建查找"><a href="#创建查找" class="headerlink" title="创建查找"></a>创建查找</h3><p>通过MethodHandles提供的API，我们可以创建具有不同访问权限的查找对象。</p>
-<p>创建提供对公共方法的访问的查找：</p>
-<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">MethodHandles.Lookup publicLookup = MethodHandles.publicLookup();</span><br></pre></td></tr></table></figure>
-
-<p>创建提供对任何访问权限的方法的查找：</p>
-<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">MethodHandles.Lookup lookup = MethodHandles.lookup();</span><br></pre></td></tr></table></figure>
-
-
-
-<h3 id="创建方法类型"><a href="#创建方法类型" class="headerlink" title="创建方法类型"></a>创建方法类型</h3><p>一个方法类型(MethodType)由返回类型和适当数量的参数类型组成。</p>
-<p>使用如下：</p>
-<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">MethodType methodType =</span><br><span class="line">    MethodType.methodType(String.class, <span class="keyword">char</span>.class, <span class="keyword">char</span>.class);</span><br></pre></td></tr></table></figure>
-
-<p>上面代码将String类型指定为返回类型，两个char类型指定为参数类型。</p>
-<p>如果方法无返回值，或者无参数。那么在<code>MethodType.methodType()</code>方法传入对应参数为<code>void.class</code></p>
-<h3 id="查找方法句柄"><a href="#查找方法句柄" class="headerlink" title="查找方法句柄"></a>查找方法句柄</h3><p>在创建完查找对象和方法类型对象之后，我们可以将方法类型对象传入查找对象的对应方法中，从而查找并获取对应的方法句柄。</p>
-<ol>
-<li><p>实例方法</p>
-<p>使用<code>MethodHandle.Lookup</code>对象的<code>findVirtual()</code>方法，可以为对象方法创建MethodHandle对象。</p>
-<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">MethodType methodType = </span><br><span class="line">    MethodType.methodType(String.class, <span class="keyword">char</span>.class, <span class="keyword">char</span>.class);</span><br><span class="line">MethodHandle methodHandle = lookup.findVirtual(String.class, <span class="string">&quot;replace&quot;</span>, methodType);</span><br></pre></td></tr></table></figure></li>
-<li><p>静态方法</p>
-<p>使用<code>findStatic()</code>方法可以查找静态方法的MethodHandle对象。</p>
-<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">MethodType methodType = </span><br><span class="line">    MethodType.methodType(List.class, Object[].class);</span><br><span class="line">MethodHandle methodHandle = lookup.findStatic(Arrays.class, <span class="string">&quot;asList&quot;</span>, methodType);</span><br></pre></td></tr></table></figure></li>
-<li><p>构造函数</p>
-<p>使用<code>findConstructor()</code>方法来访问构造函数。</p>
-<p>下面代码创建一个Integer类的构造函数的方法句柄，接收一个String为参数。</p>
-<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">MethodType mt = MethodType.methodType(<span class="keyword">void</span>.class, String.class);</span><br><span class="line">MethodHandle methodHandle = lookup.findConstructor(Integer.class, mt);</span><br></pre></td></tr></table></figure></li>
-<li><p>字段</p>
-<p>利用MethodHandle，还可以访问字段。</p>
-<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">Book</span> </span>&#123;</span><br><span class="line"></span><br><span class="line">    String id;</span><br><span class="line">    String title;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="title">Book</span><span class="params">(String id, String title)</span> </span>&#123;</span><br><span class="line">        <span class="keyword">this</span>.id = id;</span><br><span class="line">        <span class="keyword">this</span>.title = title;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-
-<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">MethodHandle methodHandle = lookup.findGetter(Book.class, <span class="string">&quot;title&quot;</span>, String.class);</span><br><span class="line">String title = (String) methodHandle.invoke(<span class="keyword">new</span> Book(<span class="string">&quot;1&quot;</span>, <span class="string">&quot;我与地坛&quot;</span>));</span><br></pre></td></tr></table></figure></li>
-<li><p>私有方法</p>
-<p>利用<code>java.lang.reflect</code>的API，我们可以为私有方法创建方法句柄。</p>
-<p>为上面的Book类添加一个私有方法：</p>
-<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">private</span> String <span class="title">formatBook</span><span class="params">()</span> </span>&#123;</span><br><span class="line">    <span class="keyword">return</span> id + <span class="string">&quot;&gt;&quot;</span> + title;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-
-<p>使用方法如下：</p>
-<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">Method formatBookMethod = Book.class.getDeclaredMethod(<span class="string">&quot;formatBook&quot;</span>);</span><br><span class="line">formatBookMethod.setAccessible(<span class="keyword">true</span>);</span><br><span class="line">MethodHandle methodHandle = lookup.unreflect(formatBookMethod);</span><br><span class="line">String str = (String) methodHandle.invoke(<span class="keyword">new</span> Book(<span class="string">&quot;1&quot;</span>, <span class="string">&quot;我与地坛&quot;</span>));</span><br></pre></td></tr></table></figure></li>
-</ol>
-<h3 id="调用方法句柄"><a href="#调用方法句柄" class="headerlink" title="调用方法句柄"></a>调用方法句柄</h3><p>创建了方法句柄，即拥有了对应方法的引用。我们通过方法句柄就可以调用对应的方法。</p>
-<p>MethodHandle提供了三种执行方法句柄的方法：<code>invoke()</code>、<code>invokeWithArguments()</code>、<code>invokeExact()</code>。</p>
-<ol>
-<li><p><code>invokeExact()</code>方法</p>
-<p>invokeExact()方法在调用时要求严格的类型匹配。</p>
-<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">MethodHandle methodHandle = lookup.findVirtual(String.class, <span class="string">&quot;replace&quot;</span>, methodType);</span><br><span class="line">Object handleStr = methodHandle.invokeExact(<span class="string">&quot;abc&quot;</span>, <span class="string">&#x27;a&#x27;</span>, <span class="string">&#x27;c&#x27;</span>);</span><br><span class="line">System.out.println(handleStr);</span><br></pre></td></tr></table></figure>
-
-<p>上述代码执行后会报错：</p>
-<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">java.lang.invoke.WrongMethodTypeException: expected (String,<span class="keyword">char</span>,<span class="keyword">char</span>)<span class="function">String but <span class="title">found</span> <span class="params">(String,<span class="keyword">char</span>,<span class="keyword">char</span>)</span>Object</span></span><br><span class="line"><span class="function">	at java.lang.invoke.Invokers.<span class="title">newWrongMethodTypeException</span><span class="params">(Invokers.java:<span class="number">298</span>)</span></span></span><br><span class="line"><span class="function">	at java.lang.invoke.Invokers.<span class="title">checkExactType</span><span class="params">(Invokers.java:<span class="number">309</span>)</span></span></span><br><span class="line"><span class="function">	at com.xgc.InvokeMethodHandle.<span class="title">main</span><span class="params">(InvokeMethodHandle.java:<span class="number">14</span>)</span></span></span><br></pre></td></tr></table></figure>
-
-<p>这是因为，不将<code>methodHandle.invokeExact(&quot;abc&quot;, &#39;a&#39;, &#39;c&#39;)</code>强制转型成String的话，在调用的时候该方法会以为返回值时Object类型，而不是String类型，所以会抛出异常。</p>
-</li>
-<li><p><code>invoke()</code>方法</p>
-<p>跟<code>invokeExact()</code>方法不同，invoke方法允许更加松散的调用方式。它会尝试在调用的时候进行返回值和参数类型转换工作。</p>
-<p>转换工作是通过MethodHandle类的asType()方法来完成的。asType()方法是将当前方法句柄适配到新的HandleType上面，并产生一个新的方法句柄。</p>
-</li>
-<li><p><code>invokeWithArguments()</code>方法</p>
-<p><code>invokeWithArguments()</code>方法除了对参数和返回类型进行强制转换、装箱和拆箱外，它还允许传入一个包含了多个参数的数组或List对象。</p>
-</li>
+<h2 id="mmap和sendFile的区别"><a href="#mmap和sendFile的区别" class="headerlink" title="mmap和sendFile的区别"></a>mmap和sendFile的区别</h2><ol>
+<li>mmap适合小数据量读写，sendFile适合大文件传输</li>
+<li>mmap需要3次拷贝，3次切换。sendFile需要2次拷贝，2次切换</li>
 </ol>
 
       
@@ -407,7 +334,7 @@
 
   
   <nav class="pagination">
-    <a class="extend prev" rel="prev" href="/notes/page/3/"><i class="fa fa-angle-left" aria-label="上一页"></i></a><a class="page-number" href="/notes/">1</a><span class="space">&hellip;</span><a class="page-number" href="/notes/page/3/">3</a><span class="page-number current">4</span><a class="page-number" href="/notes/page/5/">5</a><span class="space">&hellip;</span><a class="page-number" href="/notes/page/14/">14</a><a class="extend next" rel="next" href="/notes/page/5/"><i class="fa fa-angle-right" aria-label="下一页"></i></a>
+    <a class="extend prev" rel="prev" href="/notes/page/3/"><i class="fa fa-angle-left" aria-label="上一页"></i></a><a class="page-number" href="/notes/">1</a><span class="space">&hellip;</span><a class="page-number" href="/notes/page/3/">3</a><span class="page-number current">4</span><a class="page-number" href="/notes/page/5/">5</a><span class="space">&hellip;</span><a class="page-number" href="/notes/page/18/">18</a><a class="extend next" rel="next" href="/notes/page/5/"><i class="fa fa-angle-right" aria-label="下一页"></i></a>
   </nav>
 
 
@@ -473,7 +400,7 @@
       <div class="site-state-item site-state-posts">
           <a href="/notes/archives/">
         
-          <span class="site-state-item-count">27</span>
+          <span class="site-state-item-count">35</span>
           <span class="site-state-item-name">日志</span>
         </a>
       </div>

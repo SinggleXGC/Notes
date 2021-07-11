@@ -145,7 +145,7 @@
   
   
   <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
-    <link itemprop="mainEntityOfPage" href="https://singglexgc.github.io/notes/2021/06/10/MySQL/mysql%E6%9F%A5%E8%AF%A2%E6%9C%80%E8%BF%91%E4%B8%80%E6%9D%A1%E8%AE%B0%E5%BD%95%E7%9A%84sql%EF%BC%88%E4%BC%98%E5%8C%96%E7%AF%87%EF%BC%89/">
+    <link itemprop="mainEntityOfPage" href="https://singglexgc.github.io/notes/2021/06/23/%E8%AE%BE%E8%AE%A1%E6%A8%A1%E5%BC%8F/%E5%A4%96%E8%A7%82%E6%A8%A1%E5%BC%8F-facade-pattern/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
       <meta itemprop="image" content="/notes/images/avatar.gif">
@@ -159,7 +159,7 @@
       <header class="post-header">
         <h2 class="post-title" itemprop="name headline">
           
-            <a href="/notes/2021/06/10/MySQL/mysql%E6%9F%A5%E8%AF%A2%E6%9C%80%E8%BF%91%E4%B8%80%E6%9D%A1%E8%AE%B0%E5%BD%95%E7%9A%84sql%EF%BC%88%E4%BC%98%E5%8C%96%E7%AF%87%EF%BC%89/" class="post-title-link" itemprop="url">MySQL查询最近一条记录的SQL（优化篇）</a>
+            <a href="/notes/2021/06/23/%E8%AE%BE%E8%AE%A1%E6%A8%A1%E5%BC%8F/%E5%A4%96%E8%A7%82%E6%A8%A1%E5%BC%8F-facade-pattern/" class="post-title-link" itemprop="url">外观模式(Facade Pattern)</a>
         </h2>
 
         <div class="post-meta">
@@ -170,7 +170,7 @@
               <span class="post-meta-item-text">发表于</span>
               
 
-              <time title="创建时间：2021-06-10 17:04:08 / 修改时间：18:44:27" itemprop="dateCreated datePublished" datetime="2021-06-10T17:04:08+08:00">2021-06-10</time>
+              <time title="创建时间：2021-06-23 21:15:03 / 修改时间：21:57:55" itemprop="dateCreated datePublished" datetime="2021-06-23T21:15:03+08:00">2021-06-23</time>
             </span>
             <span class="post-meta-item">
               <span class="post-meta-item-icon">
@@ -178,7 +178,7 @@
               </span>
               <span class="post-meta-item-text">分类于</span>
                 <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-                  <a href="/notes/categories/MySQL/" itemprop="url" rel="index"><span itemprop="name">MySQL</span></a>
+                  <a href="/notes/categories/%E8%AE%BE%E8%AE%A1%E6%A8%A1%E5%BC%8F/" itemprop="url" rel="index"><span itemprop="name">设计模式</span></a>
                 </span>
             </span>
 
@@ -193,22 +193,26 @@
     <div class="post-body" itemprop="articleBody">
 
       
-          <p><strong>问题：</strong></p>
-<p>现有一张订单表orders，有用户、订单时间、金额。需要查询最近的一条订单时间。</p>
-<p><img src="/notes/2021/06/10/MySQL/mysql%E6%9F%A5%E8%AF%A2%E6%9C%80%E8%BF%91%E4%B8%80%E6%9D%A1%E8%AE%B0%E5%BD%95%E7%9A%84sql%EF%BC%88%E4%BC%98%E5%8C%96%E7%AF%87%EF%BC%89/image-20210610183509667.png" alt="image-20210610183509667"></p>
-<p><strong>要查询最近一条记录的SQL最简单的写法如下：</strong></p>
-<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">select * from orders</span><br><span class="line">order by create_time desc</span><br><span class="line">limit 1</span><br></pre></td></tr></table></figure>
+          <h2 id="外观模式具有的角色"><a href="#外观模式具有的角色" class="headerlink" title="外观模式具有的角色"></a>外观模式具有的角色</h2><p>外观模式具有以下两个角色：</p>
+<ul>
+<li>外观(Facade)角色：该角色会将客户端发送的所有请求委托给相应的子系统。</li>
+<li>子系统(Subsystem)角色：一个系统可以同时有一个或多个子系统。每个子系统不是一个单独的类，而是类的集合。</li>
+</ul>
+<h2 id="代码示例"><a href="#代码示例" class="headerlink" title="代码示例"></a>代码示例</h2><h3 id="外观角色"><a href="#外观角色" class="headerlink" title="外观角色"></a>外观角色</h3><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">ShapeMaker</span> </span>&#123;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">private</span> Shape rectangle;</span><br><span class="line">    <span class="keyword">private</span> Shape square;</span><br><span class="line">    <span class="keyword">private</span> Shape circle;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="title">ShapeMaker</span><span class="params">()</span> </span>&#123;</span><br><span class="line">        rectangle = <span class="keyword">new</span> Rectangle();</span><br><span class="line">        square = <span class="keyword">new</span> Square();</span><br><span class="line">        circle = <span class="keyword">new</span> Circle();</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">drawRectangle</span><span class="params">()</span> </span>&#123;</span><br><span class="line">        rectangle.draw();</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">drawSquare</span><span class="params">()</span> </span>&#123;</span><br><span class="line">        square.draw();</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">drawCircle</span><span class="params">()</span> </span>&#123;</span><br><span class="line">        circle.draw();</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
 
-<p>这条语句会先将a表的数据全部查询出来，按照时间倒序排序后，再取第一条。</p>
-<p>这意味着这条语句需要遍历表中的全部数据，这效率是十分低下的。</p>
-<p><strong>优化：</strong></p>
-<p>为了加快SQL的效率，我们需要减少遍历的记录。</p>
-<p>因此，我们可以对user_id进行分组，并借助max函数查询出每个用户最近的订单记录。</p>
-<p>然后对每个用户最近的订单记录按 <strong>创建时间</strong>(要<strong>注意</strong>的是，这里指的是<strong>已经查询出来数据的创建时间</strong>，即max_time) 倒序排序，取第一条数据即可。</p>
-<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">select user_id, max(create_time) max_time</span><br><span class="line">from orders</span><br><span class="line">group by user_id</span><br><span class="line">order by max_time desc</span><br><span class="line">limit 1;</span><br></pre></td></tr></table></figure>
 
-<p>从上面的SQL语句可以看到，需要遍历的数据从全表缩减到用户数的范围了。</p>
-<p>这样就加快了SQL的执行效率。</p>
+
+<h3 id="子系统角色"><a href="#子系统角色" class="headerlink" title="子系统角色"></a>子系统角色</h3><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">interface</span> <span class="title">Shape</span> </span>&#123;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">void</span> <span class="title">draw</span><span class="params">()</span></span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">Rectangle</span> <span class="keyword">implements</span> <span class="title">Shape</span> </span>&#123;</span><br><span class="line">    <span class="meta">@Override</span></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">draw</span><span class="params">()</span> </span>&#123;</span><br><span class="line">        System.out.println(<span class="string">&quot;Rectangle::draw()&quot;</span>);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">Square</span> <span class="keyword">implements</span> <span class="title">Shape</span> </span>&#123;</span><br><span class="line">    <span class="meta">@Override</span></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">draw</span><span class="params">()</span> </span>&#123;</span><br><span class="line">        System.out.println(<span class="string">&quot;Square::draw()&quot;</span>);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">Circle</span> <span class="keyword">implements</span> <span class="title">Shape</span> </span>&#123;</span><br><span class="line">    <span class="meta">@Override</span></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">draw</span><span class="params">()</span> </span>&#123;</span><br><span class="line">        System.out.println(<span class="string">&quot;Circle::draw()&quot;</span>);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+
+
+<h3 id="Client"><a href="#Client" class="headerlink" title="Client"></a>Client</h3><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">Client</span> </span>&#123;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">main</span><span class="params">(String[] args)</span> </span>&#123;</span><br><span class="line">        ShapeMaker shapeMaker = <span class="keyword">new</span> ShapeMaker();</span><br><span class="line">        shapeMaker.drawRectangle();</span><br><span class="line">        shapeMaker.drawSquare();</span><br><span class="line">        shapeMaker.drawCircle();</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
 
       
     </div>
@@ -228,7 +232,7 @@
   
   
   <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
-    <link itemprop="mainEntityOfPage" href="https://singglexgc.github.io/notes/2021/06/10/%E9%9D%A2%E8%AF%95%E9%A2%98/%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%BD%91%E7%BB%9C%E9%9D%A2%E8%AF%95%E9%A2%98/get%E8%AF%B7%E6%B1%82%E5%92%8Cpost%E8%AF%B7%E6%B1%82%E7%9A%84%E5%8C%BA%E5%88%AB%EF%BC%9F/">
+    <link itemprop="mainEntityOfPage" href="https://singglexgc.github.io/notes/2021/06/23/%E8%AE%BE%E8%AE%A1%E6%A8%A1%E5%BC%8F/%E5%BB%BA%E9%80%A0%E8%80%85%E6%A8%A1%E5%BC%8F-builder-pattern/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
       <meta itemprop="image" content="/notes/images/avatar.gif">
@@ -242,7 +246,7 @@
       <header class="post-header">
         <h2 class="post-title" itemprop="name headline">
           
-            <a href="/notes/2021/06/10/%E9%9D%A2%E8%AF%95%E9%A2%98/%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%BD%91%E7%BB%9C%E9%9D%A2%E8%AF%95%E9%A2%98/get%E8%AF%B7%E6%B1%82%E5%92%8Cpost%E8%AF%B7%E6%B1%82%E7%9A%84%E5%8C%BA%E5%88%AB%EF%BC%9F/" class="post-title-link" itemprop="url">GET请求和POST请求的区别？</a>
+            <a href="/notes/2021/06/23/%E8%AE%BE%E8%AE%A1%E6%A8%A1%E5%BC%8F/%E5%BB%BA%E9%80%A0%E8%80%85%E6%A8%A1%E5%BC%8F-builder-pattern/" class="post-title-link" itemprop="url">建造者模式(Builder Pattern)</a>
         </h2>
 
         <div class="post-meta">
@@ -251,27 +255,17 @@
                 <i class="far fa-calendar"></i>
               </span>
               <span class="post-meta-item-text">发表于</span>
+              
 
-              <time title="创建时间：2021-06-10 16:11:43" itemprop="dateCreated datePublished" datetime="2021-06-10T16:11:43+08:00">2021-06-10</time>
+              <time title="创建时间：2021-06-23 17:36:47 / 修改时间：20:25:21" itemprop="dateCreated datePublished" datetime="2021-06-23T17:36:47+08:00">2021-06-23</time>
             </span>
-              <span class="post-meta-item">
-                <span class="post-meta-item-icon">
-                  <i class="far fa-calendar-check"></i>
-                </span>
-                <span class="post-meta-item-text">更新于</span>
-                <time title="修改时间：2021-06-11 17:25:39" itemprop="dateModified" datetime="2021-06-11T17:25:39+08:00">2021-06-11</time>
-              </span>
             <span class="post-meta-item">
               <span class="post-meta-item-icon">
                 <i class="far fa-folder"></i>
               </span>
               <span class="post-meta-item-text">分类于</span>
                 <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-                  <a href="/notes/categories/%E9%9D%A2%E8%AF%95%E9%A2%98/" itemprop="url" rel="index"><span itemprop="name">面试题</span></a>
-                </span>
-                  ，
-                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-                  <a href="/notes/categories/%E9%9D%A2%E8%AF%95%E9%A2%98/%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%BD%91%E7%BB%9C%E9%9D%A2%E8%AF%95%E9%A2%98/" itemprop="url" rel="index"><span itemprop="name">计算机网络面试题</span></a>
+                  <a href="/notes/categories/%E8%AE%BE%E8%AE%A1%E6%A8%A1%E5%BC%8F/" itemprop="url" rel="index"><span itemprop="name">设计模式</span></a>
                 </span>
             </span>
 
@@ -286,34 +280,92 @@
     <div class="post-body" itemprop="articleBody">
 
       
-          <ol>
-<li>GET把参数包含在URL中，POST把参数放在请求体中。这样，POST能够发送的数据更大。(URL有长度限制)</li>
-<li>GET请求比POST请求快<ul>
-<li>POST请求包含更多的请求头(但可忽略不计)</li>
-<li><strong>最重要的是：</strong>POST在真正发送数据的时候，会先将请求头发送给服务器进行确认，然后才发送数据</li>
+          <h2 id="类图"><a href="#类图" class="headerlink" title="类图"></a>类图</h2><p><img src="/notes/2021/06/23/%E8%AE%BE%E8%AE%A1%E6%A8%A1%E5%BC%8F/%E5%BB%BA%E9%80%A0%E8%80%85%E6%A8%A1%E5%BC%8F-builder-pattern/epub_679952_23.png" alt="建造者模式类图"></p>
+<p>建造者模式包含的角色如下：</p>
+<ul>
+<li>导演者(Director)角色：安排产品各部分的构建顺序，并通知Builder进行构建。</li>
+<li>抽象构建者(Builder)角色：规范产品的组成部分，并进行抽象。</li>
+<li>具体构建者(ConcreteBuilder)角色：实现抽象构建者，实现产品各部分的构建方法，并返回构建好的产品。</li>
+<li>产品(Product)角色：该角色为系统中需要构建的复杂对象。</li>
 </ul>
-</li>
-<li>GET将数据缓存起来，而POST不会</li>
-<li>POST请求一般用于修改和写入操作，而GET请求用来获取资源操作。</li>
-<li>POST请求更加安全(参数不放在URL、数据不缓存)</li>
-<li>对参数的数据类型，POST能够发送更多的数据类型(GET只能发送ASCII字符)</li>
-</ol>
-<hr>
-<p><strong>POST请求的过程：</strong></p>
-<ol>
-<li>在TCP的第三次握手，浏览器会进行确认并发送POST请求头。</li>
-<li>服务器返回100 Continue响应</li>
-<li>浏览器发送数据</li>
-<li>服务器返回200 OK响应</li>
-</ol>
-<hr>
-<p><strong>GET请求的过程：</strong></p>
-<ol>
-<li>在TCP第三次握手，浏览器就会进行确认并发送GET请求头和数据</li>
-<li>服务器返回200 OK响应</li>
-</ol>
-<hr>
-<p>这样GET的总耗是POST的2/3左右。</p>
+<p><strong>注：</strong>导演者角色是对产品构建的封装，减少耦合。导演者对象可以有多个，也可以没有，需要根据实际需求判断。</p>
+<h2 id="构建者模式的作用"><a href="#构建者模式的作用" class="headerlink" title="构建者模式的作用"></a>构建者模式的作用</h2><p><strong>定义：</strong>将复杂对象的构建与其表示分离，使得相同的构建过程可以构建出不同的表示。</p>
+<p><strong>使用场景：</strong>在系统中需要构建一个复杂对象，该复杂对象有多个部分。根据需求不同，该复杂对象的部分会发生变化，但是组合这些部分的算法基本不变。</p>
+<h2 id="代码示例-一个导演者角色"><a href="#代码示例-一个导演者角色" class="headerlink" title="代码示例(一个导演者角色)"></a>代码示例(一个导演者角色)</h2><p>以构建一个计算机为例，需要组装主板，安装操作系统，安装显示器。</p>
+<h3 id="产品角色"><a href="#产品角色" class="headerlink" title="产品角色"></a>产品角色</h3><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">@ToString</span></span><br><span class="line"><span class="keyword">public</span> <span class="keyword">abstract</span> <span class="class"><span class="keyword">class</span> <span class="title">Computer</span> </span>&#123;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">protected</span> String board;</span><br><span class="line">    <span class="keyword">protected</span> String display;</span><br><span class="line">    <span class="keyword">protected</span> String os;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">setBoard</span><span class="params">(String board)</span> </span>&#123;</span><br><span class="line">        <span class="keyword">this</span>.board = board;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">setDisplay</span><span class="params">(String display)</span> </span>&#123;</span><br><span class="line">        <span class="keyword">this</span>.display = display;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">abstract</span> <span class="keyword">void</span> <span class="title">setOs</span><span class="params">()</span></span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">MacBook</span> <span class="keyword">extends</span> <span class="title">Computer</span> </span>&#123;</span><br><span class="line"></span><br><span class="line">    <span class="meta">@Override</span></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">setOs</span><span class="params">()</span> </span>&#123;</span><br><span class="line">        os = <span class="string">&quot;Mac OS&quot;</span>;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+
+
+<h3 id="抽象构建者角色"><a href="#抽象构建者角色" class="headerlink" title="抽象构建者角色"></a>抽象构建者角色</h3><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="keyword">abstract</span> <span class="class"><span class="keyword">class</span> <span class="title">Builder</span> </span>&#123;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">abstract</span> <span class="keyword">void</span> <span class="title">buildBoard</span><span class="params">(String board)</span></span>;</span><br><span class="line">    <span class="function"><span class="keyword">abstract</span> <span class="keyword">void</span> <span class="title">buildDisplay</span><span class="params">(String display)</span></span>;</span><br><span class="line">    <span class="function"><span class="keyword">abstract</span> <span class="keyword">void</span> <span class="title">buildOs</span><span class="params">()</span></span>;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">abstract</span> Computer <span class="title">build</span><span class="params">()</span></span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+
+
+<h3 id="具体构建者角色"><a href="#具体构建者角色" class="headerlink" title="具体构建者角色"></a>具体构建者角色</h3><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">MacBookBuilder</span> <span class="keyword">extends</span> <span class="title">Builder</span> </span>&#123;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">private</span> Computer computer = <span class="keyword">new</span> MacBook();</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">    <span class="meta">@Override</span></span><br><span class="line">    <span class="function"><span class="keyword">void</span> <span class="title">buildBoard</span><span class="params">(String board)</span> </span>&#123;</span><br><span class="line">        computer.setBoard(board);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="meta">@Override</span></span><br><span class="line">    <span class="function"><span class="keyword">void</span> <span class="title">buildDisplay</span><span class="params">(String display)</span> </span>&#123;</span><br><span class="line">        computer.setDisplay(display);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="meta">@Override</span></span><br><span class="line">    <span class="function"><span class="keyword">void</span> <span class="title">buildOs</span><span class="params">()</span> </span>&#123;</span><br><span class="line">        computer.setOs();</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="meta">@Override</span></span><br><span class="line">    <span class="function">Computer <span class="title">build</span><span class="params">()</span> </span>&#123;</span><br><span class="line">        <span class="keyword">return</span> computer;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+
+
+<h3 id="导演者角色"><a href="#导演者角色" class="headerlink" title="导演者角色"></a>导演者角色</h3><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">Director</span> </span>&#123;</span><br><span class="line"></span><br><span class="line">    Builder builder = <span class="keyword">null</span>;</span><br><span class="line"></span><br><span class="line">    Director(Builder builder) &#123;</span><br><span class="line">        <span class="keyword">this</span>.builder = builder;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">construct</span><span class="params">(String board, String display)</span> </span>&#123;</span><br><span class="line">        builder.buildBoard(board);</span><br><span class="line">        builder.buildDisplay(display);</span><br><span class="line">        builder.buildOs();</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+
+
+<h3 id="Client"><a href="#Client" class="headerlink" title="Client"></a>Client</h3><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">Client</span> </span>&#123;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">main</span><span class="params">(String[] args)</span> </span>&#123;</span><br><span class="line">        Builder builder = <span class="keyword">new</span> MacBookBuilder();</span><br><span class="line">        Director director = <span class="keyword">new</span> Director(builder);</span><br><span class="line">        director.construct(<span class="string">&quot;主板A&quot;</span>, <span class="string">&quot;显示屏A&quot;</span>);</span><br><span class="line"></span><br><span class="line">        Computer computer = builder.build();</span><br><span class="line">        System.out.println(computer.toString());</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>执行结果：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">Computer(board=主板A, display=显示屏A, os=Mac OS)</span><br></pre></td></tr></table></figure>
+
+
+
+
+
+<h2 id="代码示例-无导演者"><a href="#代码示例-无导演者" class="headerlink" title="代码示例(无导演者)"></a>代码示例(无导演者)</h2><p>在有些时候，为了简化系统结构，可以将导演者和抽象构建者Builder角色进行合并，在Builder中提供创建复杂对象的construct方法。</p>
+<p><strong>场景：</strong></p>
+<p>一个快餐店案例。</p>
+<p>一个套餐由一个汉堡Burger和冷饮ColdDrink组成。</p>
+<p>一个汉堡可以是素食汉堡VegBurger，也可以是鸡肉汉堡ChickenBurger，它们使用纸盒Wrapper包装。</p>
+<p>一杯冷饮可以是可口可乐Coke，也可以是百事可乐Pepsi，它们用瓶子Bottle装着。</p>
+<h3 id="食品条目和食品包装接口定义"><a href="#食品条目和食品包装接口定义" class="headerlink" title="食品条目和食品包装接口定义"></a>食品条目和食品包装接口定义</h3><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">interface</span> <span class="title">Item</span> </span>&#123;</span><br><span class="line">    <span class="function">String <span class="title">name</span><span class="params">()</span></span>;</span><br><span class="line">    <span class="function">Packing <span class="title">packing</span><span class="params">()</span></span>;</span><br><span class="line">    <span class="function"><span class="keyword">float</span> <span class="title">price</span><span class="params">()</span></span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">interface</span> <span class="title">Packing</span> </span>&#123;</span><br><span class="line">    <span class="function">String <span class="title">pack</span><span class="params">()</span></span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+
+
+<h3 id="实现Packing-接口的实体类：Wrapper和Bottle"><a href="#实现Packing-接口的实体类：Wrapper和Bottle" class="headerlink" title="实现Packing 接口的实体类：Wrapper和Bottle"></a>实现Packing 接口的实体类：Wrapper和Bottle</h3><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">Wrapper</span> <span class="keyword">implements</span> <span class="title">Packing</span> </span>&#123;</span><br><span class="line">    </span><br><span class="line">    <span class="meta">@Override</span></span><br><span class="line">    <span class="function"><span class="keyword">public</span> String <span class="title">pack</span><span class="params">()</span> </span>&#123;</span><br><span class="line">    	<span class="keyword">return</span> <span class="string">&quot;Wrapper&quot;</span>;</span><br><span class="line">    &#125;</span><br><span class="line">    </span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">Bottle</span> <span class="keyword">implements</span> <span class="title">Packing</span> </span>&#123;</span><br><span class="line">    </span><br><span class="line">    <span class="meta">@Override</span></span><br><span class="line">    <span class="function"><span class="keyword">public</span> String <span class="title">pack</span><span class="params">()</span> </span>&#123;</span><br><span class="line">        <span class="keyword">return</span> <span class="string">&quot;Bottle&quot;</span>;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+
+
+<h3 id="实现Item接口的抽象类：Burger和ColdDrink"><a href="#实现Item接口的抽象类：Burger和ColdDrink" class="headerlink" title="实现Item接口的抽象类：Burger和ColdDrink"></a>实现Item接口的抽象类：Burger和ColdDrink</h3><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="keyword">abstract</span> <span class="class"><span class="keyword">class</span> <span class="title">Burger</span> <span class="keyword">implements</span> <span class="title">Item</span> </span>&#123;</span><br><span class="line">    </span><br><span class="line">    <span class="meta">@Override</span></span><br><span class="line">    <span class="function"><span class="keyword">public</span> Packing <span class="title">packing</span><span class="params">()</span> </span>&#123;</span><br><span class="line">        <span class="keyword">return</span> <span class="keyword">new</span> Wrapper();</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="keyword">abstract</span> <span class="class"><span class="keyword">class</span> <span class="title">ColdDrink</span> <span class="keyword">implements</span> <span class="title">Item</span> </span>&#123;</span><br><span class="line">    </span><br><span class="line">    <span class="meta">@Override</span></span><br><span class="line">    <span class="function"><span class="keyword">public</span> Packing <span class="title">packing</span><span class="params">()</span> </span>&#123;</span><br><span class="line">        <span class="keyword">return</span> <span class="keyword">new</span> Bottle();</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+
+
+<h3 id="创建扩展了Burger和ColdDrink的实体类"><a href="#创建扩展了Burger和ColdDrink的实体类" class="headerlink" title="创建扩展了Burger和ColdDrink的实体类"></a>创建扩展了Burger和ColdDrink的实体类</h3><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">VegBurger</span> <span class="keyword">extends</span> <span class="title">Burger</span> </span>&#123;</span><br><span class="line">    </span><br><span class="line">    <span class="meta">@Override</span></span><br><span class="line">    <span class="function"><span class="keyword">public</span> String <span class="title">name</span><span class="params">()</span> </span>&#123;</span><br><span class="line">        <span class="keyword">return</span> <span class="string">&quot;VegBurger&quot;</span>;</span><br><span class="line">    &#125;</span><br><span class="line">    </span><br><span class="line">    <span class="meta">@Override</span></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">float</span> <span class="title">price</span><span class="params">()</span> </span>&#123;</span><br><span class="line">        <span class="keyword">return</span> <span class="number">50f</span>;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">ChickenBurger</span> <span class="keyword">extends</span> <span class="title">Burger</span> </span>&#123;</span><br><span class="line">    </span><br><span class="line">    <span class="meta">@Override</span></span><br><span class="line">    <span class="function"><span class="keyword">public</span> String <span class="title">name</span><span class="params">()</span> </span>&#123;</span><br><span class="line">        <span class="keyword">return</span> <span class="string">&quot;Chicken Burger&quot;</span>;</span><br><span class="line">    &#125;</span><br><span class="line">    </span><br><span class="line">    <span class="meta">@Override</span></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">float</span> <span class="title">price</span><span class="params">()</span> </span>&#123;</span><br><span class="line">        <span class="keyword">return</span> <span class="number">55f</span>;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">Coke</span> <span class="keyword">extends</span> <span class="title">ColdDrink</span> </span>&#123;</span><br><span class="line">    </span><br><span class="line">    <span class="meta">@Override</span></span><br><span class="line">    <span class="function"><span class="keyword">public</span> String <span class="title">name</span><span class="params">()</span> </span>&#123;</span><br><span class="line">        <span class="keyword">return</span> <span class="string">&quot;Coke&quot;</span>;</span><br><span class="line">    &#125;</span><br><span class="line">    </span><br><span class="line">    <span class="meta">@Override</span></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">float</span> <span class="title">price</span><span class="params">()</span> </span>&#123;</span><br><span class="line">        <span class="keyword">return</span> <span class="number">20f</span>;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">Pepsi</span> <span class="keyword">extends</span> <span class="title">ColdDrink</span> </span>&#123;</span><br><span class="line">    </span><br><span class="line">    <span class="meta">@Override</span></span><br><span class="line">    <span class="function"><span class="keyword">public</span> String <span class="title">name</span><span class="params">()</span> </span>&#123;</span><br><span class="line">        <span class="keyword">return</span> <span class="string">&quot;Pepsi&quot;</span>;</span><br><span class="line">    &#125;</span><br><span class="line">    </span><br><span class="line">    <span class="meta">@Override</span></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">float</span> <span class="title">price</span><span class="params">()</span> </span>&#123;</span><br><span class="line">        <span class="keyword">return</span> <span class="number">25f</span>;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+
+
+<h3 id="Meal"><a href="#Meal" class="headerlink" title="Meal"></a>Meal</h3><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">Meal</span> </span>&#123;</span><br><span class="line">    </span><br><span class="line">    <span class="keyword">private</span> List&lt;Item&gt; items = <span class="keyword">new</span> ArrayList&lt;Item&gt;();</span><br><span class="line">    </span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">addItem</span><span class="params">(Item item)</span> </span>&#123;</span><br><span class="line">        items.add(item);</span><br><span class="line">    &#125;</span><br><span class="line">    </span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">float</span> <span class="title">getPrice</span><span class="params">()</span> </span>&#123;</span><br><span class="line">        <span class="keyword">float</span> cost = <span class="number">0f</span>;</span><br><span class="line">        <span class="keyword">for</span>(Item item : items) &#123;</span><br><span class="line">            cost+=item.price();</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="keyword">return</span> cost;</span><br><span class="line">    &#125;</span><br><span class="line">    </span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">showItems</span><span class="params">()</span> </span>&#123;</span><br><span class="line">        <span class="keyword">for</span>(Item item : items) &#123;</span><br><span class="line">            System.out.print(<span class="string">&quot;Item : &quot;</span>+item.name());</span><br><span class="line">         	System.out.print(<span class="string">&quot;, Packing : &quot;</span>+item.packing().pack());</span><br><span class="line">         	System.out.println(<span class="string">&quot;, Price : &quot;</span>+item.price());</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+
+
+<h3 id="MealBuilder"><a href="#MealBuilder" class="headerlink" title="MealBuilder"></a>MealBuilder</h3><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">MealBuilder</span> </span>&#123;</span><br><span class="line">    </span><br><span class="line">    <span class="function"><span class="keyword">public</span> Meal <span class="title">prepareVegMeal</span><span class="params">()</span> </span>&#123;</span><br><span class="line">        Meal meal = <span class="keyword">new</span> Meal();</span><br><span class="line">        meal.addItem(<span class="keyword">new</span> VegBurger());</span><br><span class="line">        meal.addItem(<span class="keyword">new</span> Coke());</span><br><span class="line">        <span class="keyword">return</span> meal;</span><br><span class="line">    &#125;</span><br><span class="line">    </span><br><span class="line">    <span class="function"><span class="keyword">public</span> Meal <span class="title">prepareNonVegMeal</span><span class="params">()</span> </span>&#123;</span><br><span class="line">        Meal meal = <span class="keyword">new</span> Meal();</span><br><span class="line">        meal.addItem(<span class="keyword">new</span> VegBurger());</span><br><span class="line">        meal.addItem(<span class="keyword">new</span> Pepsi());</span><br><span class="line">        <span class="keyword">return</span> meal;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+
+
+<h3 id="Client-1"><a href="#Client-1" class="headerlink" title="Client"></a>Client</h3><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">Client</span> </span>&#123;</span><br><span class="line">    </span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">main</span><span class="params">(String[] args)</span> </span>&#123;</span><br><span class="line">        MealBuilder mealBuilder = <span class="keyword">new</span> MealBuilder();</span><br><span class="line">        </span><br><span class="line">        Meal vegMeal = mealBuilder.prepareVegMeal();</span><br><span class="line">        vegMeal.showItems();</span><br><span class="line">        </span><br><span class="line">        System.out.println();</span><br><span class="line">        </span><br><span class="line">        Meal nonVegMeal = mealBuilder.prepareNonVegMeal();</span><br><span class="line">        nonVegMeal.showItems();</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>执行结果：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">Item : VegBurger, Packing : Wrapper, Price : 50.0</span><br><span class="line">Item : Coke, Packing : Bottle, Price : 20.0</span><br><span class="line"></span><br><span class="line">Item : VegBurger, Packing : Wrapper, Price : 50.0</span><br><span class="line">Item : Pepsi, Packing : Bottle, Price : 25.0</span><br></pre></td></tr></table></figure>
+
 
       
     </div>
@@ -332,7 +384,7 @@
 
   
   <nav class="pagination">
-    <a class="extend prev" rel="prev" href="/notes/page/9/"><i class="fa fa-angle-left" aria-label="上一页"></i></a><a class="page-number" href="/notes/">1</a><span class="space">&hellip;</span><a class="page-number" href="/notes/page/9/">9</a><span class="page-number current">10</span><a class="page-number" href="/notes/page/11/">11</a><span class="space">&hellip;</span><a class="page-number" href="/notes/page/14/">14</a><a class="extend next" rel="next" href="/notes/page/11/"><i class="fa fa-angle-right" aria-label="下一页"></i></a>
+    <a class="extend prev" rel="prev" href="/notes/page/9/"><i class="fa fa-angle-left" aria-label="上一页"></i></a><a class="page-number" href="/notes/">1</a><span class="space">&hellip;</span><a class="page-number" href="/notes/page/9/">9</a><span class="page-number current">10</span><a class="page-number" href="/notes/page/11/">11</a><span class="space">&hellip;</span><a class="page-number" href="/notes/page/18/">18</a><a class="extend next" rel="next" href="/notes/page/11/"><i class="fa fa-angle-right" aria-label="下一页"></i></a>
   </nav>
 
 
@@ -398,7 +450,7 @@
       <div class="site-state-item site-state-posts">
           <a href="/notes/archives/">
         
-          <span class="site-state-item-count">27</span>
+          <span class="site-state-item-count">35</span>
           <span class="site-state-item-name">日志</span>
         </a>
       </div>

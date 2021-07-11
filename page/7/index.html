@@ -145,7 +145,7 @@
   
   
   <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
-    <link itemprop="mainEntityOfPage" href="https://singglexgc.github.io/notes/2021/06/15/JavaSE/java%E5%8A%A8%E6%80%81%E4%BB%A3%E7%90%86/">
+    <link itemprop="mainEntityOfPage" href="https://singglexgc.github.io/notes/2021/07/11/Netty/bio/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
       <meta itemprop="image" content="/notes/images/avatar.gif">
@@ -159,7 +159,7 @@
       <header class="post-header">
         <h2 class="post-title" itemprop="name headline">
           
-            <a href="/notes/2021/06/15/JavaSE/java%E5%8A%A8%E6%80%81%E4%BB%A3%E7%90%86/" class="post-title-link" itemprop="url">Java动态代理</a>
+            <a href="/notes/2021/07/11/Netty/bio/" class="post-title-link" itemprop="url">BIO</a>
         </h2>
 
         <div class="post-meta">
@@ -168,23 +168,17 @@
                 <i class="far fa-calendar"></i>
               </span>
               <span class="post-meta-item-text">发表于</span>
+              
 
-              <time title="创建时间：2021-06-15 12:50:02" itemprop="dateCreated datePublished" datetime="2021-06-15T12:50:02+08:00">2021-06-15</time>
+              <time title="创建时间：2021-07-11 15:22:02 / 修改时间：15:23:43" itemprop="dateCreated datePublished" datetime="2021-07-11T15:22:02+08:00">2021-07-11</time>
             </span>
-              <span class="post-meta-item">
-                <span class="post-meta-item-icon">
-                  <i class="far fa-calendar-check"></i>
-                </span>
-                <span class="post-meta-item-text">更新于</span>
-                <time title="修改时间：2021-06-16 16:25:07" itemprop="dateModified" datetime="2021-06-16T16:25:07+08:00">2021-06-16</time>
-              </span>
             <span class="post-meta-item">
               <span class="post-meta-item-icon">
                 <i class="far fa-folder"></i>
               </span>
               <span class="post-meta-item-text">分类于</span>
                 <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-                  <a href="/notes/categories/JavaSE/" itemprop="url" rel="index"><span itemprop="name">JavaSE</span></a>
+                  <a href="/notes/categories/Netty/" itemprop="url" rel="index"><span itemprop="name">Netty</span></a>
                 </span>
             </span>
 
@@ -199,46 +193,35 @@
     <div class="post-body" itemprop="articleBody">
 
       
-          <blockquote>
-<p>代理模式分为静态代理和动态代理。</p>
-<p>当代理类的class文件在程序运行之前就已经存在，这就是静态代理。</p>
-<p>动态代理的代理对象在程序运行期间通过反射动态生成。</p>
-</blockquote>
-<h2 id="静态代理"><a href="#静态代理" class="headerlink" title="静态代理"></a>静态代理</h2><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">interface</span> <span class="title">Human</span> </span>&#123;</span><br><span class="line">    </span><br><span class="line">    <span class="function"><span class="keyword">void</span> <span class="title">sing</span><span class="params">()</span></span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+          <h2 id="BIO基本介绍"><a href="#BIO基本介绍" class="headerlink" title="BIO基本介绍"></a>BIO基本介绍</h2><ol>
+<li><p>Java BIO就是<strong>传统的java io编程</strong>，其相关的类和接口在java.io。</p>
+</li>
+<li><p>BIO(blocking I/O)：<strong>同步阻塞</strong>，服务器实现模式为一个连接一个线程，即客户端有连接请求时服务器端就需要启动一个线程进行处理，如果这个连接不做任何事情会造成不必要的线程开销，可以通过线程池机制改善。</p>
+</li>
+<li><p>BIO方式适用于连接数目比较小且固定的架构，这种方式对服务器资源要求比较高，并发局限于应用中，JDK1.4之前唯一选择，程序简单易理解</p>
+</li>
+</ol>
+<h2 id="实例"><a href="#实例" class="headerlink" title="实例"></a>实例</h2><p>简单BIO实例程序如下：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">BIOServer</span> </span>&#123;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">main</span><span class="params">(String[] args)</span> <span class="keyword">throws</span> IOException </span>&#123;</span><br><span class="line">        <span class="comment">// 线程池机制</span></span><br><span class="line">        <span class="comment">// 思路:</span></span><br><span class="line">        <span class="comment">// 1.创建一个线程池</span></span><br><span class="line">        <span class="comment">// 2.如果有客户端连接，就创建一个线程，与之通信(单独写一个方法)</span></span><br><span class="line"></span><br><span class="line">        ExecutorService pool = Executors.newCachedThreadPool();</span><br><span class="line"></span><br><span class="line">        ServerSocket serverSocket =  <span class="keyword">new</span> ServerSocket(<span class="number">6666</span>);</span><br><span class="line">        System.out.println(<span class="string">&quot;服务器启动了&quot;</span>);</span><br><span class="line"></span><br><span class="line">        <span class="keyword">while</span>(<span class="keyword">true</span>) &#123;</span><br><span class="line">            <span class="keyword">final</span> Socket socket = serverSocket.accept();</span><br><span class="line">            System.out.println(<span class="string">&quot;连接到一个客户端&quot;</span>);</span><br><span class="line"></span><br><span class="line">            <span class="comment">//就创建一个线程，与之通信</span></span><br><span class="line">            pool.execute(<span class="keyword">new</span> Runnable() &#123;</span><br><span class="line">                <span class="meta">@Override</span></span><br><span class="line">                <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">run</span><span class="params">()</span> </span>&#123;</span><br><span class="line">                    handler(socket);</span><br><span class="line">                &#125;</span><br><span class="line">            &#125;);</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="comment">//编写一个handler方法，和客户端通讯</span></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">handler</span><span class="params">(Socket socket)</span> </span>&#123;</span><br><span class="line">        <span class="keyword">byte</span>[] bytes = <span class="keyword">new</span> <span class="keyword">byte</span>[<span class="number">1024</span>];</span><br><span class="line">        <span class="comment">//通过socket获取字节流</span></span><br><span class="line">        <span class="keyword">try</span> &#123;</span><br><span class="line">            InputStream inputStream = socket.getInputStream();</span><br><span class="line"></span><br><span class="line">            <span class="comment">//循环的读取客户端发送的数据</span></span><br><span class="line">            <span class="keyword">while</span> (<span class="keyword">true</span>) &#123;</span><br><span class="line">                <span class="keyword">int</span> read = inputStream.read(bytes);</span><br><span class="line">                <span class="keyword">if</span> (read != -<span class="number">1</span>) &#123;</span><br><span class="line">                    System.out.println(<span class="keyword">new</span> String(bytes, <span class="number">0</span>, bytes.length));</span><br><span class="line">                &#125; <span class="keyword">else</span> &#123;</span><br><span class="line">                    <span class="keyword">break</span>;</span><br><span class="line">                &#125;</span><br><span class="line">            &#125;</span><br><span class="line">        &#125; <span class="keyword">catch</span> (IOException e) &#123;</span><br><span class="line">            e.printStackTrace();</span><br><span class="line">        &#125; <span class="keyword">finally</span> &#123;</span><br><span class="line">            System.out.println(<span class="string">&quot;关闭和client的连接&quot;</span>);</span><br><span class="line">            <span class="keyword">try</span> &#123;</span><br><span class="line">                socket.close();</span><br><span class="line">            &#125; <span class="keyword">catch</span> (IOException e) &#123;</span><br><span class="line">                e.printStackTrace();</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
 
-<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">SuperStar</span> <span class="keyword">implements</span> <span class="title">Human</span> </span>&#123;</span><br><span class="line">    </span><br><span class="line">    <span class="meta">@Override</span></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">sing</span><span class="params">()</span> </span>&#123;</span><br><span class="line">        System.out.println(<span class="string">&quot;SuperStar is singing&quot;</span>);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-
-<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">@Data</span></span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">StarAgent</span> <span class="keyword">implements</span> <span class="title">Human</span> </span>&#123;</span><br><span class="line">    </span><br><span class="line">    <span class="keyword">private</span> Human human;</span><br><span class="line">    </span><br><span class="line">    <span class="meta">@Override</span></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">sing</span><span class="params">()</span> </span>&#123;</span><br><span class="line">        System.out.println(<span class="string">&quot;经纪人进行准备工作&quot;</span>);</span><br><span class="line">        human.sing();</span><br><span class="line">        System.out.println(<span class="string">&quot;经纪人进行收尾工作&quot;</span>);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-
-<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">Client</span> </span>&#123;</span><br><span class="line">    </span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">main</span><span class="params">(String[] args)</span> </span>&#123;</span><br><span class="line">        StarAgent starAgent = <span class="keyword">new</span> StarAgent();</span><br><span class="line">        starAgent.setHuman(<span class="keyword">new</span> SuperStar());</span><br><span class="line">        starAgent.sing();</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-
-<p>运行结果如下：</p>
-<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">经纪人进行准备工作</span><br><span class="line">SuperStar is singing</span><br><span class="line">经纪人进行收尾工作</span><br></pre></td></tr></table></figure>
-
-
-
-<h2 id="Java动态代理"><a href="#Java动态代理" class="headerlink" title="Java动态代理"></a>Java动态代理</h2><h3 id="Human"><a href="#Human" class="headerlink" title="Human"></a>Human</h3><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">interface</span> <span class="title">Human</span> </span>&#123;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">void</span> <span class="title">sing</span><span class="params">()</span></span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-
-
-
-<h3 id="SuperStar"><a href="#SuperStar" class="headerlink" title="SuperStar"></a>SuperStar</h3><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">SuperStar</span> <span class="keyword">implements</span> <span class="title">Human</span></span>&#123;</span><br><span class="line"></span><br><span class="line">    <span class="meta">@Override</span></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">sing</span><span class="params">()</span> </span>&#123;</span><br><span class="line">        System.out.println(<span class="string">&quot;SuperStar is singing&quot;</span>);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-
-
-
-<h3 id="ProxyFactory"><a href="#ProxyFactory" class="headerlink" title="ProxyFactory"></a>ProxyFactory</h3><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">/**</span></span><br><span class="line"><span class="comment"> * 代理工厂</span></span><br><span class="line"><span class="comment"> */</span></span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">ProxyFactory</span> </span>&#123;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">static</span> Object <span class="title">getProxyInstance</span><span class="params">(Object obj)</span> </span>&#123;</span><br><span class="line">        MyInvocationHandler handler = <span class="keyword">new</span> MyInvocationHandler();</span><br><span class="line">        handler.bind(obj);</span><br><span class="line"></span><br><span class="line">        <span class="comment">/*</span></span><br><span class="line"><span class="comment">        * Proxy.newProxyInstance方法参数说明</span></span><br><span class="line"><span class="comment">        * 第一个参数：用哪个类加载器加载代理对象</span></span><br><span class="line"><span class="comment">        * 第二个参数：代理类需要实现的接口</span></span><br><span class="line"><span class="comment">        * 第三个参数：InvocationHandler对象。当代理类对象的方法执行时，调用InvocationHandler对象的invoke方法执行。</span></span><br><span class="line"><span class="comment">         */</span></span><br><span class="line">        <span class="keyword">return</span> Proxy.newProxyInstance(</span><br><span class="line">                obj.getClass().getClassLoader(),</span><br><span class="line">                obj.getClass().getInterfaces(),</span><br><span class="line">                handler</span><br><span class="line">                );</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-
-
-
-<h3 id="MyInvocationHandler"><a href="#MyInvocationHandler" class="headerlink" title="MyInvocationHandler"></a>MyInvocationHandler</h3><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">MyInvocationHandler</span> <span class="keyword">implements</span> <span class="title">InvocationHandler</span> </span>&#123;</span><br><span class="line"></span><br><span class="line">    <span class="comment">//被代理对象</span></span><br><span class="line">    <span class="keyword">private</span> Object obj;</span><br><span class="line"></span><br><span class="line">    <span class="comment">//绑定被代理对象</span></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">bind</span><span class="params">(Object obj)</span> </span>&#123;</span><br><span class="line">        <span class="keyword">this</span>.obj = obj;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="comment">/**</span></span><br><span class="line"><span class="comment">     *</span></span><br><span class="line"><span class="comment">     * <span class="doctag">@param</span> proxy 代理对象</span></span><br><span class="line"><span class="comment">     * <span class="doctag">@param</span> method 代理对象调用的方法</span></span><br><span class="line"><span class="comment">     * <span class="doctag">@param</span> args 调用方法的参数</span></span><br><span class="line"><span class="comment">     * <span class="doctag">@return</span> 方法返回值</span></span><br><span class="line"><span class="comment">     * <span class="doctag">@throws</span> Throwable</span></span><br><span class="line"><span class="comment">     */</span></span><br><span class="line">    <span class="meta">@Override</span></span><br><span class="line">    <span class="function"><span class="keyword">public</span> Object <span class="title">invoke</span><span class="params">(Object proxy, Method method, Object[] args)</span> <span class="keyword">throws</span> Throwable </span>&#123;</span><br><span class="line">        System.out.println(<span class="string">&quot;经纪人进行准备工作&quot;</span>);</span><br><span class="line">        <span class="comment">/*</span></span><br><span class="line"><span class="comment">        * method.invoke方法介绍</span></span><br><span class="line"><span class="comment">        * 第一个参数：被代理对象</span></span><br><span class="line"><span class="comment">        * 第二个参数：传入到被代理对象同名方法的参数列表</span></span><br><span class="line"><span class="comment">        * 返回值：被代理对象调用方法的返回值</span></span><br><span class="line"><span class="comment">         */</span></span><br><span class="line">        Object result = method.invoke(obj, args);</span><br><span class="line">        System.out.println(<span class="string">&quot;经纪人进行收尾工作&quot;</span>);</span><br><span class="line">        <span class="keyword">return</span> result;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-
-
-
-<h3 id="Client"><a href="#Client" class="headerlink" title="Client"></a>Client</h3><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">Client</span> </span>&#123;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">main</span><span class="params">(String[] args)</span> </span>&#123;</span><br><span class="line">        Human starAgent = (Human) ProxyFactory.getProxyInstance(<span class="keyword">new</span> SuperStar());</span><br><span class="line">        starAgent.sing();</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-
-<p>执行结果如下：</p>
-<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">经纪人进行准备工作</span><br><span class="line">SuperStar is singing</span><br><span class="line">经纪人进行收尾工作</span><br></pre></td></tr></table></figure>
-
-
+<ol>
+<li><p>启动程序</p>
+</li>
+<li><p>打开cmd输入命令</p>
+<figure class="highlight cmd"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">telnet <span class="number">127</span>.<span class="number">0</span>.<span class="number">0</span>.<span class="number">1</span> <span class="number">6666</span></span><br></pre></td></tr></table></figure></li>
+<li><p>之后输入 ctrl + ]，进入交互界面</p>
+<p><img src="/notes/2021/07/11/Netty/bio/image-20201121181654292.png"></p>
+</li>
+<li><p>输入<code>send hello</code></p>
+<figure class="highlight cmd"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">Microsoft Telnet&gt; send hello</span><br><span class="line">发送字符串 hello</span><br></pre></td></tr></table></figure></li>
+<li><p>程序运行输出如下：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">服务器启动了</span><br><span class="line">连接到一个客户端</span><br><span class="line">hello</span><br></pre></td></tr></table></figure></li>
+</ol>
+<h2 id="BIO问题分析"><a href="#BIO问题分析" class="headerlink" title="BIO问题分析"></a>BIO问题分析</h2><ol>
+<li>每个请求都需要创建独立的线程，与对应的客户端进行数据Read，业务处理，数据write</li>
+<li>当并发量较大时，需要创建大量线程来处理连接，系统资源占用较大</li>
+<li>连接建立后，如果当前线程暂时没有数据可读，则线程就阻塞在Read操作上，造成线程资源浪费</li>
+</ol>
 
       
     </div>
@@ -258,7 +241,7 @@
   
   
   <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
-    <link itemprop="mainEntityOfPage" href="https://singglexgc.github.io/notes/2021/06/13/%E8%AE%BE%E8%AE%A1%E6%A8%A1%E5%BC%8F/%E8%81%8C%E8%B4%A3%E9%93%BE%E6%A8%A1%E5%BC%8F-chain-of-responsibility/">
+    <link itemprop="mainEntityOfPage" href="https://singglexgc.github.io/notes/2021/07/11/Netty/io%E6%A8%A1%E5%9E%8B/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
       <meta itemprop="image" content="/notes/images/avatar.gif">
@@ -272,7 +255,7 @@
       <header class="post-header">
         <h2 class="post-title" itemprop="name headline">
           
-            <a href="/notes/2021/06/13/%E8%AE%BE%E8%AE%A1%E6%A8%A1%E5%BC%8F/%E8%81%8C%E8%B4%A3%E9%93%BE%E6%A8%A1%E5%BC%8F-chain-of-responsibility/" class="post-title-link" itemprop="url">职责链模式(Chain of Responsibility)</a>
+            <a href="/notes/2021/07/11/Netty/io%E6%A8%A1%E5%9E%8B/" class="post-title-link" itemprop="url">IO模型</a>
         </h2>
 
         <div class="post-meta">
@@ -283,7 +266,7 @@
               <span class="post-meta-item-text">发表于</span>
               
 
-              <time title="创建时间：2021-06-13 18:17:08 / 修改时间：18:17:55" itemprop="dateCreated datePublished" datetime="2021-06-13T18:17:08+08:00">2021-06-13</time>
+              <time title="创建时间：2021-07-11 00:49:25 / 修改时间：00:50:35" itemprop="dateCreated datePublished" datetime="2021-07-11T00:49:25+08:00">2021-07-11</time>
             </span>
             <span class="post-meta-item">
               <span class="post-meta-item-icon">
@@ -291,7 +274,7 @@
               </span>
               <span class="post-meta-item-text">分类于</span>
                 <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-                  <a href="/notes/categories/%E8%AE%BE%E8%AE%A1%E6%A8%A1%E5%BC%8F/" itemprop="url" rel="index"><span itemprop="name">设计模式</span></a>
+                  <a href="/notes/categories/Netty/" itemprop="url" rel="index"><span itemprop="name">Netty</span></a>
                 </span>
             </span>
 
@@ -306,37 +289,16 @@
     <div class="post-body" itemprop="articleBody">
 
       
-          <h2 id="类图"><a href="#类图" class="headerlink" title="类图"></a>类图</h2><p>职责链的类图如下：</p>
-<p><img src="/notes/2021/06/13/%E8%AE%BE%E8%AE%A1%E6%A8%A1%E5%BC%8F/%E8%81%8C%E8%B4%A3%E9%93%BE%E6%A8%A1%E5%BC%8F-chain-of-responsibility/20210601301.png" alt="职责链模式类图"></p>
-<p>职责链模式包含如下角色：</p>
-<ul>
-<li>抽象处理者(AbstractHandler)角色：定义一个处理请求的接口，包含抽象处理方法和后继连接</li>
-<li>具体处理者(ConcreteHandler)角色：实现抽象处理者的处理方法，判断能够处理本次请求，如果能处理则处理请求，否则将请求转给它的后继者。</li>
-<li>客户端(Client)角色：创建处理链，并将请求提交给链头的具体处理者</li>
-</ul>
-<h2 id="实例"><a href="#实例" class="headerlink" title="实例"></a>实例</h2><p>公司有两个角色，manager和boss。</p>
-<p>当员工需要报销，需要向manager提交申请。</p>
-<p>manager在500元以下可以同意报销。金额超出或等于500元，需要将报销请求提交给boss。</p>
-<p>boss在5000以下可以同意报销。</p>
-<h3 id="Handler"><a href="#Handler" class="headerlink" title="Handler"></a>Handler</h3><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">@Data</span></span><br><span class="line"><span class="keyword">public</span> <span class="keyword">abstract</span> <span class="class"><span class="keyword">class</span> <span class="title">Handler</span> </span>&#123;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">private</span> Handler processor;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">abstract</span> <span class="keyword">void</span> <span class="title">handleRequest</span><span class="params">(<span class="keyword">int</span> price)</span></span>;</span><br><span class="line"></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-
-
-
-<h3 id="Manager"><a href="#Manager" class="headerlink" title="Manager"></a>Manager</h3><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">Manager</span> <span class="keyword">extends</span> <span class="title">Handler</span> </span>&#123;</span><br><span class="line"></span><br><span class="line">    <span class="meta">@Override</span></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">handleRequest</span><span class="params">(<span class="keyword">int</span> price)</span> </span>&#123;</span><br><span class="line">        <span class="keyword">if</span> (price &lt; <span class="number">500</span>) &#123;</span><br><span class="line">            System.out.println(<span class="string">&quot;经理同意报销成功&quot;</span>);</span><br><span class="line">        &#125; <span class="keyword">else</span> &#123;</span><br><span class="line">            <span class="keyword">if</span> (getProcessor() != <span class="keyword">null</span>) &#123;</span><br><span class="line">                getProcessor().handleRequest(price);</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-
-
-
-<h3 id="Boss"><a href="#Boss" class="headerlink" title="Boss"></a>Boss</h3><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">Boss</span> <span class="keyword">extends</span>  <span class="title">Handler</span> </span>&#123;</span><br><span class="line"></span><br><span class="line">    <span class="meta">@Override</span></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">handleRequest</span><span class="params">(<span class="keyword">int</span> price)</span> </span>&#123;</span><br><span class="line">        <span class="keyword">if</span> (price &lt; <span class="number">5000</span>) &#123;</span><br><span class="line">            System.out.println(<span class="string">&quot;boss同意报销&quot;</span>);</span><br><span class="line">        &#125; <span class="keyword">else</span> &#123;</span><br><span class="line">            System.out.println(<span class="string">&quot;boss不允许报销&quot;</span>);</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-
-
-
-<h3 id="Client"><a href="#Client" class="headerlink" title="Client"></a>Client</h3><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">Client</span> </span>&#123;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">main</span><span class="params">(String[] args)</span> </span>&#123;</span><br><span class="line"></span><br><span class="line">        <span class="comment">//创建职责链</span></span><br><span class="line">        Handler manager = <span class="keyword">new</span> Manager();</span><br><span class="line">        manager.setProcessor(<span class="keyword">new</span> Boss());</span><br><span class="line"></span><br><span class="line">        <span class="comment">//请求报销 100 元</span></span><br><span class="line">        manager.handleRequest(<span class="number">100</span>);</span><br><span class="line"></span><br><span class="line">        <span class="comment">//请求报销 600 元</span></span><br><span class="line">        manager.handleRequest(<span class="number">600</span>);</span><br><span class="line"></span><br><span class="line">        <span class="comment">//请求报销 5100 元</span></span><br><span class="line">        manager.handleRequest(<span class="number">5100</span>);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-
-
-
-<h3 id="执行结果"><a href="#执行结果" class="headerlink" title="执行结果"></a>执行结果</h3><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">经理同意报销成功</span><br><span class="line">boss同意报销</span><br><span class="line">boss不允许报销</span><br></pre></td></tr></table></figure>
-
-
+          <p>IO模型的简单理解：就是用什么样的通道进行数据的接收和发送，很大程度上决定了程序通信的性能，</p>
+<p>Java共支持3种网络编程模型/IO模型：BIO、NIO、AIO.</p>
+<p>Java BIO：同步并阻塞(<strong>传统阻塞型</strong>)，服务器实现模式为一个连接一个线程，即客户端有连接请求时服务器端就需要启动一个线程进行处理，如果这个连接不做任何事情就会造成不必要的线程开销。</p>
+<p>Java NIO：<strong>同步非阻塞</strong>，服务器实现模型为一个线程处理多个请求(连接)，即客户端发送的连接请求都会注册在多路复用器上，多路复用器轮询到连接有I/O请求就进行处理。</p>
+<p>Java AIO：<strong>异步非阻塞</strong>，AIO引入异步通道的概念，采用了Proactor模式，简化了程序编写，有效的请求才启动线程，它的特点是先有操作系统完成后才通知服务端程序启动线程去处理，一般适用于连接数较多且连接时间较长的应用。</p>
+<h2 id="BIO、NIO、AIO使用场景分析"><a href="#BIO、NIO、AIO使用场景分析" class="headerlink" title="BIO、NIO、AIO使用场景分析"></a>BIO、NIO、AIO使用场景分析</h2><ol>
+<li>BIO方式适用于连接数目比较小且固定的架构，这种方式对服务器资源要求比较高，并发局限于应用中，JDK1.4以前的唯一选择，但程序简单易理解</li>
+<li>NIO方式适用于<strong>连接数目多且连接比较短</strong>(轻操作)的架构，比如聊天服务器，弹幕系统，服务器间通讯等。编程比较复杂，JDK1.4开始支持。</li>
+<li>AIO方式适用于<strong>连接数目多且连接比较长</strong>(重操作)的架构，比如相册服务器，充分调用OS参与并发操作，编程比较复杂，JDK7开始支持。</li>
+</ol>
 
       
     </div>
@@ -355,7 +317,7 @@
 
   
   <nav class="pagination">
-    <a class="extend prev" rel="prev" href="/notes/page/6/"><i class="fa fa-angle-left" aria-label="上一页"></i></a><a class="page-number" href="/notes/">1</a><span class="space">&hellip;</span><a class="page-number" href="/notes/page/6/">6</a><span class="page-number current">7</span><a class="page-number" href="/notes/page/8/">8</a><span class="space">&hellip;</span><a class="page-number" href="/notes/page/14/">14</a><a class="extend next" rel="next" href="/notes/page/8/"><i class="fa fa-angle-right" aria-label="下一页"></i></a>
+    <a class="extend prev" rel="prev" href="/notes/page/6/"><i class="fa fa-angle-left" aria-label="上一页"></i></a><a class="page-number" href="/notes/">1</a><span class="space">&hellip;</span><a class="page-number" href="/notes/page/6/">6</a><span class="page-number current">7</span><a class="page-number" href="/notes/page/8/">8</a><span class="space">&hellip;</span><a class="page-number" href="/notes/page/18/">18</a><a class="extend next" rel="next" href="/notes/page/8/"><i class="fa fa-angle-right" aria-label="下一页"></i></a>
   </nav>
 
 
@@ -421,7 +383,7 @@
       <div class="site-state-item site-state-posts">
           <a href="/notes/archives/">
         
-          <span class="site-state-item-count">27</span>
+          <span class="site-state-item-count">35</span>
           <span class="site-state-item-name">日志</span>
         </a>
       </div>

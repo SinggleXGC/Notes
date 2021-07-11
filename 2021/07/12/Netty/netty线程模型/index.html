@@ -1,0 +1,530 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
+<meta name="theme-color" content="#222">
+<meta name="generator" content="Hexo 5.4.0">
+  <link rel="apple-touch-icon" sizes="180x180" href="/notes/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/notes/images/favicon-32x32-next.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/notes/images/favicon-16x16-next.png">
+  <link rel="mask-icon" href="/notes/images/logo.svg" color="#222">
+
+<link rel="stylesheet" href="/notes/css/main.css">
+
+
+<link rel="stylesheet" href="/notes/lib/font-awesome/css/all.min.css">
+
+<script id="hexo-configurations">
+    var NexT = window.NexT || {};
+    var CONFIG = {"hostname":"singglexgc.github.io","root":"/notes/","scheme":"Gemini","version":"7.8.0","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12,"onmobile":false},"copycode":{"enable":false,"show_result":false,"style":null},"back2top":{"enable":true,"sidebar":false,"scrollpercent":false},"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":false,"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"algolia":{"hits":{"per_page":10},"labels":{"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}},"localsearch":{"enable":false,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}}};
+  </script>
+
+  <meta name="description" content="线程模型基本介绍不同的线程模型对程序的性能有着很大影响。 目前存在的线程模型有：  传统阻塞I&#x2F;O服务模型  Reactor模型 根据Reactor的数量和处理资源池线程的不同，有3种典型的实现：  单Reactor单线程 单Reactor多线程 主从Reactor多线程   Netty线程模式(Netty主要基于主从Reactor多线程模型做了一定的改进)   传统阻塞I&#x2F;O服务模型 模型特点">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Netty线程模型">
+<meta property="og:url" content="https://singglexgc.github.io/notes/2021/07/12/Netty/netty%E7%BA%BF%E7%A8%8B%E6%A8%A1%E5%9E%8B/index.html">
+<meta property="og:site_name" content="Notes">
+<meta property="og:description" content="线程模型基本介绍不同的线程模型对程序的性能有着很大影响。 目前存在的线程模型有：  传统阻塞I&#x2F;O服务模型  Reactor模型 根据Reactor的数量和处理资源池线程的不同，有3种典型的实现：  单Reactor单线程 单Reactor多线程 主从Reactor多线程   Netty线程模式(Netty主要基于主从Reactor多线程模型做了一定的改进)   传统阻塞I&#x2F;O服务模型 模型特点">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="https://singglexgc.github.io/notes/2021/07/12/Netty/netty%E7%BA%BF%E7%A8%8B%E6%A8%A1%E5%9E%8B/image-20210204150132837.png">
+<meta property="og:image" content="https://singglexgc.github.io/notes/2021/07/12/Netty/netty%E7%BA%BF%E7%A8%8B%E6%A8%A1%E5%9E%8B/image-20210204151832927.png">
+<meta property="og:image" content="https://singglexgc.github.io/notes/2021/07/12/Netty/netty%E7%BA%BF%E7%A8%8B%E6%A8%A1%E5%9E%8B/image-20210204152553499.png">
+<meta property="og:image" content="https://singglexgc.github.io/notes/2021/07/12/Netty/netty%E7%BA%BF%E7%A8%8B%E6%A8%A1%E5%9E%8B/image-20210204153812322.png">
+<meta property="og:image" content="https://singglexgc.github.io/notes/2021/07/12/Netty/netty%E7%BA%BF%E7%A8%8B%E6%A8%A1%E5%9E%8B/image-20210204171908996.png">
+<meta property="og:image" content="https://singglexgc.github.io/notes/2021/07/12/Netty/netty%E7%BA%BF%E7%A8%8B%E6%A8%A1%E5%9E%8B/image-20210204195851100.png">
+<meta property="og:image" content="https://singglexgc.github.io/notes/2021/07/12/Netty/netty%E7%BA%BF%E7%A8%8B%E6%A8%A1%E5%9E%8B/image-20210204204654252.png">
+<meta property="article:published_time" content="2021-07-11T16:21:31.000Z">
+<meta property="article:modified_time" content="2021-07-11T16:22:52.271Z">
+<meta property="article:author" content="Sinngle">
+<meta property="article:tag" content="Netty">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://singglexgc.github.io/notes/2021/07/12/Netty/netty%E7%BA%BF%E7%A8%8B%E6%A8%A1%E5%9E%8B/image-20210204150132837.png">
+
+<link rel="canonical" href="https://singglexgc.github.io/notes/2021/07/12/Netty/netty%E7%BA%BF%E7%A8%8B%E6%A8%A1%E5%9E%8B/">
+
+
+<script id="page-configurations">
+  // https://hexo.io/docs/variables.html
+  CONFIG.page = {
+    sidebar: "",
+    isHome : false,
+    isPost : true,
+    lang   : 'zh-CN'
+  };
+</script>
+
+  <title>Netty线程模型 | Notes</title>
+  
+
+
+
+
+
+
+  <noscript>
+  <style>
+  .use-motion .brand,
+  .use-motion .menu-item,
+  .sidebar-inner,
+  .use-motion .post-block,
+  .use-motion .pagination,
+  .use-motion .comments,
+  .use-motion .post-header,
+  .use-motion .post-body,
+  .use-motion .collection-header { opacity: initial; }
+
+  .use-motion .site-title,
+  .use-motion .site-subtitle {
+    opacity: initial;
+    top: initial;
+  }
+
+  .use-motion .logo-line-before i { left: initial; }
+  .use-motion .logo-line-after i { right: initial; }
+  </style>
+</noscript>
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage">
+  <div class="container use-motion">
+    <div class="headband"></div>
+
+    <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="切换导航栏">
+      <span class="toggle-line toggle-line-first"></span>
+      <span class="toggle-line toggle-line-middle"></span>
+      <span class="toggle-line toggle-line-last"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/notes/" class="brand" rel="start">
+      <span class="logo-line-before"><i></i></span>
+      <h1 class="site-title">Notes</h1>
+      <span class="logo-line-after"><i></i></span>
+    </a>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger">
+    </div>
+  </div>
+</div>
+
+
+
+
+<nav class="site-nav">
+  <ul id="menu" class="main-menu menu">
+        <li class="menu-item menu-item-home">
+
+    <a href="/notes/" rel="section"><i class="fa fa-home fa-fw"></i>首页</a>
+
+  </li>
+        <li class="menu-item menu-item-archives">
+
+    <a href="/notes/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>归档</a>
+
+  </li>
+  </ul>
+</nav>
+
+
+
+
+</div>
+    </header>
+
+    
+  <div class="back-to-top">
+    <i class="fa fa-arrow-up"></i>
+    <span>0%</span>
+  </div>
+
+
+    <main class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          
+
+          <div class="content post posts-expand">
+            
+
+    
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="https://singglexgc.github.io/notes/2021/07/12/Netty/netty%E7%BA%BF%E7%A8%8B%E6%A8%A1%E5%9E%8B/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/notes/images/avatar.gif">
+      <meta itemprop="name" content="Sinngle">
+      <meta itemprop="description" content="">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Notes">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          Netty线程模型
+        </h1>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+              
+
+              <time title="创建时间：2021-07-12 00:21:31 / 修改时间：00:22:52" itemprop="dateCreated datePublished" datetime="2021-07-12T00:21:31+08:00">2021-07-12</time>
+            </span>
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-folder"></i>
+              </span>
+              <span class="post-meta-item-text">分类于</span>
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/notes/categories/Netty/" itemprop="url" rel="index"><span itemprop="name">Netty</span></a>
+                </span>
+            </span>
+
+          
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+        <h2 id="线程模型基本介绍"><a href="#线程模型基本介绍" class="headerlink" title="线程模型基本介绍"></a>线程模型基本介绍</h2><p>不同的线程模型对程序的性能有着很大影响。</p>
+<p>目前存在的线程模型有：</p>
+<ul>
+<li><p>传统阻塞I/O服务模型</p>
+</li>
+<li><p>Reactor模型</p>
+<p>根据Reactor的数量和处理资源池线程的不同，有3种典型的实现：</p>
+<ul>
+<li>单Reactor单线程</li>
+<li>单Reactor多线程</li>
+<li>主从Reactor多线程</li>
+</ul>
+</li>
+<li><p>Netty线程模式(Netty主要基于<strong>主从Reactor多线程模型</strong>做了一定的改进)</p>
+</li>
+</ul>
+<h2 id="传统阻塞I-O服务模型"><a href="#传统阻塞I-O服务模型" class="headerlink" title="传统阻塞I/O服务模型"></a>传统阻塞I/O服务模型</h2><p><img src="/notes/2021/07/12/Netty/netty%E7%BA%BF%E7%A8%8B%E6%A8%A1%E5%9E%8B/image-20210204150132837.png"></p>
+<p><strong>模型特点</strong></p>
+<ol>
+<li>采用阻塞IO模式获取输入的数据</li>
+<li>每个连接都需要独立的线程完成数据的输入、业务处理、数据返回</li>
+</ol>
+<p><strong>问题分析</strong></p>
+<ol>
+<li>当并发数很大，就会创建大量的线程，占用很大系统资源</li>
+<li>连接创建后，如果当前线程暂时没有数据可读，该线程会阻塞在read操作，造成线程资源浪费</li>
+</ol>
+<h2 id="Reactor模式"><a href="#Reactor模式" class="headerlink" title="Reactor模式"></a>Reactor模式</h2><p>Reactor对应的叫法：</p>
+<ol>
+<li>反应器模式</li>
+<li>分发者模式(Dispatcher)</li>
+<li>通知者模式(notifier)</li>
+</ol>
+<h3 id="针对传统阻塞IO服务模型解决方案"><a href="#针对传统阻塞IO服务模型解决方案" class="headerlink" title="针对传统阻塞IO服务模型解决方案"></a>针对传统阻塞IO服务模型解决方案</h3><ol>
+<li>针对I/O复用模型：多个连接共用一个阻塞对象，应用程序只需要在一个阻塞对象等待，无需阻塞等待所有连接。当某个连接有新的数据可以处理时，操作系统通知应用程序，线程从阻塞状态返回，开始进行业务处理。</li>
+<li>基于线程池复用线程资源：不必为每个连接创建线程，将连接后的业务处理任务分配给线程进行处理，一个线程可以处理多个连接的业务</li>
+</ol>
+<h3 id="模型图"><a href="#模型图" class="headerlink" title="模型图"></a>模型图</h3><p><img src="/notes/2021/07/12/Netty/netty%E7%BA%BF%E7%A8%8B%E6%A8%A1%E5%9E%8B/image-20210204151832927.png"></p>
+<p>I/O复用结合线程池就是Reactor模式基本设计思想。</p>
+<ol>
+<li>Reactor模式，通过一个或多个输入同时传递给服务处理器的模式(基于事件驱动)</li>
+<li>服务器端程序处理传入的多个请求，并将它们同步分派到相应的处理线程，所以也叫分发者(Dispatcher)模式</li>
+<li>Reactor模式使用IO复用监听事件，收到事件后，分发给某个线程(进程)，这就是网络服务器高并发处理关键</li>
+</ol>
+<h3 id="核心组成"><a href="#核心组成" class="headerlink" title="核心组成"></a>核心组成</h3><ol>
+<li>Reactor：Reactor在一个单独的线程中运行，负责监听和分发事件，分发给适当的处理程序来对IO事件进行反应。</li>
+<li>Handlers：处理程序执行I/O事件要完成的实际事件。</li>
+</ol>
+<h2 id="单Reactor单线程"><a href="#单Reactor单线程" class="headerlink" title="单Reactor单线程"></a>单Reactor单线程</h2><p><img src="/notes/2021/07/12/Netty/netty%E7%BA%BF%E7%A8%8B%E6%A8%A1%E5%9E%8B/image-20210204152553499.png"></p>
+<p><strong>说明：</strong></p>
+<ol>
+<li>Select可以实现应用程序通过一个阻塞对象监听多路连接请求</li>
+<li>Reactor对象通过Select监听客户连接事件，收到事件后通过Dispatcher进行分发</li>
+<li>如果是连接事件，由Acceptor通过accept处理连接请求，然后创建一个Handler对象来处理连接后的后续业务处理</li>
+<li>如果不是连接事件，则会被分发到Handler来处理</li>
+<li>Handler会完成read -&gt; 业务处理 -&gt; send的完整业务流程</li>
+</ol>
+<p><strong>方案优缺点分析：</strong></p>
+<ol>
+<li>优点：模型简单，没有多线程、进程通信、竞争的问题，全部都在一个线程中完成</li>
+<li>缺点：性能问题，只有一个线程，无法完全发挥CPU的性能。Handler在处理某个连接的业务时，整个进程无法处理其他连接事件，很容易造成性能瓶颈</li>
+<li>缺点：可靠性问题，线程意外终止，或者进入死循环，会导致整个系统通信模块不可用，不能接收或处理外部消息，造成节点故障</li>
+<li>使用场景：客户端的数量有限，业务处理非常快速。</li>
+</ol>
+<h2 id="单Reactor多线程"><a href="#单Reactor多线程" class="headerlink" title="单Reactor多线程"></a>单Reactor多线程</h2><p><img src="/notes/2021/07/12/Netty/netty%E7%BA%BF%E7%A8%8B%E6%A8%A1%E5%9E%8B/image-20210204153812322.png"></p>
+<p><strong>说明：</strong></p>
+<ol>
+<li>Reactor对象通过select监控客户端请求事件，收到事件后，通过dispatch进行分发</li>
+<li>如果建立连接请求，则Acceptor通过accept处理连接请求，然后创建一个Handler对象处理完成连接后的请求</li>
+<li>如果不是连接请求，则由Reactor分发调用连接对应的handler来处理</li>
+<li>handler只负责响应事件，不做具体的业务处理，通过read读取数据后，会分发给后面的worker线程池中的某个线程完成业务处理</li>
+<li>worker线程池会分配独立线程完成业务，并将结果返回给handler</li>
+<li>handler收到响应后，会通过send将结果发送给Client</li>
+</ol>
+<p><strong>方案优缺点：</strong></p>
+<ol>
+<li>优点：可以充分用多核CPU的处理能力</li>
+<li>缺点：多线程数据共享和访问比较复杂，reactor处理所有事件的监听和响应，在单线程运行，在高并发场景下容易出现性能瓶颈</li>
+</ol>
+<h2 id="主从Reactor多线程"><a href="#主从Reactor多线程" class="headerlink" title="主从Reactor多线程"></a>主从Reactor多线程</h2><p><img src="/notes/2021/07/12/Netty/netty%E7%BA%BF%E7%A8%8B%E6%A8%A1%E5%9E%8B/image-20210204171908996.png"></p>
+<p><strong>说明：</strong></p>
+<ol>
+<li>Reactor主线程MainReactor对象通过select监听连接事件，收到事件后，通过Acceptor对象处理连接请求</li>
+<li>当Acceptor处理连接事件后，MainReactor将连接分配给SubReactor</li>
+<li>SubReactor将连接加入连接队列进行监听，并创建Handler进行各种事件处理</li>
+<li>当有新事件发生时，SubReactor就会调用对应的handler进行处理。</li>
+<li>handler通过read从连接读取数据，分发给worker线程池处理</li>
+<li>worker线程池分配独立的worker线程进行业务处理，并返回结果</li>
+<li>handler收到结果后，通过send发生将结果返回给client</li>
+<li>Reactor主线程可以有多个Reactor子线程，即MainReactor可以关联多个SubReactor</li>
+</ol>
+<p><strong>方案优缺点：</strong></p>
+<ol>
+<li>优点：父线程与子线程的数据交互简单职责明确，父线程只需要接收新连接，子线程完成后续的业务处理</li>
+<li>缺点：编程复杂</li>
+</ol>
+<h2 id="Netty模型"><a href="#Netty模型" class="headerlink" title="Netty模型"></a>Netty模型</h2><h3 id="简单版"><a href="#简单版" class="headerlink" title="简单版"></a>简单版</h3><p><img src="/notes/2021/07/12/Netty/netty%E7%BA%BF%E7%A8%8B%E6%A8%A1%E5%9E%8B/image-20210204195851100.png"></p>
+<p><strong>说明：</strong></p>
+<ol>
+<li>BossGroup线程维护Selector，只关注accept</li>
+<li>当接收到Accept事件，获取到对应的SocketChannel，封装成NIOSocketChannel，然后注册到WorkerGroup的Selector中，并进行维护</li>
+<li>当Worker线程监听到selector中通道发生自己感兴趣的事件后，就进行处理</li>
+</ol>
+<h3 id="详细版"><a href="#详细版" class="headerlink" title="详细版"></a>详细版</h3><p><img src="/notes/2021/07/12/Netty/netty%E7%BA%BF%E7%A8%8B%E6%A8%A1%E5%9E%8B/image-20210204204654252.png"></p>
+<p><strong>说明：</strong></p>
+<ol>
+<li>Netty抽象出两个线程组：BossGroup负责客户端的接收，WorkerGroup专门负责网络的读写</li>
+<li>BossGroup和WorkerGroup都是NioEventLoopGroup类型</li>
+<li>NioEventLoopGroup是一个事件循环组，里面有多个事件循环，每一个事件循环都是NioEventLoop</li>
+<li>NioEventLoop表示一个不断循环的执行处理任务的线程，每个NioEventLoop都有一个Selector，用于监听绑定在其上的socket的网络通讯</li>
+<li>NioEventLoopGroup可以有多个线程，即有多个NioEventLoop</li>
+<li>每个Boss NioEventLoop循环执行的步骤：<ol>
+<li>轮询accept事件</li>
+<li>处理accept事件，与client建立连接，生成NioSocketChannel，并将其注册到某个Worker NioEventLoop上的Selector</li>
+<li>处理任务队列的任务，即runAllTasks</li>
+</ol>
+</li>
+<li>每个Worker NioEventLoop循环执行的步骤：<ol>
+<li>轮询read、write事件</li>
+<li>处理io事件，即read、write事件，在对应的NioSocketChannel处理</li>
+<li>处理任务队列的任务，即runAllTasks</li>
+</ol>
+</li>
+<li>每个Worker NioEventLoop处理业务时，会使用pipeline(管道)，pipeline包含了channel，即通过pipeline可以获取到对应通道，管道中维护了很多的处理器</li>
+</ol>
+
+    </div>
+
+    
+    
+    
+
+      <footer class="post-footer">
+          <div class="post-tags">
+              <a href="/notes/tags/Netty/" rel="tag"># Netty</a>
+          </div>
+
+        
+
+
+        
+    <div class="post-nav">
+      <div class="post-nav-item">
+    <a href="/notes/2021/07/12/Netty/netty%E7%AE%80%E4%BB%8B/" rel="prev" title="Netty简介">
+      <i class="fa fa-chevron-left"></i> Netty简介
+    </a></div>
+      <div class="post-nav-item">
+    <a href="/notes/2021/07/12/Netty/netty%E4%BD%BF%E7%94%A8/" rel="next" title="Netty使用">
+      Netty使用 <i class="fa fa-chevron-right"></i>
+    </a></div>
+    </div>
+      </footer>
+    
+  </article>
+  
+  
+  
+
+
+
+          </div>
+          
+
+<script>
+  window.addEventListener('tabs:register', () => {
+    let { activeClass } = CONFIG.comments;
+    if (CONFIG.comments.storage) {
+      activeClass = localStorage.getItem('comments_active') || activeClass;
+    }
+    if (activeClass) {
+      let activeTab = document.querySelector(`a[href="#comment-${activeClass}"]`);
+      if (activeTab) {
+        activeTab.click();
+      }
+    }
+  });
+  if (CONFIG.comments.storage) {
+    window.addEventListener('tabs:click', event => {
+      if (!event.target.matches('.tabs-comment .tab-content .tab-pane')) return;
+      let commentClass = event.target.classList[1];
+      localStorage.setItem('comments_active', commentClass);
+    });
+  }
+</script>
+
+        </div>
+          
+  
+  <div class="toggle sidebar-toggle">
+    <span class="toggle-line toggle-line-first"></span>
+    <span class="toggle-line toggle-line-middle"></span>
+    <span class="toggle-line toggle-line-last"></span>
+  </div>
+
+  <aside class="sidebar">
+    <div class="sidebar-inner">
+
+      <ul class="sidebar-nav motion-element">
+        <li class="sidebar-nav-toc">
+          文章目录
+        </li>
+        <li class="sidebar-nav-overview">
+          站点概览
+        </li>
+      </ul>
+
+      <!--noindex-->
+      <div class="post-toc-wrap sidebar-panel">
+          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#%E7%BA%BF%E7%A8%8B%E6%A8%A1%E5%9E%8B%E5%9F%BA%E6%9C%AC%E4%BB%8B%E7%BB%8D"><span class="nav-number">1.</span> <span class="nav-text">线程模型基本介绍</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E4%BC%A0%E7%BB%9F%E9%98%BB%E5%A1%9EI-O%E6%9C%8D%E5%8A%A1%E6%A8%A1%E5%9E%8B"><span class="nav-number">2.</span> <span class="nav-text">传统阻塞I&#x2F;O服务模型</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Reactor%E6%A8%A1%E5%BC%8F"><span class="nav-number">3.</span> <span class="nav-text">Reactor模式</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E9%92%88%E5%AF%B9%E4%BC%A0%E7%BB%9F%E9%98%BB%E5%A1%9EIO%E6%9C%8D%E5%8A%A1%E6%A8%A1%E5%9E%8B%E8%A7%A3%E5%86%B3%E6%96%B9%E6%A1%88"><span class="nav-number">3.1.</span> <span class="nav-text">针对传统阻塞IO服务模型解决方案</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%A8%A1%E5%9E%8B%E5%9B%BE"><span class="nav-number">3.2.</span> <span class="nav-text">模型图</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%A0%B8%E5%BF%83%E7%BB%84%E6%88%90"><span class="nav-number">3.3.</span> <span class="nav-text">核心组成</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%8D%95Reactor%E5%8D%95%E7%BA%BF%E7%A8%8B"><span class="nav-number">4.</span> <span class="nav-text">单Reactor单线程</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%8D%95Reactor%E5%A4%9A%E7%BA%BF%E7%A8%8B"><span class="nav-number">5.</span> <span class="nav-text">单Reactor多线程</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E4%B8%BB%E4%BB%8EReactor%E5%A4%9A%E7%BA%BF%E7%A8%8B"><span class="nav-number">6.</span> <span class="nav-text">主从Reactor多线程</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Netty%E6%A8%A1%E5%9E%8B"><span class="nav-number">7.</span> <span class="nav-text">Netty模型</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E7%AE%80%E5%8D%95%E7%89%88"><span class="nav-number">7.1.</span> <span class="nav-text">简单版</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E8%AF%A6%E7%BB%86%E7%89%88"><span class="nav-number">7.2.</span> <span class="nav-text">详细版</span></a></li></ol></li></ol></div>
+      </div>
+      <!--/noindex-->
+
+      <div class="site-overview-wrap sidebar-panel">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+  <p class="site-author-name" itemprop="name">Sinngle</p>
+  <div class="site-description" itemprop="description"></div>
+</div>
+<div class="site-state-wrap motion-element">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+          <a href="/notes/archives/">
+        
+          <span class="site-state-item-count">35</span>
+          <span class="site-state-item-name">日志</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+            <a href="/notes/categories/">
+        <span class="site-state-item-count">13</span>
+        <span class="site-state-item-name">分类</span></a>
+      </div>
+      <div class="site-state-item site-state-tags">
+            <a href="/notes/tags/">
+        <span class="site-state-item-count">20</span>
+        <span class="site-state-item-name">标签</span></a>
+      </div>
+  </nav>
+</div>
+
+
+
+      </div>
+
+    </div>
+  </aside>
+  <div id="sidebar-dimmer"></div>
+
+
+      </div>
+    </main>
+
+    <footer class="footer">
+      <div class="footer-inner">
+        
+
+        
+
+<div class="copyright">
+  
+  &copy; 
+  <span itemprop="copyrightYear">2021</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">Sinngle</span>
+</div>
+  <div class="powered-by">由 <a href="https://hexo.io/" class="theme-link" rel="noopener" target="_blank">Hexo</a> & <a href="https://theme-next.org/" class="theme-link" rel="noopener" target="_blank">NexT.Gemini</a> 强力驱动
+  </div>
+
+        
+
+
+
+
+
+
+
+
+      </div>
+    </footer>
+  </div>
+
+  
+  <script src="/notes/lib/anime.min.js"></script>
+  <script src="/notes/lib/velocity/velocity.min.js"></script>
+  <script src="/notes/lib/velocity/velocity.ui.min.js"></script>
+
+<script src="/notes/js/utils.js"></script>
+
+<script src="/notes/js/motion.js"></script>
+
+
+<script src="/notes/js/schemes/pisces.js"></script>
+
+
+<script src="/notes/js/next-boot.js"></script>
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+  
+
+</body>
+</html>

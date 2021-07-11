@@ -145,7 +145,7 @@
   
   
   <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
-    <link itemprop="mainEntityOfPage" href="https://singglexgc.github.io/notes/2021/06/10/MySQL/%E4%BA%8B%E5%8A%A1%E7%9A%84%E5%9B%9B%E5%A4%A7%E7%89%B9%E6%80%A7%E5%92%8C%E9%9A%94%E7%A6%BB%E7%BA%A7%E5%88%AB%E3%80%81%E5%B9%B6%E5%8F%91%E4%BA%8B%E5%8A%A1%E4%B8%89%E5%A4%A7%E9%97%AE%E9%A2%98/">
+    <link itemprop="mainEntityOfPage" href="https://singglexgc.github.io/notes/2021/06/15/JavaSE/java%E5%8A%A8%E6%80%81%E4%BB%A3%E7%90%86/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
       <meta itemprop="image" content="/notes/images/avatar.gif">
@@ -159,7 +159,7 @@
       <header class="post-header">
         <h2 class="post-title" itemprop="name headline">
           
-            <a href="/notes/2021/06/10/MySQL/%E4%BA%8B%E5%8A%A1%E7%9A%84%E5%9B%9B%E5%A4%A7%E7%89%B9%E6%80%A7%E5%92%8C%E9%9A%94%E7%A6%BB%E7%BA%A7%E5%88%AB%E3%80%81%E5%B9%B6%E5%8F%91%E4%BA%8B%E5%8A%A1%E4%B8%89%E5%A4%A7%E9%97%AE%E9%A2%98/" class="post-title-link" itemprop="url">事务的四大特性和隔离级别、并发事务三大问题</a>
+            <a href="/notes/2021/06/15/JavaSE/java%E5%8A%A8%E6%80%81%E4%BB%A3%E7%90%86/" class="post-title-link" itemprop="url">Java动态代理</a>
         </h2>
 
         <div class="post-meta">
@@ -168,17 +168,23 @@
                 <i class="far fa-calendar"></i>
               </span>
               <span class="post-meta-item-text">发表于</span>
-              
 
-              <time title="创建时间：2021-06-10 20:43:55 / 修改时间：23:59:02" itemprop="dateCreated datePublished" datetime="2021-06-10T20:43:55+08:00">2021-06-10</time>
+              <time title="创建时间：2021-06-15 12:50:02" itemprop="dateCreated datePublished" datetime="2021-06-15T12:50:02+08:00">2021-06-15</time>
             </span>
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="far fa-calendar-check"></i>
+                </span>
+                <span class="post-meta-item-text">更新于</span>
+                <time title="修改时间：2021-06-16 16:25:07" itemprop="dateModified" datetime="2021-06-16T16:25:07+08:00">2021-06-16</time>
+              </span>
             <span class="post-meta-item">
               <span class="post-meta-item-icon">
                 <i class="far fa-folder"></i>
               </span>
               <span class="post-meta-item-text">分类于</span>
                 <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-                  <a href="/notes/categories/MySQL/" itemprop="url" rel="index"><span itemprop="name">MySQL</span></a>
+                  <a href="/notes/categories/JavaSE/" itemprop="url" rel="index"><span itemprop="name">JavaSE</span></a>
                 </span>
             </span>
 
@@ -193,51 +199,46 @@
     <div class="post-body" itemprop="articleBody">
 
       
-          <h2 id="什么是事务？"><a href="#什么是事务？" class="headerlink" title="什么是事务？"></a>什么是事务？</h2><p>事务是一个原子操作单位。一个事务内的操作要么全部成功，要么全部失败。</p>
-<h2 id="事务的四大特性"><a href="#事务的四大特性" class="headerlink" title="事务的四大特性"></a>事务的四大特性</h2><p>事务的四大特性就是ACID。</p>
-<ul>
-<li>Atomicity，原子性。事务内的操作要么全部成功，要么全部失败。</li>
-<li>Consistency，一致性。数据库的数据要么处于事务前，要么处于事务后的状态，不能同时存在新值和旧值。</li>
-<li>Isolation，隔离性。并行事务之间是互不影响的。</li>
-<li>Duration，持久性。事务提交之后，对数据的修改是持久的。</li>
-</ul>
-<h2 id="并发事务引发的三大问题"><a href="#并发事务引发的三大问题" class="headerlink" title="并发事务引发的三大问题"></a>并发事务引发的三大问题</h2><p>事务并发执行会引起三大问题：脏读、幻读、不可重复读。</p>
-<ul>
-<li><p>脏读：一个事务读取到了另一个事务未提交的数据。(<strong>读取到未提交数据</strong>)</p>
-<p>例如，事务A修改了数据，但是还未提交。此时并行执行的事务B读取到了事务A修改的数据。然后，事务A因为发生了某些错误，造成了回滚。此时，事务B读取的数据就是脏数据。</p>
-</li>
-<li><p>不可重复读：在同一事务内，事务两次读取的数据不一致。(<strong>同一条数据但不一致</strong>)</p>
-<p>例如：事务A读取了一条数据之后，事务B对该数据进行修改并提交了。然后事务A再次读取这条记录，就会发现数据不一致。</p>
-</li>
-<li><p>幻读：在同一事务内，事务的两次读取的记录数不相同。(<strong>记录数不一致</strong>)</p>
-<p>例如：事务A使用一定条件进行查询，事务B插入或删除了符合条件的记录。那么事务A在第二次查询时，查询出的记录数就会不一致。</p>
-</li>
-</ul>
-<p>看到这里，我们就会很奇怪。不是说事务具有隔离性，并行事务执行互不影响吗？</p>
-<p>不急，我们先来看看下面的事务隔离级别。</p>
-<h2 id="事务的隔离级别"><a href="#事务的隔离级别" class="headerlink" title="事务的隔离级别"></a>事务的隔离级别</h2><p>事务有四个隔离级别</p>
-<ul>
-<li><p>读未提交(Read Uncommitted)：在这个隔离级别下，一个事务可以读取到另一个事务的未提交数据。</p>
-<p>这就会造成上面的脏读、不可重复读、幻读。</p>
-</li>
-<li><p>读已提交(Read Commiteed)：在这个隔离级别下，一个事务可以读取到另一个事务的已提交数据，而不能读取未提交数据。</p>
-<p>因为一个事务不能读取到另一个事务的未提交数据。因此，可以避免脏读问题。</p>
-<p>但是，不可重复读和幻读问题依然会产生。因此，这无法阻止另一个事务对数据的修改、增加和删除等操作的提交。</p>
-</li>
-<li><p>可重复读(Repeatable Read)：在这个隔离级别下，一个事务在读取数据的时候，另一个事务不能修改该数据。</p>
-<p>这个隔离级别限制了事务对数据的修改，因此避免了事务的脏读，不可重复读问题。</p>
-<p>但是还是会存在幻读的问题。</p>
-</li>
-<li><p>序列化(Serializable)：在这个隔离级别下，事务是串行执行的，效率最低。</p>
-<p>事务串行执行，也不存在上述并行事务引发的问题，可以避免脏读、不可重复读、幻读问题。</p>
-</li>
-</ul>
-<blockquote>
-<p>到这里，我们就知道为什么并发事务会出现上述的3种问题。这是因为事务并不是完全遵循事务的隔离性。</p>
+          <blockquote>
+<p>代理模式分为静态代理和动态代理。</p>
+<p>当代理类的class文件在程序运行之前就已经存在，这就是静态代理。</p>
+<p>动态代理的代理对象在程序运行期间通过反射动态生成。</p>
 </blockquote>
-<blockquote>
-<p>划分事务隔离级别的原因是为了能够根据不同的场景选择不同的隔离级别。隔离级别越高的事务，数据库的性能就会越低。</p>
-</blockquote>
+<h2 id="静态代理"><a href="#静态代理" class="headerlink" title="静态代理"></a>静态代理</h2><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">interface</span> <span class="title">Human</span> </span>&#123;</span><br><span class="line">    </span><br><span class="line">    <span class="function"><span class="keyword">void</span> <span class="title">sing</span><span class="params">()</span></span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">SuperStar</span> <span class="keyword">implements</span> <span class="title">Human</span> </span>&#123;</span><br><span class="line">    </span><br><span class="line">    <span class="meta">@Override</span></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">sing</span><span class="params">()</span> </span>&#123;</span><br><span class="line">        System.out.println(<span class="string">&quot;SuperStar is singing&quot;</span>);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">@Data</span></span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">StarAgent</span> <span class="keyword">implements</span> <span class="title">Human</span> </span>&#123;</span><br><span class="line">    </span><br><span class="line">    <span class="keyword">private</span> Human human;</span><br><span class="line">    </span><br><span class="line">    <span class="meta">@Override</span></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">sing</span><span class="params">()</span> </span>&#123;</span><br><span class="line">        System.out.println(<span class="string">&quot;经纪人进行准备工作&quot;</span>);</span><br><span class="line">        human.sing();</span><br><span class="line">        System.out.println(<span class="string">&quot;经纪人进行收尾工作&quot;</span>);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">Client</span> </span>&#123;</span><br><span class="line">    </span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">main</span><span class="params">(String[] args)</span> </span>&#123;</span><br><span class="line">        StarAgent starAgent = <span class="keyword">new</span> StarAgent();</span><br><span class="line">        starAgent.setHuman(<span class="keyword">new</span> SuperStar());</span><br><span class="line">        starAgent.sing();</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>运行结果如下：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">经纪人进行准备工作</span><br><span class="line">SuperStar is singing</span><br><span class="line">经纪人进行收尾工作</span><br></pre></td></tr></table></figure>
+
+
+
+<h2 id="Java动态代理"><a href="#Java动态代理" class="headerlink" title="Java动态代理"></a>Java动态代理</h2><h3 id="Human"><a href="#Human" class="headerlink" title="Human"></a>Human</h3><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">interface</span> <span class="title">Human</span> </span>&#123;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">void</span> <span class="title">sing</span><span class="params">()</span></span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+
+
+<h3 id="SuperStar"><a href="#SuperStar" class="headerlink" title="SuperStar"></a>SuperStar</h3><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">SuperStar</span> <span class="keyword">implements</span> <span class="title">Human</span></span>&#123;</span><br><span class="line"></span><br><span class="line">    <span class="meta">@Override</span></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">sing</span><span class="params">()</span> </span>&#123;</span><br><span class="line">        System.out.println(<span class="string">&quot;SuperStar is singing&quot;</span>);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+
+
+<h3 id="ProxyFactory"><a href="#ProxyFactory" class="headerlink" title="ProxyFactory"></a>ProxyFactory</h3><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">/**</span></span><br><span class="line"><span class="comment"> * 代理工厂</span></span><br><span class="line"><span class="comment"> */</span></span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">ProxyFactory</span> </span>&#123;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">static</span> Object <span class="title">getProxyInstance</span><span class="params">(Object obj)</span> </span>&#123;</span><br><span class="line">        MyInvocationHandler handler = <span class="keyword">new</span> MyInvocationHandler();</span><br><span class="line">        handler.bind(obj);</span><br><span class="line"></span><br><span class="line">        <span class="comment">/*</span></span><br><span class="line"><span class="comment">        * Proxy.newProxyInstance方法参数说明</span></span><br><span class="line"><span class="comment">        * 第一个参数：用哪个类加载器加载代理对象</span></span><br><span class="line"><span class="comment">        * 第二个参数：代理类需要实现的接口</span></span><br><span class="line"><span class="comment">        * 第三个参数：InvocationHandler对象。当代理类对象的方法执行时，调用InvocationHandler对象的invoke方法执行。</span></span><br><span class="line"><span class="comment">         */</span></span><br><span class="line">        <span class="keyword">return</span> Proxy.newProxyInstance(</span><br><span class="line">                obj.getClass().getClassLoader(),</span><br><span class="line">                obj.getClass().getInterfaces(),</span><br><span class="line">                handler</span><br><span class="line">                );</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+
+
+<h3 id="MyInvocationHandler"><a href="#MyInvocationHandler" class="headerlink" title="MyInvocationHandler"></a>MyInvocationHandler</h3><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">MyInvocationHandler</span> <span class="keyword">implements</span> <span class="title">InvocationHandler</span> </span>&#123;</span><br><span class="line"></span><br><span class="line">    <span class="comment">//被代理对象</span></span><br><span class="line">    <span class="keyword">private</span> Object obj;</span><br><span class="line"></span><br><span class="line">    <span class="comment">//绑定被代理对象</span></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">bind</span><span class="params">(Object obj)</span> </span>&#123;</span><br><span class="line">        <span class="keyword">this</span>.obj = obj;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="comment">/**</span></span><br><span class="line"><span class="comment">     *</span></span><br><span class="line"><span class="comment">     * <span class="doctag">@param</span> proxy 代理对象</span></span><br><span class="line"><span class="comment">     * <span class="doctag">@param</span> method 代理对象调用的方法</span></span><br><span class="line"><span class="comment">     * <span class="doctag">@param</span> args 调用方法的参数</span></span><br><span class="line"><span class="comment">     * <span class="doctag">@return</span> 方法返回值</span></span><br><span class="line"><span class="comment">     * <span class="doctag">@throws</span> Throwable</span></span><br><span class="line"><span class="comment">     */</span></span><br><span class="line">    <span class="meta">@Override</span></span><br><span class="line">    <span class="function"><span class="keyword">public</span> Object <span class="title">invoke</span><span class="params">(Object proxy, Method method, Object[] args)</span> <span class="keyword">throws</span> Throwable </span>&#123;</span><br><span class="line">        System.out.println(<span class="string">&quot;经纪人进行准备工作&quot;</span>);</span><br><span class="line">        <span class="comment">/*</span></span><br><span class="line"><span class="comment">        * method.invoke方法介绍</span></span><br><span class="line"><span class="comment">        * 第一个参数：被代理对象</span></span><br><span class="line"><span class="comment">        * 第二个参数：传入到被代理对象同名方法的参数列表</span></span><br><span class="line"><span class="comment">        * 返回值：被代理对象调用方法的返回值</span></span><br><span class="line"><span class="comment">         */</span></span><br><span class="line">        Object result = method.invoke(obj, args);</span><br><span class="line">        System.out.println(<span class="string">&quot;经纪人进行收尾工作&quot;</span>);</span><br><span class="line">        <span class="keyword">return</span> result;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+
+
+<h3 id="Client"><a href="#Client" class="headerlink" title="Client"></a>Client</h3><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">Client</span> </span>&#123;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">main</span><span class="params">(String[] args)</span> </span>&#123;</span><br><span class="line">        Human starAgent = (Human) ProxyFactory.getProxyInstance(<span class="keyword">new</span> SuperStar());</span><br><span class="line">        starAgent.sing();</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>执行结果如下：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">经纪人进行准备工作</span><br><span class="line">SuperStar is singing</span><br><span class="line">经纪人进行收尾工作</span><br></pre></td></tr></table></figure>
+
+
 
       
     </div>
@@ -257,7 +258,7 @@
   
   
   <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
-    <link itemprop="mainEntityOfPage" href="https://singglexgc.github.io/notes/2021/06/10/MySQL/mysql%E6%9F%A5%E8%AF%A2%E6%9C%80%E8%BF%91%E4%B8%80%E6%9D%A1%E8%AE%B0%E5%BD%95%E7%9A%84sql%EF%BC%88%E4%BC%98%E5%8C%96%E7%AF%87%EF%BC%89/">
+    <link itemprop="mainEntityOfPage" href="https://singglexgc.github.io/notes/2021/06/13/%E8%AE%BE%E8%AE%A1%E6%A8%A1%E5%BC%8F/%E8%81%8C%E8%B4%A3%E9%93%BE%E6%A8%A1%E5%BC%8F-chain-of-responsibility/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
       <meta itemprop="image" content="/notes/images/avatar.gif">
@@ -271,7 +272,7 @@
       <header class="post-header">
         <h2 class="post-title" itemprop="name headline">
           
-            <a href="/notes/2021/06/10/MySQL/mysql%E6%9F%A5%E8%AF%A2%E6%9C%80%E8%BF%91%E4%B8%80%E6%9D%A1%E8%AE%B0%E5%BD%95%E7%9A%84sql%EF%BC%88%E4%BC%98%E5%8C%96%E7%AF%87%EF%BC%89/" class="post-title-link" itemprop="url">MySQL查询最近一条记录的SQL（优化篇）</a>
+            <a href="/notes/2021/06/13/%E8%AE%BE%E8%AE%A1%E6%A8%A1%E5%BC%8F/%E8%81%8C%E8%B4%A3%E9%93%BE%E6%A8%A1%E5%BC%8F-chain-of-responsibility/" class="post-title-link" itemprop="url">职责链模式(Chain of Responsibility)</a>
         </h2>
 
         <div class="post-meta">
@@ -282,7 +283,7 @@
               <span class="post-meta-item-text">发表于</span>
               
 
-              <time title="创建时间：2021-06-10 17:04:08 / 修改时间：18:44:27" itemprop="dateCreated datePublished" datetime="2021-06-10T17:04:08+08:00">2021-06-10</time>
+              <time title="创建时间：2021-06-13 18:17:08 / 修改时间：18:17:55" itemprop="dateCreated datePublished" datetime="2021-06-13T18:17:08+08:00">2021-06-13</time>
             </span>
             <span class="post-meta-item">
               <span class="post-meta-item-icon">
@@ -290,7 +291,7 @@
               </span>
               <span class="post-meta-item-text">分类于</span>
                 <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-                  <a href="/notes/categories/MySQL/" itemprop="url" rel="index"><span itemprop="name">MySQL</span></a>
+                  <a href="/notes/categories/%E8%AE%BE%E8%AE%A1%E6%A8%A1%E5%BC%8F/" itemprop="url" rel="index"><span itemprop="name">设计模式</span></a>
                 </span>
             </span>
 
@@ -305,22 +306,37 @@
     <div class="post-body" itemprop="articleBody">
 
       
-          <p><strong>问题：</strong></p>
-<p>现有一张订单表orders，有用户、订单时间、金额。需要查询最近的一条订单时间。</p>
-<p><img src="/notes/2021/06/10/MySQL/mysql%E6%9F%A5%E8%AF%A2%E6%9C%80%E8%BF%91%E4%B8%80%E6%9D%A1%E8%AE%B0%E5%BD%95%E7%9A%84sql%EF%BC%88%E4%BC%98%E5%8C%96%E7%AF%87%EF%BC%89/image-20210610183509667.png" alt="image-20210610183509667"></p>
-<p><strong>要查询最近一条记录的SQL最简单的写法如下：</strong></p>
-<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">select * from orders</span><br><span class="line">order by create_time desc</span><br><span class="line">limit 1</span><br></pre></td></tr></table></figure>
+          <h2 id="类图"><a href="#类图" class="headerlink" title="类图"></a>类图</h2><p>职责链的类图如下：</p>
+<p><img src="/notes/2021/06/13/%E8%AE%BE%E8%AE%A1%E6%A8%A1%E5%BC%8F/%E8%81%8C%E8%B4%A3%E9%93%BE%E6%A8%A1%E5%BC%8F-chain-of-responsibility/20210601301.png" alt="职责链模式类图"></p>
+<p>职责链模式包含如下角色：</p>
+<ul>
+<li>抽象处理者(AbstractHandler)角色：定义一个处理请求的接口，包含抽象处理方法和后继连接</li>
+<li>具体处理者(ConcreteHandler)角色：实现抽象处理者的处理方法，判断能够处理本次请求，如果能处理则处理请求，否则将请求转给它的后继者。</li>
+<li>客户端(Client)角色：创建处理链，并将请求提交给链头的具体处理者</li>
+</ul>
+<h2 id="实例"><a href="#实例" class="headerlink" title="实例"></a>实例</h2><p>公司有两个角色，manager和boss。</p>
+<p>当员工需要报销，需要向manager提交申请。</p>
+<p>manager在500元以下可以同意报销。金额超出或等于500元，需要将报销请求提交给boss。</p>
+<p>boss在5000以下可以同意报销。</p>
+<h3 id="Handler"><a href="#Handler" class="headerlink" title="Handler"></a>Handler</h3><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">@Data</span></span><br><span class="line"><span class="keyword">public</span> <span class="keyword">abstract</span> <span class="class"><span class="keyword">class</span> <span class="title">Handler</span> </span>&#123;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">private</span> Handler processor;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">abstract</span> <span class="keyword">void</span> <span class="title">handleRequest</span><span class="params">(<span class="keyword">int</span> price)</span></span>;</span><br><span class="line"></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
 
-<p>这条语句会先将a表的数据全部查询出来，按照时间倒序排序后，再取第一条。</p>
-<p>这意味着这条语句需要遍历表中的全部数据，这效率是十分低下的。</p>
-<p><strong>优化：</strong></p>
-<p>为了加快SQL的效率，我们需要减少遍历的记录。</p>
-<p>因此，我们可以对user_id进行分组，并借助max函数查询出每个用户最近的订单记录。</p>
-<p>然后对每个用户最近的订单记录按 <strong>创建时间</strong>(要<strong>注意</strong>的是，这里指的是<strong>已经查询出来数据的创建时间</strong>，即max_time) 倒序排序，取第一条数据即可。</p>
-<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">select user_id, max(create_time) max_time</span><br><span class="line">from orders</span><br><span class="line">group by user_id</span><br><span class="line">order by max_time desc</span><br><span class="line">limit 1;</span><br></pre></td></tr></table></figure>
 
-<p>从上面的SQL语句可以看到，需要遍历的数据从全表缩减到用户数的范围了。</p>
-<p>这样就加快了SQL的执行效率。</p>
+
+<h3 id="Manager"><a href="#Manager" class="headerlink" title="Manager"></a>Manager</h3><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">Manager</span> <span class="keyword">extends</span> <span class="title">Handler</span> </span>&#123;</span><br><span class="line"></span><br><span class="line">    <span class="meta">@Override</span></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">handleRequest</span><span class="params">(<span class="keyword">int</span> price)</span> </span>&#123;</span><br><span class="line">        <span class="keyword">if</span> (price &lt; <span class="number">500</span>) &#123;</span><br><span class="line">            System.out.println(<span class="string">&quot;经理同意报销成功&quot;</span>);</span><br><span class="line">        &#125; <span class="keyword">else</span> &#123;</span><br><span class="line">            <span class="keyword">if</span> (getProcessor() != <span class="keyword">null</span>) &#123;</span><br><span class="line">                getProcessor().handleRequest(price);</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+
+
+<h3 id="Boss"><a href="#Boss" class="headerlink" title="Boss"></a>Boss</h3><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">Boss</span> <span class="keyword">extends</span>  <span class="title">Handler</span> </span>&#123;</span><br><span class="line"></span><br><span class="line">    <span class="meta">@Override</span></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">handleRequest</span><span class="params">(<span class="keyword">int</span> price)</span> </span>&#123;</span><br><span class="line">        <span class="keyword">if</span> (price &lt; <span class="number">5000</span>) &#123;</span><br><span class="line">            System.out.println(<span class="string">&quot;boss同意报销&quot;</span>);</span><br><span class="line">        &#125; <span class="keyword">else</span> &#123;</span><br><span class="line">            System.out.println(<span class="string">&quot;boss不允许报销&quot;</span>);</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+
+
+<h3 id="Client"><a href="#Client" class="headerlink" title="Client"></a>Client</h3><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">Client</span> </span>&#123;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">main</span><span class="params">(String[] args)</span> </span>&#123;</span><br><span class="line"></span><br><span class="line">        <span class="comment">//创建职责链</span></span><br><span class="line">        Handler manager = <span class="keyword">new</span> Manager();</span><br><span class="line">        manager.setProcessor(<span class="keyword">new</span> Boss());</span><br><span class="line"></span><br><span class="line">        <span class="comment">//请求报销 100 元</span></span><br><span class="line">        manager.handleRequest(<span class="number">100</span>);</span><br><span class="line"></span><br><span class="line">        <span class="comment">//请求报销 600 元</span></span><br><span class="line">        manager.handleRequest(<span class="number">600</span>);</span><br><span class="line"></span><br><span class="line">        <span class="comment">//请求报销 5100 元</span></span><br><span class="line">        manager.handleRequest(<span class="number">5100</span>);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+
+
+<h3 id="执行结果"><a href="#执行结果" class="headerlink" title="执行结果"></a>执行结果</h3><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">经理同意报销成功</span><br><span class="line">boss同意报销</span><br><span class="line">boss不允许报销</span><br></pre></td></tr></table></figure>
+
+
 
       
     </div>
@@ -339,7 +355,7 @@
 
   
   <nav class="pagination">
-    <a class="extend prev" rel="prev" href="/notes/page/6/"><i class="fa fa-angle-left" aria-label="上一页"></i></a><a class="page-number" href="/notes/">1</a><span class="space">&hellip;</span><a class="page-number" href="/notes/page/6/">6</a><span class="page-number current">7</span><a class="page-number" href="/notes/page/8/">8</a><span class="space">&hellip;</span><a class="page-number" href="/notes/page/11/">11</a><a class="extend next" rel="next" href="/notes/page/8/"><i class="fa fa-angle-right" aria-label="下一页"></i></a>
+    <a class="extend prev" rel="prev" href="/notes/page/6/"><i class="fa fa-angle-left" aria-label="上一页"></i></a><a class="page-number" href="/notes/">1</a><span class="space">&hellip;</span><a class="page-number" href="/notes/page/6/">6</a><span class="page-number current">7</span><a class="page-number" href="/notes/page/8/">8</a><span class="space">&hellip;</span><a class="page-number" href="/notes/page/14/">14</a><a class="extend next" rel="next" href="/notes/page/8/"><i class="fa fa-angle-right" aria-label="下一页"></i></a>
   </nav>
 
 
@@ -405,7 +421,7 @@
       <div class="site-state-item site-state-posts">
           <a href="/notes/archives/">
         
-          <span class="site-state-item-count">22</span>
+          <span class="site-state-item-count">27</span>
           <span class="site-state-item-name">日志</span>
         </a>
       </div>

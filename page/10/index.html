@@ -145,7 +145,7 @@
   
   
   <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
-    <link itemprop="mainEntityOfPage" href="https://singglexgc.github.io/notes/2021/05/30/MyBatis/%E5%A6%82%E4%BD%95%E6%89%A7%E8%A1%8C%E6%89%B9%E9%87%8F%E5%A4%84%E7%90%86%EF%BC%9F/">
+    <link itemprop="mainEntityOfPage" href="https://singglexgc.github.io/notes/2021/06/10/MySQL/mysql%E6%9F%A5%E8%AF%A2%E6%9C%80%E8%BF%91%E4%B8%80%E6%9D%A1%E8%AE%B0%E5%BD%95%E7%9A%84sql%EF%BC%88%E4%BC%98%E5%8C%96%E7%AF%87%EF%BC%89/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
       <meta itemprop="image" content="/notes/images/avatar.gif">
@@ -159,7 +159,7 @@
       <header class="post-header">
         <h2 class="post-title" itemprop="name headline">
           
-            <a href="/notes/2021/05/30/MyBatis/%E5%A6%82%E4%BD%95%E6%89%A7%E8%A1%8C%E6%89%B9%E9%87%8F%E5%A4%84%E7%90%86%EF%BC%9F/" class="post-title-link" itemprop="url">如何执行批量处理？</a>
+            <a href="/notes/2021/06/10/MySQL/mysql%E6%9F%A5%E8%AF%A2%E6%9C%80%E8%BF%91%E4%B8%80%E6%9D%A1%E8%AE%B0%E5%BD%95%E7%9A%84sql%EF%BC%88%E4%BC%98%E5%8C%96%E7%AF%87%EF%BC%89/" class="post-title-link" itemprop="url">MySQL查询最近一条记录的SQL（优化篇）</a>
         </h2>
 
         <div class="post-meta">
@@ -170,7 +170,7 @@
               <span class="post-meta-item-text">发表于</span>
               
 
-              <time title="创建时间：2021-05-30 12:24:37 / 修改时间：13:25:24" itemprop="dateCreated datePublished" datetime="2021-05-30T12:24:37+08:00">2021-05-30</time>
+              <time title="创建时间：2021-06-10 17:04:08 / 修改时间：18:44:27" itemprop="dateCreated datePublished" datetime="2021-06-10T17:04:08+08:00">2021-06-10</time>
             </span>
             <span class="post-meta-item">
               <span class="post-meta-item-icon">
@@ -178,7 +178,7 @@
               </span>
               <span class="post-meta-item-text">分类于</span>
                 <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-                  <a href="/notes/categories/MyBatis/" itemprop="url" rel="index"><span itemprop="name">MyBatis</span></a>
+                  <a href="/notes/categories/MySQL/" itemprop="url" rel="index"><span itemprop="name">MySQL</span></a>
                 </span>
             </span>
 
@@ -193,57 +193,22 @@
     <div class="post-body" itemprop="articleBody">
 
       
-          <p><code>MyBatis</code>有三种批量插入数据的方式。</p>
-<ol>
-<li>循环插入。</li>
-<li>foreach标签。</li>
-<li>批处理。</li>
-</ol>
-<h2 id="循环插入"><a href="#循环插入" class="headerlink" title="循环插入"></a>循环插入</h2><h3 id="userMapper-xml"><a href="#userMapper-xml" class="headerlink" title="userMapper.xml"></a>userMapper.xml</h3><figure class="highlight xml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="tag">&lt;<span class="name">mapper</span> <span class="attr">namespace</span>=<span class="string">&quot;com.xgc.entity.User&quot;</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">insert</span> <span class="attr">id</span>=<span class="string">&quot;insertUser&quot;</span> <span class="attr">parameterType</span>=<span class="string">&quot;User&quot;</span>&gt;</span></span><br><span class="line">        insert into user (username, age)</span><br><span class="line">        values (#&#123;username&#125;, #&#123;age&#125;)</span><br><span class="line">	<span class="tag">&lt;/<span class="name">insert</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;/<span class="name">mapper</span>&gt;</span></span><br></pre></td></tr></table></figure>
+          <p><strong>问题：</strong></p>
+<p>现有一张订单表orders，有用户、订单时间、金额。需要查询最近的一条订单时间。</p>
+<p><img src="/notes/2021/06/10/MySQL/mysql%E6%9F%A5%E8%AF%A2%E6%9C%80%E8%BF%91%E4%B8%80%E6%9D%A1%E8%AE%B0%E5%BD%95%E7%9A%84sql%EF%BC%88%E4%BC%98%E5%8C%96%E7%AF%87%EF%BC%89/image-20210610183509667.png" alt="image-20210610183509667"></p>
+<p><strong>要查询最近一条记录的SQL最简单的写法如下：</strong></p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">select * from orders</span><br><span class="line">order by create_time desc</span><br><span class="line">limit 1</span><br></pre></td></tr></table></figure>
 
+<p>这条语句会先将a表的数据全部查询出来，按照时间倒序排序后，再取第一条。</p>
+<p>这意味着这条语句需要遍历表中的全部数据，这效率是十分低下的。</p>
+<p><strong>优化：</strong></p>
+<p>为了加快SQL的效率，我们需要减少遍历的记录。</p>
+<p>因此，我们可以对user_id进行分组，并借助max函数查询出每个用户最近的订单记录。</p>
+<p>然后对每个用户最近的订单记录按 <strong>创建时间</strong>(要<strong>注意</strong>的是，这里指的是<strong>已经查询出来数据的创建时间</strong>，即max_time) 倒序排序，取第一条数据即可。</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">select user_id, max(create_time) max_time</span><br><span class="line">from orders</span><br><span class="line">group by user_id</span><br><span class="line">order by max_time desc</span><br><span class="line">limit 1;</span><br></pre></td></tr></table></figure>
 
-
-<h3 id="UserMapper"><a href="#UserMapper" class="headerlink" title="UserMapper"></a>UserMapper</h3><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">interface</span> <span class="title">UserMapper</span> </span>&#123;</span><br><span class="line">    <span class="function"><span class="keyword">void</span> <span class="title">insertUser</span><span class="params">(User user)</span></span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-
-
-
-<h3 id="UserService"><a href="#UserService" class="headerlink" title="UserService"></a>UserService</h3><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">UserService</span> </span>&#123;</span><br><span class="line">    </span><br><span class="line">    <span class="meta">@Autowired</span></span><br><span class="line">    <span class="keyword">private</span> UserMapper userMapper;</span><br><span class="line">    </span><br><span class="line">    <span class="comment">//批量插入User对象</span></span><br><span class="line">    <span class="function"><span class="keyword">public</span> String <span class="title">insertUsers</span><span class="params">(List&lt;User&gt; userList)</span> </span>&#123;</span><br><span class="line">        <span class="keyword">for</span>(User user : userList) &#123;</span><br><span class="line">            userMapper.insertUser(user);</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-
-
-
-<h2 id="foreach标签"><a href="#foreach标签" class="headerlink" title="foreach标签"></a>foreach标签</h2><h3 id="userMapper-xml-1"><a href="#userMapper-xml-1" class="headerlink" title="userMapper.xml"></a>userMapper.xml</h3><figure class="highlight xml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="tag">&lt;<span class="name">mapper</span> <span class="attr">namespace</span>=<span class="string">&quot;com.xgc.entity.User&quot;</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">insert</span> <span class="attr">id</span>=<span class="string">&quot;insertUsers&quot;</span>&gt;</span></span><br><span class="line">        insert into user (username, age)</span><br><span class="line">        values</span><br><span class="line">        <span class="tag">&lt;<span class="name">foreach</span> <span class="attr">collection</span>=<span class="string">&quot;userList&quot;</span> <span class="attr">item</span>=<span class="string">&quot;user&quot;</span> <span class="attr">separator</span>=<span class="string">&quot;,&quot;</span>&gt;</span></span><br><span class="line">            (#&#123;user.username&#125;, #&#123;user.age&#125;)</span><br><span class="line">        <span class="tag">&lt;/<span class="name">foreach</span>&gt;</span></span><br><span class="line">	<span class="tag">&lt;/<span class="name">insert</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;/<span class="name">mapper</span>&gt;</span></span><br></pre></td></tr></table></figure>
-
-
-
-<h3 id="UserMapper-1"><a href="#UserMapper-1" class="headerlink" title="UserMapper"></a>UserMapper</h3><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">interface</span> <span class="title">UserMapper</span> </span>&#123;</span><br><span class="line">    <span class="function"><span class="keyword">void</span> <span class="title">insertUsers</span><span class="params">(List&lt;User&gt; userList)</span></span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-
-
-
-<h2 id="批处理"><a href="#批处理" class="headerlink" title="批处理"></a>批处理</h2><h3 id="userMapper-xml-2"><a href="#userMapper-xml-2" class="headerlink" title="userMapper.xml"></a>userMapper.xml</h3><figure class="highlight xml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="tag">&lt;<span class="name">mapper</span> <span class="attr">namespace</span>=<span class="string">&quot;com.xgc.entity.User&quot;</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">insert</span> <span class="attr">id</span>=<span class="string">&quot;insertUser&quot;</span> <span class="attr">parameterType</span>=<span class="string">&quot;User&quot;</span>&gt;</span></span><br><span class="line">        insert into user (username, age)</span><br><span class="line">        values (#&#123;username&#125;, #&#123;age&#125;)</span><br><span class="line">	<span class="tag">&lt;/<span class="name">insert</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;/<span class="name">mapper</span>&gt;</span></span><br></pre></td></tr></table></figure>
-
-
-
-<h3 id="UserMapper-2"><a href="#UserMapper-2" class="headerlink" title="UserMapper"></a>UserMapper</h3><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">interface</span> <span class="title">UserMapper</span> </span>&#123;</span><br><span class="line">    <span class="function"><span class="keyword">void</span> <span class="title">insertUser</span><span class="params">(User user)</span></span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-
-
-
-<h3 id="UserService-1"><a href="#UserService-1" class="headerlink" title="UserService"></a>UserService</h3><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">insertUsers</span><span class="params">(List&lt;User&gt; userList)</span> </span>&#123;</span><br><span class="line">    <span class="comment">//SqlSession openSession(ExecutorType execType, boolean autoCommit);</span></span><br><span class="line">    SqlSession sqlSession = sqlSessionFactory.openSession(ExecutorType.BATCH, <span class="keyword">false</span>);</span><br><span class="line">    UserMapper userMapper = sqlSession.getMapper(UserMapper.class);</span><br><span class="line">    </span><br><span class="line">    <span class="keyword">for</span>(User user : userList) &#123;</span><br><span class="line">        userMapper.insertUser(user);</span><br><span class="line">    &#125;</span><br><span class="line">    </span><br><span class="line">    sqlSession.commit();</span><br><span class="line">    sqlSession.clearCache();</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-
-
-
-<h2 id="小结"><a href="#小结" class="headerlink" title="小结"></a>小结</h2><p>上面介绍了三种批量处理的方式，它们之间的区别如下：</p>
-<ul>
-<li>从效率上来看：foreach标签 &gt; 批处理 &gt; 循环插入</li>
-</ul>
-<p>但是，我们推荐使用的是<strong>批处理</strong>的方式。</p>
-<p>理由如下：</p>
-<ol>
-<li><p>循环插入效率最低，当数据量很大的时候，程序就会出现“卡”的感觉。这会导致程序不断在for循环，无法执行后续代码，这是很不理想的。</p>
-</li>
-<li><p>foreach标签是执行速度最快的，但是我们也不推荐使用。它其实本质上是通过foreach标签，将数据拼接成一条SQL语句从而进行执行的。但是SQL长度是有限制的，当SQL的长度超过MySQL服务器的<strong>max_allowed_packet</strong>变量指定的长度，那么该条SQL语句就会无法执行。</p>
-<p>因此，foreach标签能够批量插入的数据，根据MySQL服务器的max_allowed_packet变量值的不同而不同。所以，foreach标签不推荐用于批量处理。</p>
-</li>
-</ol>
+<p>从上面的SQL语句可以看到，需要遍历的数据从全表缩减到用户数的范围了。</p>
+<p>这样就加快了SQL的执行效率。</p>
 
       
     </div>
@@ -263,7 +228,7 @@
   
   
   <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
-    <link itemprop="mainEntityOfPage" href="https://singglexgc.github.io/notes/2021/05/29/JavaSE/JDBC/jdbc%E6%89%B9%E5%A4%84%E7%90%86/">
+    <link itemprop="mainEntityOfPage" href="https://singglexgc.github.io/notes/2021/06/10/%E9%9D%A2%E8%AF%95%E9%A2%98/%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%BD%91%E7%BB%9C%E9%9D%A2%E8%AF%95%E9%A2%98/get%E8%AF%B7%E6%B1%82%E5%92%8Cpost%E8%AF%B7%E6%B1%82%E7%9A%84%E5%8C%BA%E5%88%AB%EF%BC%9F/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
       <meta itemprop="image" content="/notes/images/avatar.gif">
@@ -277,7 +242,7 @@
       <header class="post-header">
         <h2 class="post-title" itemprop="name headline">
           
-            <a href="/notes/2021/05/29/JavaSE/JDBC/jdbc%E6%89%B9%E5%A4%84%E7%90%86/" class="post-title-link" itemprop="url">JDBC批处理</a>
+            <a href="/notes/2021/06/10/%E9%9D%A2%E8%AF%95%E9%A2%98/%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%BD%91%E7%BB%9C%E9%9D%A2%E8%AF%95%E9%A2%98/get%E8%AF%B7%E6%B1%82%E5%92%8Cpost%E8%AF%B7%E6%B1%82%E7%9A%84%E5%8C%BA%E5%88%AB%EF%BC%9F/" class="post-title-link" itemprop="url">GET请求和POST请求的区别？</a>
         </h2>
 
         <div class="post-meta">
@@ -286,21 +251,27 @@
                 <i class="far fa-calendar"></i>
               </span>
               <span class="post-meta-item-text">发表于</span>
-              
 
-              <time title="创建时间：2021-05-29 22:31:52 / 修改时间：22:32:41" itemprop="dateCreated datePublished" datetime="2021-05-29T22:31:52+08:00">2021-05-29</time>
+              <time title="创建时间：2021-06-10 16:11:43" itemprop="dateCreated datePublished" datetime="2021-06-10T16:11:43+08:00">2021-06-10</time>
             </span>
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="far fa-calendar-check"></i>
+                </span>
+                <span class="post-meta-item-text">更新于</span>
+                <time title="修改时间：2021-06-11 17:25:39" itemprop="dateModified" datetime="2021-06-11T17:25:39+08:00">2021-06-11</time>
+              </span>
             <span class="post-meta-item">
               <span class="post-meta-item-icon">
                 <i class="far fa-folder"></i>
               </span>
               <span class="post-meta-item-text">分类于</span>
                 <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-                  <a href="/notes/categories/JavaSE/" itemprop="url" rel="index"><span itemprop="name">JavaSE</span></a>
+                  <a href="/notes/categories/%E9%9D%A2%E8%AF%95%E9%A2%98/" itemprop="url" rel="index"><span itemprop="name">面试题</span></a>
                 </span>
                   ，
                 <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-                  <a href="/notes/categories/JavaSE/JDBC/" itemprop="url" rel="index"><span itemprop="name">JDBC</span></a>
+                  <a href="/notes/categories/%E9%9D%A2%E8%AF%95%E9%A2%98/%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%BD%91%E7%BB%9C%E9%9D%A2%E8%AF%95%E9%A2%98/" itemprop="url" rel="index"><span itemprop="name">计算机网络面试题</span></a>
                 </span>
             </span>
 
@@ -315,11 +286,34 @@
     <div class="post-body" itemprop="articleBody">
 
       
-          <p>JDBC支持批处理，可以减少通信的消耗，提高性能。</p>
-<p>通过JDBC的批处理，我们不再像之前一样，每执行一条SQL语句就要提交一次。我们只需要在设置完需要提交的数据后，通过<code>PreparedStatement</code>对象的<code>executeBatch</code>方法同时将多条SQL同时提交，进而减少了通信的次数，从而提高了性能。</p>
-<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br></pre></td><td class="code"><pre><span class="line">Connection conn = DriverManager.getConnection(url, username, pass);</span><br><span class="line"><span class="comment">//关闭自动提交</span></span><br><span class="line">conn.setAutoCommit(<span class="keyword">false</span>);</span><br><span class="line"><span class="comment">//创建PreparedStatment对象</span></span><br><span class="line">String sql = <span class="string">&quot;insert into user values (?,?)&quot;</span>;</span><br><span class="line">PreparedStatement pstmt = conn.prepareStatement(sql);</span><br><span class="line"></span><br><span class="line"><span class="comment">//设置参数</span></span><br><span class="line">pstmt.setString(<span class="number">1</span>, <span class="string">&quot;user1&quot;</span>);</span><br><span class="line">pstmt.setInt(<span class="number">2</span>, <span class="number">17</span>);</span><br><span class="line">pstmt.addBatch();</span><br><span class="line"></span><br><span class="line">pstmt.setString(<span class="number">1</span>, <span class="string">&quot;user2&quot;</span>);</span><br><span class="line">pstmt.setInt(<span class="number">2</span>, <span class="number">17</span>);</span><br><span class="line">pstmt.addBatch();</span><br><span class="line"></span><br><span class="line">pstmt.setString(<span class="number">1</span>, <span class="string">&quot;user3&quot;</span>);</span><br><span class="line">pstmt.setInt(<span class="number">2</span>, <span class="number">17</span>);</span><br><span class="line">pstmt.addBatch();</span><br><span class="line"></span><br><span class="line"><span class="comment">//提交上面3条语句</span></span><br><span class="line"><span class="keyword">int</span>[] counts = pstmt.executeBatch();</span><br><span class="line">conn.commit();</span><br></pre></td></tr></table></figure>
-
-
+          <ol>
+<li>GET把参数包含在URL中，POST把参数放在请求体中。这样，POST能够发送的数据更大。(URL有长度限制)</li>
+<li>GET请求比POST请求快<ul>
+<li>POST请求包含更多的请求头(但可忽略不计)</li>
+<li><strong>最重要的是：</strong>POST在真正发送数据的时候，会先将请求头发送给服务器进行确认，然后才发送数据</li>
+</ul>
+</li>
+<li>GET将数据缓存起来，而POST不会</li>
+<li>POST请求一般用于修改和写入操作，而GET请求用来获取资源操作。</li>
+<li>POST请求更加安全(参数不放在URL、数据不缓存)</li>
+<li>对参数的数据类型，POST能够发送更多的数据类型(GET只能发送ASCII字符)</li>
+</ol>
+<hr>
+<p><strong>POST请求的过程：</strong></p>
+<ol>
+<li>在TCP的第三次握手，浏览器会进行确认并发送POST请求头。</li>
+<li>服务器返回100 Continue响应</li>
+<li>浏览器发送数据</li>
+<li>服务器返回200 OK响应</li>
+</ol>
+<hr>
+<p><strong>GET请求的过程：</strong></p>
+<ol>
+<li>在TCP第三次握手，浏览器就会进行确认并发送GET请求头和数据</li>
+<li>服务器返回200 OK响应</li>
+</ol>
+<hr>
+<p>这样GET的总耗是POST的2/3左右。</p>
 
       
     </div>
@@ -338,7 +332,7 @@
 
   
   <nav class="pagination">
-    <a class="extend prev" rel="prev" href="/notes/page/9/"><i class="fa fa-angle-left" aria-label="上一页"></i></a><a class="page-number" href="/notes/">1</a><span class="space">&hellip;</span><a class="page-number" href="/notes/page/9/">9</a><span class="page-number current">10</span><a class="page-number" href="/notes/page/11/">11</a><a class="extend next" rel="next" href="/notes/page/11/"><i class="fa fa-angle-right" aria-label="下一页"></i></a>
+    <a class="extend prev" rel="prev" href="/notes/page/9/"><i class="fa fa-angle-left" aria-label="上一页"></i></a><a class="page-number" href="/notes/">1</a><span class="space">&hellip;</span><a class="page-number" href="/notes/page/9/">9</a><span class="page-number current">10</span><a class="page-number" href="/notes/page/11/">11</a><span class="space">&hellip;</span><a class="page-number" href="/notes/page/14/">14</a><a class="extend next" rel="next" href="/notes/page/11/"><i class="fa fa-angle-right" aria-label="下一页"></i></a>
   </nav>
 
 
@@ -404,7 +398,7 @@
       <div class="site-state-item site-state-posts">
           <a href="/notes/archives/">
         
-          <span class="site-state-item-count">22</span>
+          <span class="site-state-item-count">27</span>
           <span class="site-state-item-name">日志</span>
         </a>
       </div>

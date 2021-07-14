@@ -145,6 +145,102 @@
   
   
   <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="https://singglexgc.github.io/notes/2021/07/12/Netty/netty%E7%AE%80%E4%BB%8B/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/notes/images/avatar.gif">
+      <meta itemprop="name" content="Sinngle">
+      <meta itemprop="description" content="">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Notes">
+    </span>
+      <header class="post-header">
+        <h2 class="post-title" itemprop="name headline">
+          
+            <a href="/notes/2021/07/12/Netty/netty%E7%AE%80%E4%BB%8B/" class="post-title-link" itemprop="url">Netty简介</a>
+        </h2>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+              
+
+              <time title="创建时间：2021-07-12 00:20:32 / 修改时间：00:21:11" itemprop="dateCreated datePublished" datetime="2021-07-12T00:20:32+08:00">2021-07-12</time>
+            </span>
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-folder"></i>
+              </span>
+              <span class="post-meta-item-text">分类于</span>
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/notes/categories/Netty/" itemprop="url" rel="index"><span itemprop="name">Netty</span></a>
+                </span>
+            </span>
+
+          
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+          <h2 id="原生NIO存在的问题"><a href="#原生NIO存在的问题" class="headerlink" title="原生NIO存在的问题"></a>原生NIO存在的问题</h2><ol>
+<li>NIO的类库和API繁杂，使用麻烦。需要熟悉掌握Selector、ServerSocketChannel、SocketChannel、ByteBuffer等</li>
+<li>需要具备其他的额外技能：要熟悉Java多线程编程，因为NIO编程需要涉及到Reactor模式，你必须对多线程和网络编程非常熟悉，才能编写出高质量的NIO程序</li>
+<li>开发工作量和难度都非常大：例如客户端面临断连重连、网络闪断、半包读写、失败缓存、网络拥堵和异常流的处理等等</li>
+<li>JDK NIO的bug：例如臭名昭著的Epoll Bug，它会导致Selector空轮询，最终导致CPU 100%，直至JDK 1.7版本该问题仍然存在，没有被根本解决</li>
+</ol>
+<h2 id="什么是Netty"><a href="#什么是Netty" class="headerlink" title="什么是Netty"></a>什么是Netty</h2><ol>
+<li>Netty是JBOSS提供的一个Java开源框架。Netty提供异步的、基于事件驱动的网络应用程序框架，用于快速开发高性能、高可靠性的网络IO程序</li>
+<li>Netty主要针对在TCP协议下，面向Clients端的高并发应用，或者在Peer-to-Peer场景下的大量数据持续传输的应用</li>
+<li>Netty是目前最流行的NIO框架，Netty在互联网领域、大数据分布式计算领域、游戏行业、通信行业等获得了广泛的应用，例如：知名的ElasticSearch、Dubbo框架内部都采用了Netty.</li>
+</ol>
+<h2 id="Netty的应用场景"><a href="#Netty的应用场景" class="headerlink" title="Netty的应用场景"></a>Netty的应用场景</h2><h3 id="互联网行业"><a href="#互联网行业" class="headerlink" title="互联网行业"></a>互联网行业</h3><p>在分布式系统中，各个节点之间需要远程服务调用，高性能的RPC框架必不可少，Netty作为异步高性能的通信框架，往往作为基础通信组件被这些RPC框架使用。</p>
+<p>典型的应用有：阿里分布式服务框架Dubbo的PRC框架使用Dubbo协议进行节点间通信，Dubbo协议默认使用Netty作为基础通信组件，用于实现各进程节点之间的内部通信。</p>
+<h3 id="游戏行业"><a href="#游戏行业" class="headerlink" title="游戏行业"></a>游戏行业</h3><p>Netty作为高性能的基础通信组件，提供了TCP/UDP和HTTP协议栈，方便定制和开发私有协议栈，账号登陆服务器。</p>
+<p>地图服务器之间可以方便的通过Netty进行高性能的通信</p>
+<h3 id="大数据领域"><a href="#大数据领域" class="headerlink" title="大数据领域"></a>大数据领域</h3><p>经典的Hadoop的高性能通信和序列化组件(AVRO 实现数据文件共享)的PRC框架，默认采用Netty进行跨界点通信。</p>
+<p>它的Netty Service基于Netty框架二次封装实现。</p>
+<h2 id="Netty的优点"><a href="#Netty的优点" class="headerlink" title="Netty的优点"></a>Netty的优点</h2><p>Netty对JDK自带的NIO的API进行了封装，解决了上述问题。</p>
+<ol>
+<li>设计优雅。适用于各种传输类型的统一API，阻塞和非阻塞Socket；基于灵活且可扩展的事件模型，可以清晰地分离关注点；高度可定制的线程模型：单线程、一个或多个线程池</li>
+<li>使用方便。详细文档，没有其他依赖项，JDK5(Netty 3.x)或6(Netty 4.x)就足够了</li>
+<li>高性能、高吞吐量：延迟更低。减少资源消耗。最小化不必要的内存复制</li>
+<li>安全。完整的SSL/TSL和StartTLS支持</li>
+<li>社区活跃</li>
+</ol>
+<h2 id="Netty版本说明"><a href="#Netty版本说明" class="headerlink" title="Netty版本说明"></a>Netty版本说明</h2><ol>
+<li>Netty版本分为netty3.x和Netty4.x、Netty5.x</li>
+<li>因为Netty5出现重大bug，现在已经被官网废弃了。目前推荐使用的是Netty4.x的稳定版本</li>
+</ol>
+
+      
+    </div>
+
+    
+    
+    
+      <footer class="post-footer">
+        <div class="post-eof"></div>
+      </footer>
+  </article>
+  
+  
+  
+
+      
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
     <link itemprop="mainEntityOfPage" href="https://singglexgc.github.io/notes/2021/07/12/Netty/%E9%9B%B6%E6%8B%B7%E8%B4%9D/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
@@ -235,120 +331,10 @@
   
   
 
-      
-  
-  
-  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
-    <link itemprop="mainEntityOfPage" href="https://singglexgc.github.io/notes/2021/07/11/Netty/selector/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="image" content="/notes/images/avatar.gif">
-      <meta itemprop="name" content="Sinngle">
-      <meta itemprop="description" content="">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="Notes">
-    </span>
-      <header class="post-header">
-        <h2 class="post-title" itemprop="name headline">
-          
-            <a href="/notes/2021/07/11/Netty/selector/" class="post-title-link" itemprop="url">Selector</a>
-        </h2>
-
-        <div class="post-meta">
-            <span class="post-meta-item">
-              <span class="post-meta-item-icon">
-                <i class="far fa-calendar"></i>
-              </span>
-              <span class="post-meta-item-text">发表于</span>
-              
-
-              <time title="创建时间：2021-07-11 15:31:55 / 修改时间：15:33:52" itemprop="dateCreated datePublished" datetime="2021-07-11T15:31:55+08:00">2021-07-11</time>
-            </span>
-            <span class="post-meta-item">
-              <span class="post-meta-item-icon">
-                <i class="far fa-folder"></i>
-              </span>
-              <span class="post-meta-item-text">分类于</span>
-                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-                  <a href="/notes/categories/Netty/" itemprop="url" rel="index"><span itemprop="name">Netty</span></a>
-                </span>
-            </span>
-
-          
-
-        </div>
-      </header>
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-
-      
-          <h2 id="Selector简介"><a href="#Selector简介" class="headerlink" title="Selector简介"></a>Selector简介</h2><ol>
-<li>Java的NIO，用非阻塞的IO方式。可以用一个线程处理多个客户端连接，就会用到Selector</li>
-<li>Selector能够检测到多个注册的通道上事件的发生。如果有事件发生，就获取事件并对事件进行处理。这样就可以只用一个单线程去管理多个通道，即管理多个连接和请求</li>
-<li>只有在有读写事件发生的时候，才会进行读写，大大减少了系统开销。</li>
-<li>减少了多线程之间的上下文切换开销</li>
-</ol>
-<h2 id="Selector类相关方法"><a href="#Selector类相关方法" class="headerlink" title="Selector类相关方法"></a>Selector类相关方法</h2><p>Selector类是一个抽象类，常用方法和抽象如下：</p>
-<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="keyword">abstract</span> <span class="class"><span class="keyword">class</span> <span class="title">Selector</span> <span class="keyword">implements</span> <span class="title">Closeable</span> </span>&#123;</span><br><span class="line">    <span class="keyword">public</span> <span class="keyword">abstract</span> Selector open; <span class="comment">//得到一个选择器对象</span></span><br><span class="line">    <span class="comment">//监控所有注册的通道，当其中有IO操作可以进行时，将对应的SelectionKey加入到内部集合中并返回，参数用来设置超时时间</span></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">int</span> <span class="title">select</span><span class="params">(<span class="keyword">long</span> timeout)</span></span>; </span><br><span class="line">    <span class="comment">//从内部集合中得到所有的SelectionKey</span></span><br><span class="line">    <span class="function"><span class="keyword">public</span> Set&lt;SelectionKey&gt; <span class="title">selectedKeys</span><span class="params">()</span></span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-
-
-
-<h2 id="NIO非阻塞网络编程原理"><a href="#NIO非阻塞网络编程原理" class="headerlink" title="NIO非阻塞网络编程原理"></a>NIO非阻塞网络编程原理</h2><p>NIO非阻塞网络编程相关的Selector、SelectionKey、ServerSocketChannel、SocketChannel关系梳理图</p>
-<p><img src="/notes/2021/07/11/Netty/selector/image-20210131164701080.png"></p>
-<ol>
-<li>当客户端连接，会通过ServerSocketChannel得到SocketChannel</li>
-<li>Selector进行监听select方法，返回有事件发生的通道的个数</li>
-<li>将socketChannel注册到Selector上，register(Selector sel, int ops)，一个Selector可以注册多个Channel</li>
-<li>注册后返回一个SelectionKey</li>
-<li>进一步获得各个SelectionKey(有事件发生)</li>
-<li>再通过SelectionKey获得SocketChannel，方法channel()</li>
-<li>可以通过获得的SocketChannel完成业务处理</li>
-</ol>
-<h2 id="示例"><a href="#示例" class="headerlink" title="示例"></a>示例</h2><p>服务器端代码</p>
-<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">/**</span></span><br><span class="line"><span class="comment"> * NIO实现服务器端和客户端的数据简单通讯(非阻塞)</span></span><br><span class="line"><span class="comment"> */</span></span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">NIOServer</span> </span>&#123;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">main</span><span class="params">(String[] args)</span> <span class="keyword">throws</span> IOException </span>&#123;</span><br><span class="line">        ServerSocketChannel serverSocketChannel = ServerSocketChannel.open();</span><br><span class="line"></span><br><span class="line">        Selector selector = Selector.open();</span><br><span class="line"></span><br><span class="line">        <span class="comment">//绑定6666端口，监听</span></span><br><span class="line">        serverSocketChannel.socket().bind(<span class="keyword">new</span> InetSocketAddress(<span class="number">6666</span>));</span><br><span class="line">        <span class="comment">//设置为非阻塞</span></span><br><span class="line">        serverSocketChannel.configureBlocking(<span class="keyword">false</span>);</span><br><span class="line"></span><br><span class="line">        <span class="comment">//将ServerSocketChannel注册到Selector中，关注OP_ACCEPT事件</span></span><br><span class="line">        serverSocketChannel.register(selector, SelectionKey.OP_ACCEPT);</span><br><span class="line"></span><br><span class="line">        <span class="comment">//循环等待客户端连接</span></span><br><span class="line">        <span class="keyword">while</span> (<span class="keyword">true</span>) &#123;</span><br><span class="line">            <span class="keyword">if</span> (selector.select(<span class="number">1000</span>) == <span class="number">0</span>) &#123;</span><br><span class="line">                System.out.println(<span class="string">&quot;没有事件发生&quot;</span>);</span><br><span class="line">                <span class="keyword">continue</span>;</span><br><span class="line">            &#125;</span><br><span class="line"></span><br><span class="line">            <span class="comment">//如果select返回不等于0，就获取相关的selectionKey集合</span></span><br><span class="line">            <span class="comment">//获取关注事件的集合</span></span><br><span class="line">            Set&lt;SelectionKey&gt; selectionKeys = selector.selectedKeys();</span><br><span class="line"></span><br><span class="line">            Iterator&lt;SelectionKey&gt; iterator = selectionKeys.iterator();</span><br><span class="line">            <span class="keyword">while</span> (iterator.hasNext()) &#123;</span><br><span class="line">                SelectionKey selectionKey =  iterator.next();</span><br><span class="line">                <span class="keyword">if</span> (selectionKey.isAcceptable()) &#123;</span><br><span class="line">                    <span class="comment">//为新的客户端生成一个socketChannel</span></span><br><span class="line">                    SocketChannel socketChannel = serverSocketChannel.accept();</span><br><span class="line">                    <span class="comment">//将生成的socketChannel设置为非阻塞</span></span><br><span class="line">                    socketChannel.configureBlocking(<span class="keyword">false</span>);</span><br><span class="line">                    <span class="comment">//将socketChannel注册到selector,同时关注时间OP_READ，同时给SocketBuffer关联</span></span><br><span class="line">                    socketChannel.register(selector, SelectionKey.OP_READ, ByteBuffer.allocate(<span class="number">1024</span>));</span><br><span class="line"></span><br><span class="line">                &#125;</span><br><span class="line">                <span class="keyword">if</span> (selectionKey.isReadable()) &#123;</span><br><span class="line">                    SocketChannel socketChannel = (SocketChannel) selectionKey.channel();</span><br><span class="line">                    <span class="comment">//获取该channel关联的buffer</span></span><br><span class="line">                    ByteBuffer buffer = (ByteBuffer) selectionKey.attachment();</span><br><span class="line">                    socketChannel.read(buffer);</span><br><span class="line">                    System.out.println(<span class="string">&quot;from 客户端：&quot;</span> + <span class="keyword">new</span> String(buffer.array()));</span><br><span class="line">                &#125;</span><br><span class="line"></span><br><span class="line">                <span class="comment">//手动从集合中移除当前的SelectionKey，防止重复操作</span></span><br><span class="line">                iterator.remove();</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-
-<p>客户端代码</p>
-<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">NIOClient</span> </span>&#123;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">main</span><span class="params">(String[] args)</span> <span class="keyword">throws</span> IOException </span>&#123;</span><br><span class="line">        <span class="comment">//得到网络通道</span></span><br><span class="line">        SocketChannel socketChannel = SocketChannel.open();</span><br><span class="line">        socketChannel.configureBlocking(<span class="keyword">false</span>);</span><br><span class="line"></span><br><span class="line">        InetSocketAddress inetSocketAddress = <span class="keyword">new</span> InetSocketAddress(<span class="string">&quot;127.0.0.1&quot;</span>, <span class="number">6666</span>);</span><br><span class="line">        <span class="comment">//连接服务器</span></span><br><span class="line">        <span class="keyword">if</span> (!socketChannel.connect(inetSocketAddress)) &#123;</span><br><span class="line">            <span class="keyword">while</span> (!socketChannel.finishConnect()) &#123;</span><br><span class="line">                System.out.println(<span class="string">&quot;连接尚未成功，客户端不会阻塞，可以执行其他任务&quot;</span>);</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;</span><br><span class="line"></span><br><span class="line">        <span class="comment">//如果连接成功，就发送数据</span></span><br><span class="line">        String str = <span class="string">&quot;hello world&quot;</span>;</span><br><span class="line">        <span class="comment">// Wraps a byte array into a buffer</span></span><br><span class="line">        ByteBuffer byteBuffer = ByteBuffer.wrap(str.getBytes());</span><br><span class="line">        socketChannel.write(byteBuffer);</span><br><span class="line">        System.in.read();</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-
-
-
-<h2 id="SelectionKey简介"><a href="#SelectionKey简介" class="headerlink" title="SelectionKey简介"></a>SelectionKey简介</h2><p>SelectionKey表示Selector和网络通道的注册关系，共四种：</p>
-<ul>
-<li>OP_READ：代表读操作，值为1</li>
-<li>OP_WRITE：代表写操作，值为4</li>
-<li>OP_CONNECT：代表连接已经建立，值为8</li>
-<li>OP_ACCEPT：有新的网络连接可以accept，值为16</li>
-</ul>
-<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">final</span> <span class="keyword">int</span> OP_READ = <span class="number">1</span> &lt;&lt; <span class="number">0</span>;</span><br><span class="line"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">final</span> <span class="keyword">int</span> OP_WRITE = <span class="number">1</span> &lt;&lt; <span class="number">2</span>;</span><br><span class="line"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">final</span> <span class="keyword">int</span> OP_CONNECT = <span class="number">1</span> &lt;&lt; <span class="number">3</span>;</span><br><span class="line"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">final</span> <span class="keyword">int</span> OP_ACCEPT = <span class="number">1</span> &lt;&lt; <span class="number">4</span>;</span><br></pre></td></tr></table></figure>
-
-
-
-<h2 id="SelectionKey相关方法"><a href="#SelectionKey相关方法" class="headerlink" title="SelectionKey相关方法"></a>SelectionKey相关方法</h2><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="keyword">abstract</span> <span class="class"><span class="keyword">class</span> <span class="title">SelectionKey</span> </span>&#123;</span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">abstract</span> Selector <span class="title">selector</span><span class="params">()</span></span>;</span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">abstract</span> SelectableChannel <span class="title">channel</span><span class="params">()</span></span>;</span><br><span class="line">    <span class="comment">//得到与之关联的共享数据</span></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">final</span> Object <span class="title">attachment</span><span class="params">()</span></span>;</span><br><span class="line">    <span class="comment">//设置或改变监听事件</span></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">abstract</span> SelectionKey <span class="title">interestOps</span><span class="params">(<span class="keyword">int</span> ops)</span></span>;</span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">final</span> <span class="keyword">boolean</span> <span class="title">isAcceptable</span><span class="params">()</span></span>;</span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">final</span> <span class="keyword">boolean</span> <span class="title">isReadable</span><span class="params">()</span></span>;</span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">final</span> <span class="keyword">boolean</span> <span class="title">isWritable</span><span class="params">()</span></span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-
-
-      
-    </div>
-
-    
-    
-    
-      <footer class="post-footer">
-        <div class="post-eof"></div>
-      </footer>
-  </article>
-  
-  
-  
-
 
   
   <nav class="pagination">
-    <a class="extend prev" rel="prev" href="/notes/page/4/"><i class="fa fa-angle-left" aria-label="上一页"></i></a><a class="page-number" href="/notes/">1</a><span class="space">&hellip;</span><a class="page-number" href="/notes/page/4/">4</a><span class="page-number current">5</span><a class="page-number" href="/notes/page/6/">6</a><span class="space">&hellip;</span><a class="page-number" href="/notes/page/18/">18</a><a class="extend next" rel="next" href="/notes/page/6/"><i class="fa fa-angle-right" aria-label="下一页"></i></a>
+    <a class="extend prev" rel="prev" href="/notes/page/4/"><i class="fa fa-angle-left" aria-label="上一页"></i></a><a class="page-number" href="/notes/">1</a><span class="space">&hellip;</span><a class="page-number" href="/notes/page/4/">4</a><span class="page-number current">5</span><a class="page-number" href="/notes/page/6/">6</a><span class="space">&hellip;</span><a class="page-number" href="/notes/page/19/">19</a><a class="extend next" rel="next" href="/notes/page/6/"><i class="fa fa-angle-right" aria-label="下一页"></i></a>
   </nav>
 
 
@@ -414,7 +400,7 @@
       <div class="site-state-item site-state-posts">
           <a href="/notes/archives/">
         
-          <span class="site-state-item-count">36</span>
+          <span class="site-state-item-count">37</span>
           <span class="site-state-item-name">日志</span>
         </a>
       </div>

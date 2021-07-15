@@ -1,0 +1,424 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
+<meta name="theme-color" content="#222">
+<meta name="generator" content="Hexo 5.4.0">
+  <link rel="apple-touch-icon" sizes="180x180" href="/notes/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/notes/images/favicon-32x32-next.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/notes/images/favicon-16x16-next.png">
+  <link rel="mask-icon" href="/notes/images/logo.svg" color="#222">
+
+<link rel="stylesheet" href="/notes/css/main.css">
+
+
+<link rel="stylesheet" href="/notes/lib/font-awesome/css/all.min.css">
+
+<script id="hexo-configurations">
+    var NexT = window.NexT || {};
+    var CONFIG = {"hostname":"singglexgc.github.io","root":"/notes/","scheme":"Gemini","version":"7.8.0","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12,"onmobile":false},"copycode":{"enable":false,"show_result":false,"style":null},"back2top":{"enable":true,"sidebar":false,"scrollpercent":false},"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":false,"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"algolia":{"hits":{"per_page":10},"labels":{"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}},"localsearch":{"enable":false,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}}};
+  </script>
+
+  <meta name="description" content="引言ServiceHandler中有一个count共享变量，那么在多线程环境下，下面代码是否是线程安全的？ 12345678910111213public class ServiceHandler extends ChannelInboundHandlerAdapter &amp;#123;	private int count &#x3D; 0;	@Override	public void channelRead(">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Netty之ChannelHandler并发安全分析">
+<meta property="og:url" content="https://singglexgc.github.io/notes/2021/07/15/Netty/netty%E4%B9%8Bchannelhandler%E5%B9%B6%E5%8F%91%E5%AE%89%E5%85%A8%E5%88%86%E6%9E%90/index.html">
+<meta property="og:site_name" content="Notes">
+<meta property="og:description" content="引言ServiceHandler中有一个count共享变量，那么在多线程环境下，下面代码是否是线程安全的？ 12345678910111213public class ServiceHandler extends ChannelInboundHandlerAdapter &amp;#123;	private int count &#x3D; 0;	@Override	public void channelRead(">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="https://singglexgc.github.io/notes/2021/07/15/Netty/netty%E4%B9%8Bchannelhandler%E5%B9%B6%E5%8F%91%E5%AE%89%E5%85%A8%E5%88%86%E6%9E%90/20200113175229452.png">
+<meta property="article:published_time" content="2021-07-15T13:51:56.000Z">
+<meta property="article:modified_time" content="2021-07-15T13:53:14.137Z">
+<meta property="article:author" content="Sinngle">
+<meta property="article:tag" content="Netty">
+<meta property="article:tag" content="ChannelHandler">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://singglexgc.github.io/notes/2021/07/15/Netty/netty%E4%B9%8Bchannelhandler%E5%B9%B6%E5%8F%91%E5%AE%89%E5%85%A8%E5%88%86%E6%9E%90/20200113175229452.png">
+
+<link rel="canonical" href="https://singglexgc.github.io/notes/2021/07/15/Netty/netty%E4%B9%8Bchannelhandler%E5%B9%B6%E5%8F%91%E5%AE%89%E5%85%A8%E5%88%86%E6%9E%90/">
+
+
+<script id="page-configurations">
+  // https://hexo.io/docs/variables.html
+  CONFIG.page = {
+    sidebar: "",
+    isHome : false,
+    isPost : true,
+    lang   : 'zh-CN'
+  };
+</script>
+
+  <title>Netty之ChannelHandler并发安全分析 | Notes</title>
+  
+
+
+
+
+
+
+  <noscript>
+  <style>
+  .use-motion .brand,
+  .use-motion .menu-item,
+  .sidebar-inner,
+  .use-motion .post-block,
+  .use-motion .pagination,
+  .use-motion .comments,
+  .use-motion .post-header,
+  .use-motion .post-body,
+  .use-motion .collection-header { opacity: initial; }
+
+  .use-motion .site-title,
+  .use-motion .site-subtitle {
+    opacity: initial;
+    top: initial;
+  }
+
+  .use-motion .logo-line-before i { left: initial; }
+  .use-motion .logo-line-after i { right: initial; }
+  </style>
+</noscript>
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage">
+  <div class="container use-motion">
+    <div class="headband"></div>
+
+    <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="切换导航栏">
+      <span class="toggle-line toggle-line-first"></span>
+      <span class="toggle-line toggle-line-middle"></span>
+      <span class="toggle-line toggle-line-last"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/notes/" class="brand" rel="start">
+      <span class="logo-line-before"><i></i></span>
+      <h1 class="site-title">Notes</h1>
+      <span class="logo-line-after"><i></i></span>
+    </a>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger">
+    </div>
+  </div>
+</div>
+
+
+
+
+<nav class="site-nav">
+  <ul id="menu" class="main-menu menu">
+        <li class="menu-item menu-item-home">
+
+    <a href="/notes/" rel="section"><i class="fa fa-home fa-fw"></i>首页</a>
+
+  </li>
+        <li class="menu-item menu-item-archives">
+
+    <a href="/notes/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>归档</a>
+
+  </li>
+  </ul>
+</nav>
+
+
+
+
+</div>
+    </header>
+
+    
+  <div class="back-to-top">
+    <i class="fa fa-arrow-up"></i>
+    <span>0%</span>
+  </div>
+
+
+    <main class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          
+
+          <div class="content post posts-expand">
+            
+
+    
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="https://singglexgc.github.io/notes/2021/07/15/Netty/netty%E4%B9%8Bchannelhandler%E5%B9%B6%E5%8F%91%E5%AE%89%E5%85%A8%E5%88%86%E6%9E%90/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/notes/images/avatar.gif">
+      <meta itemprop="name" content="Sinngle">
+      <meta itemprop="description" content="">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Notes">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          Netty之ChannelHandler并发安全分析
+        </h1>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+              
+
+              <time title="创建时间：2021-07-15 21:51:56 / 修改时间：21:53:14" itemprop="dateCreated datePublished" datetime="2021-07-15T21:51:56+08:00">2021-07-15</time>
+            </span>
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-folder"></i>
+              </span>
+              <span class="post-meta-item-text">分类于</span>
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/notes/categories/Netty/" itemprop="url" rel="index"><span itemprop="name">Netty</span></a>
+                </span>
+            </span>
+
+          
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+        <h2 id="引言"><a href="#引言" class="headerlink" title="引言"></a>引言</h2><p>ServiceHandler中有一个count共享变量，那么在多线程环境下，下面代码是否是线程安全的？</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">ServiceHandler</span> <span class="keyword">extends</span> <span class="title">ChannelInboundHandlerAdapter</span> </span>&#123;</span><br><span class="line"></span><br><span class="line">	<span class="keyword">private</span> <span class="keyword">int</span> count = <span class="number">0</span>;</span><br><span class="line"></span><br><span class="line">	<span class="meta">@Override</span></span><br><span class="line">	<span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">channelRead</span><span class="params">(ChannelHandlerContext ctx, Object msg)</span> <span class="keyword">throws</span> Exception </span>&#123;</span><br><span class="line">		<span class="keyword">while</span> (count &lt; <span class="number">10</span>) &#123;</span><br><span class="line">			count++;</span><br><span class="line">			System.out.println(<span class="string">&quot;读取&quot;</span> + count + <span class="string">&quot;次&quot;</span>);</span><br><span class="line">		&#125;</span><br><span class="line">	&#125;</span><br><span class="line"></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+
+
+<h2 id="串行执行后的ChannelHandler"><a href="#串行执行后的ChannelHandler" class="headerlink" title="串行执行后的ChannelHandler"></a>串行执行后的ChannelHandler</h2><p><strong>如果ChannelHandler是非共享的，则它就是线程安全的。</strong></p>
+<p>这是因为：每个Channel都有各自的ChannelHandler实例。从消息接收到消息响应都是同一个NioEventLoop线程进行处理。这就不会存在多线程同时访问共享变量的问题，也就线程安全了。</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line">ServerBootstrap serverBootstrap = <span class="keyword">new</span> ServerBootstrap()</span><br><span class="line">    .group(bossGroup, workerGroup)</span><br><span class="line">    .channel(NioServerSocketChannel.class)</span><br><span class="line">    .option(ChannelOption.SO_BACKLOG, <span class="number">128</span>)</span><br><span class="line">    .childOption(ChannelOption.SO_KEEPALIVE, <span class="keyword">true</span>)</span><br><span class="line">    .childHandler(<span class="keyword">new</span> ChannelInitializer&lt;SocketChannel&gt;() &#123;</span><br><span class="line">        <span class="meta">@Override</span></span><br><span class="line">        <span class="function"><span class="keyword">protected</span> <span class="keyword">void</span> <span class="title">initChannel</span><span class="params">(SocketChannel ch)</span> <span class="keyword">throws</span> Exception </span>&#123;</span><br><span class="line">            ch.pipeline().addLast(<span class="keyword">new</span> ServiceHandler());</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;);</span><br></pre></td></tr></table></figure>
+
+<p>串行执行的ChannelHandler的工作原理：</p>
+<p><img src="/notes/2021/07/15/Netty/netty%E4%B9%8Bchannelhandler%E5%B9%B6%E5%8F%91%E5%AE%89%E5%85%A8%E5%88%86%E6%9E%90/20200113175229452.png" alt="串行执行的ChannelHandler的工作原理"></p>
+<h2 id="跨链路共享的ChannelHandler"><a href="#跨链路共享的ChannelHandler" class="headerlink" title="跨链路共享的ChannelHandler"></a>跨链路共享的ChannelHandler</h2><p>现在我们只初始化一次ChannelHandler，然后加入到多个Channel的ChannelPipeline中。</p>
+<p>由于不同的Channel可能注册到不同的NioEventLoop线程，这样ChannelHandler就可能被多个线程访问，就存在并发访问风险了。</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br></pre></td><td class="code"><pre><span class="line">EventLoopGroup eventLoopGroup = <span class="keyword">new</span> NioEventLoopGroup();</span><br><span class="line"></span><br><span class="line"><span class="comment">// 只实例化一个ChannelHandler</span></span><br><span class="line">ChannelHandler channelHandler = <span class="keyword">new</span> ServiceHandler();</span><br><span class="line">Bootstrap bootstrap = <span class="keyword">new</span> Bootstrap()</span><br><span class="line">    .group(eventLoopGroup)</span><br><span class="line">    .channel(NioSocketChannel.class)</span><br><span class="line">    .handler(<span class="keyword">new</span> ChannelInitializer&lt;SocketChannel&gt;() &#123;</span><br><span class="line">        <span class="meta">@Override</span></span><br><span class="line">        <span class="function"><span class="keyword">protected</span> <span class="keyword">void</span> <span class="title">initChannel</span><span class="params">(SocketChannel ch)</span> <span class="keyword">throws</span> Exception </span>&#123;</span><br><span class="line">            ch.pipeline().addLast(channelHandler);</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;);</span><br><span class="line"></span><br><span class="line">List&lt;ChannelFuture&gt; channelFutures = <span class="keyword">new</span> ArrayList&lt;&gt;();</span><br><span class="line"><span class="comment">// 模拟4个客户端启动访问,每个客户端链路都共用一个ChannelHandler</span></span><br><span class="line"><span class="keyword">for</span>(<span class="keyword">int</span> i = <span class="number">0</span>; i &lt; <span class="number">4</span>; i++)&#123;</span><br><span class="line">    ChannelFuture channelFuture = bootstrap.connect(HOST, PORT).sync();</span><br><span class="line">    channelFutures.add(channelFuture);</span><br><span class="line">&#125;</span><br><span class="line">channelFutures.forEach(channelFuture -&gt; &#123;</span><br><span class="line">    <span class="keyword">try</span> &#123;</span><br><span class="line">        channelFuture.channel().closeFuture().sync();</span><br><span class="line">    &#125; <span class="keyword">catch</span> (InterruptedException e) &#123;</span><br><span class="line">        e.printStackTrace();</span><br><span class="line">    &#125;</span><br><span class="line">&#125;);</span><br><span class="line">eventLoopGroup.shutdownGracefully();</span><br></pre></td></tr></table></figure>
+
+<p>执行后报错如下：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">18:52:45.384 [nioEventLoopGroup-2-2] WARN  io.netty.channel.ChannelInitializer - Failed to initialize a channel. Closing: [id: 0xb6df6234]</span><br><span class="line">io.netty.channel.ChannelPipelineException: com.manling.netty.handler.security.ServiceHandler is not a @Sharable handler, so can&#x27;t be added or removed multiple times.</span><br><span class="line">	at io.netty.channel.DefaultChannelPipeline.checkMultiplicity(DefaultChannelPipeline.java:600)</span><br><span class="line">	at io.netty.channel.DefaultChannelPipeline.addLast(DefaultChannelPipeline.java:202)</span><br><span class="line">	at io.netty.channel.DefaultChannelPipeline.addLast(DefaultChannelPipeline.java:381)</span><br><span class="line">	at io.netty.channel.DefaultChannelPipeline.addLast(DefaultChannelPipeline.java:370)</span><br><span class="line">	at com.manling.netty.test.NettyClient$1.initChannel(NettyClient.java:33)</span><br></pre></td></tr></table></figure>
+
+<p>报错是因为，我们尝试将同一个ChannelHandler加入到多个ChannelPipeline。</p>
+<hr>
+<p>如果我们要ChannelHandler能够共享，通过<code>@ChannelHandler.Sharable</code>注解就可以实现。</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">@ChannelHandler</span>.Sharable</span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">ServiceHandler</span> <span class="keyword">extends</span> <span class="title">ChannelInboundHandlerAdapter</span> </span>&#123;</span><br><span class="line">    ...</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+
+
+<h2 id="参考文章"><a href="#参考文章" class="headerlink" title="参考文章"></a>参考文章</h2><p><a target="_blank" rel="noopener" href="https://blog.csdn.net/MarchRS/article/details/103961106">Netty-ChannelHandler并发安全分析</a></p>
+
+    </div>
+
+    
+    
+    
+
+      <footer class="post-footer">
+          <div class="post-tags">
+              <a href="/notes/tags/Netty/" rel="tag"># Netty</a>
+              <a href="/notes/tags/ChannelHandler/" rel="tag"># ChannelHandler</a>
+          </div>
+
+        
+
+
+        
+    <div class="post-nav">
+      <div class="post-nav-item">
+    <a href="/notes/2021/07/15/SpringBoot/springboot%E4%B9%8Bapplicationrunner%E6%8E%A5%E5%8F%A3%E5%92%8C-order%E6%B3%A8%E8%A7%A3/" rel="prev" title="SpringBoot之ApplicationRunner接口和@Order注解">
+      <i class="fa fa-chevron-left"></i> SpringBoot之ApplicationRunner接口和@Order注解
+    </a></div>
+      <div class="post-nav-item"></div>
+    </div>
+      </footer>
+    
+  </article>
+  
+  
+  
+
+
+
+          </div>
+          
+
+<script>
+  window.addEventListener('tabs:register', () => {
+    let { activeClass } = CONFIG.comments;
+    if (CONFIG.comments.storage) {
+      activeClass = localStorage.getItem('comments_active') || activeClass;
+    }
+    if (activeClass) {
+      let activeTab = document.querySelector(`a[href="#comment-${activeClass}"]`);
+      if (activeTab) {
+        activeTab.click();
+      }
+    }
+  });
+  if (CONFIG.comments.storage) {
+    window.addEventListener('tabs:click', event => {
+      if (!event.target.matches('.tabs-comment .tab-content .tab-pane')) return;
+      let commentClass = event.target.classList[1];
+      localStorage.setItem('comments_active', commentClass);
+    });
+  }
+</script>
+
+        </div>
+          
+  
+  <div class="toggle sidebar-toggle">
+    <span class="toggle-line toggle-line-first"></span>
+    <span class="toggle-line toggle-line-middle"></span>
+    <span class="toggle-line toggle-line-last"></span>
+  </div>
+
+  <aside class="sidebar">
+    <div class="sidebar-inner">
+
+      <ul class="sidebar-nav motion-element">
+        <li class="sidebar-nav-toc">
+          文章目录
+        </li>
+        <li class="sidebar-nav-overview">
+          站点概览
+        </li>
+      </ul>
+
+      <!--noindex-->
+      <div class="post-toc-wrap sidebar-panel">
+          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%BC%95%E8%A8%80"><span class="nav-number">1.</span> <span class="nav-text">引言</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E4%B8%B2%E8%A1%8C%E6%89%A7%E8%A1%8C%E5%90%8E%E7%9A%84ChannelHandler"><span class="nav-number">2.</span> <span class="nav-text">串行执行后的ChannelHandler</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E8%B7%A8%E9%93%BE%E8%B7%AF%E5%85%B1%E4%BA%AB%E7%9A%84ChannelHandler"><span class="nav-number">3.</span> <span class="nav-text">跨链路共享的ChannelHandler</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%8F%82%E8%80%83%E6%96%87%E7%AB%A0"><span class="nav-number">4.</span> <span class="nav-text">参考文章</span></a></li></ol></div>
+      </div>
+      <!--/noindex-->
+
+      <div class="site-overview-wrap sidebar-panel">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+  <p class="site-author-name" itemprop="name">Sinngle</p>
+  <div class="site-description" itemprop="description"></div>
+</div>
+<div class="site-state-wrap motion-element">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+          <a href="/notes/archives/">
+        
+          <span class="site-state-item-count">39</span>
+          <span class="site-state-item-name">日志</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+            <a href="/notes/categories/">
+        <span class="site-state-item-count">15</span>
+        <span class="site-state-item-name">分类</span></a>
+      </div>
+      <div class="site-state-item site-state-tags">
+            <a href="/notes/tags/">
+        <span class="site-state-item-count">23</span>
+        <span class="site-state-item-name">标签</span></a>
+      </div>
+  </nav>
+</div>
+
+
+
+      </div>
+
+    </div>
+  </aside>
+  <div id="sidebar-dimmer"></div>
+
+
+      </div>
+    </main>
+
+    <footer class="footer">
+      <div class="footer-inner">
+        
+
+        
+
+<div class="copyright">
+  
+  &copy; 
+  <span itemprop="copyrightYear">2021</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">Sinngle</span>
+</div>
+  <div class="powered-by">由 <a href="https://hexo.io/" class="theme-link" rel="noopener" target="_blank">Hexo</a> & <a href="https://theme-next.org/" class="theme-link" rel="noopener" target="_blank">NexT.Gemini</a> 强力驱动
+  </div>
+
+        
+
+
+
+
+
+
+
+
+      </div>
+    </footer>
+  </div>
+
+  
+  <script src="/notes/lib/anime.min.js"></script>
+  <script src="/notes/lib/velocity/velocity.min.js"></script>
+  <script src="/notes/lib/velocity/velocity.ui.min.js"></script>
+
+<script src="/notes/js/utils.js"></script>
+
+<script src="/notes/js/motion.js"></script>
+
+
+<script src="/notes/js/schemes/pisces.js"></script>
+
+
+<script src="/notes/js/next-boot.js"></script>
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+  
+
+</body>
+</html>

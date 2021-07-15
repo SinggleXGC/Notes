@@ -145,7 +145,7 @@
   
   
   <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
-    <link itemprop="mainEntityOfPage" href="https://singglexgc.github.io/notes/2021/07/12/Netty/netty%E6%A0%B8%E5%BF%83%E7%BB%84%E4%BB%B6/">
+    <link itemprop="mainEntityOfPage" href="https://singglexgc.github.io/notes/2021/07/12/Netty/netty%E6%95%B4%E5%90%88%E5%88%B0log4j/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
       <meta itemprop="image" content="/notes/images/avatar.gif">
@@ -159,7 +159,7 @@
       <header class="post-header">
         <h2 class="post-title" itemprop="name headline">
           
-            <a href="/notes/2021/07/12/Netty/netty%E6%A0%B8%E5%BF%83%E7%BB%84%E4%BB%B6/" class="post-title-link" itemprop="url">Netty核心组件</a>
+            <a href="/notes/2021/07/12/Netty/netty%E6%95%B4%E5%90%88%E5%88%B0log4j/" class="post-title-link" itemprop="url">Netty整合到Log4j</a>
         </h2>
 
         <div class="post-meta">
@@ -170,7 +170,7 @@
               <span class="post-meta-item-text">发表于</span>
               
 
-              <time title="创建时间：2021-07-12 00:25:06 / 修改时间：00:36:42" itemprop="dateCreated datePublished" datetime="2021-07-12T00:25:06+08:00">2021-07-12</time>
+              <time title="创建时间：2021-07-12 00:36:53 / 修改时间：00:37:34" itemprop="dateCreated datePublished" datetime="2021-07-12T00:36:53+08:00">2021-07-12</time>
             </span>
             <span class="post-meta-item">
               <span class="post-meta-item-icon">
@@ -193,132 +193,12 @@
     <div class="post-body" itemprop="articleBody">
 
       
-          <h2 id="Bootstrap、ServerBootstrap"><a href="#Bootstrap、ServerBootstrap" class="headerlink" title="Bootstrap、ServerBootstrap"></a>Bootstrap、ServerBootstrap</h2><p>一个Netty应用通常由一个Bootstrap开始，主要作用是配置整个Netty程序，串联各个组件，Netty中Bootstrap类是客户端程序的启动引导类，ServerBootstrap是服务器启动引导类。</p>
-<h2 id="Future、ChannelFuture"><a href="#Future、ChannelFuture" class="headerlink" title="Future、ChannelFuture"></a>Future、ChannelFuture</h2><p>Netty中所有IO操作都是异步的，会立即返回一个ChannelFuture对象。通过这个对象可以注册一个监听，当操作执行成功或失败时监听会自动触发注册的监听事件</p>
-<h3 id="常见的方法"><a href="#常见的方法" class="headerlink" title="常见的方法"></a>常见的方法</h3><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="function">Channel <span class="title">channel</span><span class="params">()</span></span>; <span class="comment">//返回当前正在进行IO操作的通道</span></span><br><span class="line"><span class="function">ChannelFuture <span class="title">sync</span><span class="params">()</span></span>; <span class="comment">//等待异步操作执行完毕</span></span><br></pre></td></tr></table></figure>
-
-
-
-<h2 id="Channel"><a href="#Channel" class="headerlink" title="Channel"></a>Channel</h2><ol>
-<li>Netty网络通信的组件，能够用于执行网络IO操作</li>
-<li>通过Channel可获得当前网络连接的通道的状态</li>
-<li>通过Channel可获得网络连接的配置参数(例如接收缓冲区大小)</li>
-<li>Channel提供异步的网络IO操作(如建立连接，读写，绑定端口)</li>
-<li>调用立即返回一个ChannelFuture对象，可以通过注册监听到ChannelFuture对象</li>
-<li>支持关联IO操作与对应的处理程序</li>
-<li>不同协议，不同阻塞类型的连接都有不同的Channel类型与之对应，常用的Channel类型有：<ul>
-<li>NioSocketChannel：异步的客户端TCP连接</li>
-<li>NioServerSocketChannel：异步的服务器端TCP连接</li>
-<li>NioDatagramChannel：异步的UDP连接</li>
-<li>NioSctpChannel：异步的客户端Sctp连接</li>
-<li>NioSctpServerChannel：异步的服务器端Sctp连接，这些通道涵盖了UDP和TCP网络IO以及文件IO</li>
-</ul>
-</li>
+          <ol>
+<li><p>增加依赖</p>
+<figure class="highlight xml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br></pre></td><td class="code"><pre><span class="line"><span class="tag">&lt;<span class="name">dependency</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">groupId</span>&gt;</span>log4j<span class="tag">&lt;/<span class="name">groupId</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">artifactId</span>&gt;</span>log4j<span class="tag">&lt;/<span class="name">artifactId</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">version</span>&gt;</span>1.2.17<span class="tag">&lt;/<span class="name">version</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;/<span class="name">dependency</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;<span class="name">dependency</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">groupId</span>&gt;</span>org.slf4j<span class="tag">&lt;/<span class="name">groupId</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">artifactId</span>&gt;</span>slf4j-api<span class="tag">&lt;/<span class="name">artifactId</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">version</span>&gt;</span>1.7.25<span class="tag">&lt;/<span class="name">version</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;/<span class="name">dependency</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;<span class="name">dependency</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">groupId</span>&gt;</span>org.slf4j<span class="tag">&lt;/<span class="name">groupId</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">artifactId</span>&gt;</span>slf4j-log4j12<span class="tag">&lt;/<span class="name">artifactId</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">version</span>&gt;</span>1.7.25<span class="tag">&lt;/<span class="name">version</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">scope</span>&gt;</span>test<span class="tag">&lt;/<span class="name">scope</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;/<span class="name">dependency</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;<span class="name">dependency</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">groupId</span>&gt;</span>org.slf4j<span class="tag">&lt;/<span class="name">groupId</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">artifactId</span>&gt;</span>slf4j-simple<span class="tag">&lt;/<span class="name">artifactId</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">version</span>&gt;</span>1.7.25<span class="tag">&lt;/<span class="name">version</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">scope</span>&gt;</span>test<span class="tag">&lt;/<span class="name">scope</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;/<span class="name">dependency</span>&gt;</span></span><br></pre></td></tr></table></figure></li>
+<li><p>编写配置文件</p>
+<figure class="highlight properties"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">#log4j.rootLogger=DEBUG, stdout</span></span><br><span class="line"><span class="comment">#log4j.appender.stdout=org.apache.log4j.ConsoleAppender</span></span><br><span class="line"><span class="comment">#log4j.appender.stdout.layout=org.apache.log4j.PatternLayout</span></span><br><span class="line"><span class="comment">#log4j.appender.stdout.layout.ConversionPattern=[%p] %C&#123;1&#125; - %m%n</span></span><br></pre></td></tr></table></figure></li>
 </ol>
-<h2 id="Selecor"><a href="#Selecor" class="headerlink" title="Selecor"></a>Selecor</h2><ol>
-<li>Netty基于Selector实现IO多路复用，通过Selctor一个线程可以监听多个连接的Channel事件</li>
-<li>当向一个Selector中注册Channel后，Selector内部的机制就可以自动不断地查询(select)这些注册的Channel是否有就绪写IO事件，这样就可以实现一个线程高效的管理多个Channel</li>
-</ol>
-<h2 id="ChannelHandler及其实现类"><a href="#ChannelHandler及其实现类" class="headerlink" title="ChannelHandler及其实现类"></a>ChannelHandler及其实现类</h2><ol>
-<li>ChannelHandler是一个接口，处理IO事件或拦截IO操作，并将其转发到其ChannelPipeline(业务处理链)中的下一个处理程序</li>
-<li>ChannelHandler本身没有提供很多方法，因为这个接口有许多的方法需要实现，方便使用期间，可以继承它的子类</li>
-</ol>
-<p><img src="/notes/2021/07/12/Netty/netty%E6%A0%B8%E5%BF%83%E7%BB%84%E4%BB%B6/image-20210206181034239.png"></p>
-<ul>
-<li>ChannelInboundHandler：用于处理入站IO事件</li>
-<li>ChannelOutboundHandler：用于处理出站IO事件</li>
-</ul>
-<p>//适配器</p>
-<ul>
-<li>ChannelInboundHandlerAdapter：用于处理入站IO事件</li>
-<li>ChannelOutboundHandlerAdapter：用于处理出站IO事件</li>
-<li>ChannelDuplexHandler：用于处理入站和出站IO事件</li>
-</ul>
-<ol start="3">
-<li>ChannelPipeline提供了ChannelHandler链的容器，以客户端应用程序为例，如果事件的运动方向是从客户端到服务器端的，那么我们称这些事件为出站。即客户端发送给客户端的数据会通过Pipeline中的一系列ChannelOutboundHandler处理。</li>
-</ol>
-<h2 id="Pipeline和ChannelPipeline"><a href="#Pipeline和ChannelPipeline" class="headerlink" title="Pipeline和ChannelPipeline"></a>Pipeline和ChannelPipeline</h2><ol>
-<li><p>ChannelPipeline是一个Handler的集合，它负责处理和拦截inbound或者outbound事件和操作，相当于一个贯穿Netty的链。</p>
-</li>
-<li><p>ChannelPipeline实现了一种高级形式的拦截过滤器模式，使用户可以完全控制事件的处理方式，以及Channel中的各个ChannelHandler如何相互交互</p>
-</li>
-<li><p>在Netty中每个Channel都有且仅有一个ChannelPipeline与之对应，它们的组成关系如下：</p>
-<p><img src="/notes/2021/07/12/Netty/netty%E6%A0%B8%E5%BF%83%E7%BB%84%E4%BB%B6/image-20210206183613550.png"></p>
-<ul>
-<li>一个Channel包括了一个ChannelPipeline，而ChannelPipeline中又维护了一个由ChannelHandlerContext组成的双向链表，并且每个ChannelHandlerContext中又关联着一个ChannelHandler。</li>
-<li>入站事件和出站事件在一个双向链表中，入站事件会从链表head往后传递到最后一个入站的handler，出站事件会从链表tail向前传递到最前一个出站的handler。两种类型的handler互不干扰。</li>
-</ul>
-</li>
-</ol>
-<h3 id="常见方法"><a href="#常见方法" class="headerlink" title="常见方法"></a>常见方法</h3><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="function">ChannelPipeline <span class="title">addFirst</span><span class="params">(ChannelHandler... handlers)</span></span>;</span><br><span class="line"><span class="function">ChannelPipeline <span class="title">addLast</span><span class="params">(ChannelHandler... handlers)</span></span>;</span><br></pre></td></tr></table></figure>
-
-
-
-<h2 id="ChannelHandlerContext"><a href="#ChannelHandlerContext" class="headerlink" title="ChannelHandlerContext"></a>ChannelHandlerContext</h2><ol>
-<li>保存Channel相关的所有上下文对象，同时关联与一个ChannelHandler对象</li>
-<li>即ChannelHandlerContext中包含一个具体的事件处理器ChannelHandler，同时ChannelHandlerContext中也绑定了对应的pipeline和Channel的信息，方便对ChannelHandler进行调用</li>
-</ol>
-<h3 id="常用方法"><a href="#常用方法" class="headerlink" title="常用方法"></a>常用方法</h3><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="function">ChannelFuture <span class="title">close</span><span class="params">()</span></span>; <span class="comment">//关闭通道</span></span><br><span class="line"><span class="function">ChannelOutboundInvoker <span class="title">flush</span><span class="params">()</span></span>; <span class="comment">//刷新</span></span><br><span class="line"><span class="comment">//将数据写到ChannelPipeline中当前ChannelHandler的下一个ChannelHandler开始处理(出站)</span></span><br><span class="line"><span class="function">ChannelFuture <span class="title">writeAndFlush</span><span class="params">(Object msg)</span></span>;</span><br></pre></td></tr></table></figure>
-
-
-
-<h2 id="ChannelOption"><a href="#ChannelOption" class="headerlink" title="ChannelOption"></a>ChannelOption</h2><ol>
-<li><p>Netty在创建Channel实例后，一般都需要设置ChannlOption参数</p>
-</li>
-<li><p>ChannelOption参数如下：</p>
-<ul>
-<li><p>ChannelOption.SO_BACKLOG</p>
-<p>对应TCP/IP协议listen函数中的backlog参数，用于初始化服务器可连接队列大小。服务器处理客户端连接请求是顺序处理的，同一时间只能处理一个客户端连接。多个客户端来的时候，服务器将不能处理的客户端连接请求放在队列中等待处理。backlog参数执行了队列的大小。</p>
-</li>
-<li><p>ChannelOption.SO_KEEPALIVE</p>
-<p>一直保持连接活动状态</p>
-</li>
-</ul>
-</li>
-</ol>
-<h2 id="EventLoopGroup和其实现类NioEventLoopGroup"><a href="#EventLoopGroup和其实现类NioEventLoopGroup" class="headerlink" title="EventLoopGroup和其实现类NioEventLoopGroup"></a>EventLoopGroup和其实现类NioEventLoopGroup</h2><ol>
-<li>EventLoopGroup是一组EventLoop的抽象，Netty为了更好的利用多核CPU资源，一般会有多个EventLoop同时工作，每个EventLoop维护着一个Selector实例</li>
-<li>EventLoopGroup提供next接口，可以从组里面按照一定规则获取一个EventLoop来处理任务。</li>
-<li>通常一个服务端口，即一个ServerSocketChannel对应一个Selector和一个EventLoop线程。BossEventLoop负责接收客户端的连接并将SocketChannel交给WorkerEventLoopGroup来进行IO处理。</li>
-</ol>
-<h2 id="Unpooled类"><a href="#Unpooled类" class="headerlink" title="Unpooled类"></a>Unpooled类</h2><p>Netty提供一个专门用来操作缓冲区(即Netty的数据容器)的工具类</p>
-<h3 id="常用方法-1"><a href="#常用方法-1" class="headerlink" title="常用方法"></a>常用方法</h3><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">//通过给定的数据和字符编码返回一个ByteBuf对象</span></span><br><span class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">static</span> ByteBuf <span class="title">copiedBuffer</span><span class="params">(CharSequence string, Charset charset)</span></span>;</span><br></pre></td></tr></table></figure>
-
-
-
-<h2 id="编码和解码"><a href="#编码和解码" class="headerlink" title="编码和解码"></a>编码和解码</h2><ol>
-<li><p>编写网络应用程序时，因为数据在网络中传输的都是二进制字节码数据，在发送数据时就需要编码，接收数据时就需要解码</p>
-</li>
-<li><p>codec(编解码器)的组成部分有两个：decoder(解码器)和encoder(编码器)</p>
-<p>encoder负责将业务数据转换成字节码数据</p>
-<p>decoder负责将字节码数据转换成业务数据</p>
-</li>
-<li><p>Netty自身提供了一些codec</p>
-<ul>
-<li>StringEncoder，StringDecoder</li>
-<li>ObjectEncoder，ObjectDecoder，对Java对象进行编解码</li>
-</ul>
-</li>
-<li><p>Netty本身自带的ObjectDecoder和ObjectEncoder可以用来实现POJO对象或各种业务对象的编码解码，底层使用的是Java序列化技术，而Java序列化技术本身效率不高，存在如下问题：</p>
-<ul>
-<li>无法跨语言</li>
-<li>序列化的体积太大，是二进制编码的5倍多</li>
-<li>序列化性能太低</li>
-</ul>
-<p>所以出现了新的解决方案：Google的ProtoBuf</p>
-</li>
-</ol>
-<h3 id="常用解码器"><a href="#常用解码器" class="headerlink" title="常用解码器"></a>常用解码器</h3><h4 id="RelayingDecoder"><a href="#RelayingDecoder" class="headerlink" title="RelayingDecoder"></a>RelayingDecoder</h4><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="keyword">abstract</span> <span class="class"><span class="keyword">class</span> <span class="title">RelayingDecoder</span>&lt;<span class="title">S</span>&gt; <span class="keyword">extends</span> <span class="title">ByteToMessageDecoder</span></span></span><br></pre></td></tr></table></figure>
-
-<p>RelayingDecoder扩展了ByteToMessageDecoder类，使用这个类，我们不必调用readableBytes()方法。参数S指定了用户状态管理的类型，其中Void代表不需要状态管理。</p>
-<p>缺点：</p>
-<ol>
-<li>并不是所有的ByteBuf操作被支持</li>
-<li>ReplayingDecoder在某些情况下可能稍慢于ByteToMessageDecoder，例如网络缓慢并且消息格式复杂时，消息会被拆分了多个碎片，速度变慢。</li>
-</ol>
-<h4 id="LineBasedFrameDecoder"><a href="#LineBasedFrameDecoder" class="headerlink" title="LineBasedFrameDecoder"></a>LineBasedFrameDecoder</h4><p>这个类在Netty内部也有使用，它使用行尾控制字符(<code>\n</code>或者<code>\r\n</code>)作为分隔符来解析数据</p>
-<h4 id="DelimiterBasedFrameDecoder"><a href="#DelimiterBasedFrameDecoder" class="headerlink" title="DelimiterBasedFrameDecoder"></a>DelimiterBasedFrameDecoder</h4><p>使用自定义的特殊字符作为消息的分隔符</p>
-<h4 id="HttpObjectDecoder"><a href="#HttpObjectDecoder" class="headerlink" title="HttpObjectDecoder"></a>HttpObjectDecoder</h4><p>一个Http数据的解码器长度来标识整包消息，这样就可以自动的处理粘包和半包消息。</p>
 
       
     </div>
@@ -338,7 +218,7 @@
   
   
   <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
-    <link itemprop="mainEntityOfPage" href="https://singglexgc.github.io/notes/2021/07/12/Netty/%E5%BC%82%E6%AD%A5%E6%A8%A1%E5%9E%8B/">
+    <link itemprop="mainEntityOfPage" href="https://singglexgc.github.io/notes/2021/07/12/Netty/protobuf/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
       <meta itemprop="image" content="/notes/images/avatar.gif">
@@ -352,7 +232,7 @@
       <header class="post-header">
         <h2 class="post-title" itemprop="name headline">
           
-            <a href="/notes/2021/07/12/Netty/%E5%BC%82%E6%AD%A5%E6%A8%A1%E5%9E%8B/" class="post-title-link" itemprop="url">异步模型</a>
+            <a href="/notes/2021/07/12/Netty/protobuf/" class="post-title-link" itemprop="url">ProtoBuf</a>
         </h2>
 
         <div class="post-meta">
@@ -363,7 +243,7 @@
               <span class="post-meta-item-text">发表于</span>
               
 
-              <time title="创建时间：2021-07-12 00:24:27 / 修改时间：00:24:49" itemprop="dateCreated datePublished" datetime="2021-07-12T00:24:27+08:00">2021-07-12</time>
+              <time title="创建时间：2021-07-12 00:26:45 / 修改时间：00:28:34" itemprop="dateCreated datePublished" datetime="2021-07-12T00:26:45+08:00">2021-07-12</time>
             </span>
             <span class="post-meta-item">
               <span class="post-meta-item-icon">
@@ -386,17 +266,30 @@
     <div class="post-body" itemprop="articleBody">
 
       
-          <h2 id="什么是异步模型"><a href="#什么是异步模型" class="headerlink" title="什么是异步模型"></a>什么是异步模型</h2><ol>
-<li>Netty的IO操作是异步的，Bind、Write、Connect等操作会简单的返回一个ChannelFuture</li>
-<li>调用者不能立即获得结果，而是通过Future-Listener机制，用户可以方便的主动获得或者通过通知机制获得IO操作结果</li>
-<li>Netty的异步模型是建立在Future和Callback之上的。Callback就是回调。重点说Future，它的核心思想是：假设一个fun方法耗时长，那么可以在调用Fun方法的时候立即返回一个Future对象，后续可以通过Future对象去监控fun方法的处理过程(即Future-Listener机制)</li>
+          <h2 id="ProtoBuf简介"><a href="#ProtoBuf简介" class="headerlink" title="ProtoBuf简介"></a>ProtoBuf简介</h2><ol>
+<li>ProtoBuf是Google发布的开源项目，全称Google Protocol Buffers，是一种轻便高效的结构化数据存储格式，可以用于结构化数据串行化，或者说序列化。它很适合做数据存储或PRC数据交换格式</li>
+<li>Protobuf是以message的方式来管理数据的</li>
+<li>支持跨平台、跨语言</li>
+<li>高性能，高可靠性</li>
+<li>使用protobuf编译器能自动生成代码，protobuf是将类的定义使用.proto文件进行描述。然后通过protoc.exe编译器根据.proto自动生成.java文件</li>
 </ol>
-<h2 id="Future说明"><a href="#Future说明" class="headerlink" title="Future说明"></a>Future说明</h2><ol>
-<li><p>表示异步的执行结果，可以通过它提供的方法来检测执行是否完成，比如检索计算等。</p>
+<h2 id="ProtoBuf使用"><a href="#ProtoBuf使用" class="headerlink" title="ProtoBuf使用"></a>ProtoBuf使用</h2><ol>
+<li><p>引入依赖</p>
+<figure class="highlight xml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="tag">&lt;<span class="name">dependency</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">groupId</span>&gt;</span>com.google.protobuf<span class="tag">&lt;/<span class="name">groupId</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">artifactId</span>&gt;</span>protobuf-java<span class="tag">&lt;/<span class="name">artifactId</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">version</span>&gt;</span>3.6.1<span class="tag">&lt;/<span class="name">version</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;/<span class="name">dependency</span>&gt;</span></span><br></pre></td></tr></table></figure></li>
+<li><p>编写proto文件</p>
+<figure class="highlight protobuf"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">syntax = <span class="string">&quot;proto3&quot;</span>; <span class="comment">//版本</span></span><br><span class="line"><span class="keyword">option</span> java_outer_classname = <span class="string">&quot;StudentPOJO&quot;</span>; <span class="comment">//生成的外部类名，同时也是文件名</span></span><br><span class="line"><span class="comment">//protobuf 使用message管理数据</span></span><br><span class="line"><span class="class"><span class="keyword">message</span> <span class="title">Student</span> </span>&#123; <span class="comment">//会在StudentPOJO外部类生成一个内部类Student，它是正在发送的POJO对象</span></span><br><span class="line">    <span class="built_in">int32</span> id = <span class="number">1</span>; <span class="comment">//Student类中有一个属性 名字为id，类型为int32(protobuf类型) 1表示属性序号，不是值</span></span><br><span class="line">    <span class="built_in">string</span> name = <span class="number">2</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></li>
+<li><p>编译proto文件为java文件</p>
+<p>下载protoc.exe编译器，执行命令</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">protoc.exe --java_out=. Student.proto</span><br></pre></td></tr></table></figure>
+
+<p>就会生成StudentPOJO.java文件</p>
 </li>
-<li><p>ChannelFuture是一个接口，<code>public interface ChannelFuture extends Future&lt;Void&gt;</code></p>
-<p>我们可以添加监听器，当监听的事件发生时，就会通知监听器</p>
-<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line">ChannelFuture channelFuture = bootstrap.bind(<span class="number">6668</span>).sync();</span><br><span class="line"></span><br><span class="line"><span class="comment">//给ChannelFuture注册监听器，监控我们关心的事件</span></span><br><span class="line">channelFuture.addListener(<span class="keyword">new</span> ChannelFutureListener() &#123;</span><br><span class="line">    <span class="meta">@Override</span></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">operationComplete</span><span class="params">(ChannelFuture channelFuture)</span> <span class="keyword">throws</span> Exception </span>&#123;</span><br><span class="line">        <span class="keyword">if</span> (channelFuture.isSuccess()) &#123;</span><br><span class="line">            System.out.println(<span class="string">&quot;监听端口6668成功&quot;</span>);</span><br><span class="line">        &#125; <span class="keyword">else</span> &#123;</span><br><span class="line">            System.out.println(<span class="string">&quot;监听端口失败&quot;</span>);</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;);</span><br></pre></td></tr></table></figure></li>
+<li><p>为服务器端增加ProtobufDecoder解码器，为客户端增加ProtobufEncoder编码器</p>
+<p>服务器端需要指定传输的类型</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">pipeline.addLast(<span class="string">&quot;decoder&quot;</span>,</span><br><span class="line">                 <span class="keyword">new</span> ProtobufDecoder(StudentPOJO.Student.getDefaultInstance()));</span><br></pre></td></tr></table></figure>
+
+<p>客户端构建Student对象，并发送给服务器端</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">StudentPOJO.Student student = StudentPOJO.Student.newBuilder().setId(<span class="number">4</span>)</span><br><span class="line">    .setName(<span class="string">&quot;豹子头 林冲&quot;</span>).build();</span><br><span class="line">ctx.writeAndFlush(student);</span><br></pre></td></tr></table></figure></li>
 </ol>
 
       
@@ -416,7 +309,7 @@
 
   
   <nav class="pagination">
-    <a class="extend prev" rel="prev" href="/notes/page/2/"><i class="fa fa-angle-left" aria-label="上一页"></i></a><a class="page-number" href="/notes/">1</a><a class="page-number" href="/notes/page/2/">2</a><span class="page-number current">3</span><a class="page-number" href="/notes/page/4/">4</a><span class="space">&hellip;</span><a class="page-number" href="/notes/page/19/">19</a><a class="extend next" rel="next" href="/notes/page/4/"><i class="fa fa-angle-right" aria-label="下一页"></i></a>
+    <a class="extend prev" rel="prev" href="/notes/page/2/"><i class="fa fa-angle-left" aria-label="上一页"></i></a><a class="page-number" href="/notes/">1</a><a class="page-number" href="/notes/page/2/">2</a><span class="page-number current">3</span><a class="page-number" href="/notes/page/4/">4</a><span class="space">&hellip;</span><a class="page-number" href="/notes/page/20/">20</a><a class="extend next" rel="next" href="/notes/page/4/"><i class="fa fa-angle-right" aria-label="下一页"></i></a>
   </nav>
 
 
@@ -482,18 +375,18 @@
       <div class="site-state-item site-state-posts">
           <a href="/notes/archives/">
         
-          <span class="site-state-item-count">37</span>
+          <span class="site-state-item-count">39</span>
           <span class="site-state-item-name">日志</span>
         </a>
       </div>
       <div class="site-state-item site-state-categories">
             <a href="/notes/categories/">
-        <span class="site-state-item-count">14</span>
+        <span class="site-state-item-count">15</span>
         <span class="site-state-item-name">分类</span></a>
       </div>
       <div class="site-state-item site-state-tags">
             <a href="/notes/tags/">
-        <span class="site-state-item-count">21</span>
+        <span class="site-state-item-count">23</span>
         <span class="site-state-item-name">标签</span></a>
       </div>
   </nav>

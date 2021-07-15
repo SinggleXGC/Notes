@@ -145,7 +145,7 @@
   
   
   <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
-    <link itemprop="mainEntityOfPage" href="https://singglexgc.github.io/notes/2021/06/13/%E8%BD%AF%E4%BB%B6%E5%B7%A5%E7%A8%8B/%E7%B1%BB%E5%9B%BE/">
+    <link itemprop="mainEntityOfPage" href="https://singglexgc.github.io/notes/2021/06/15/JavaSE/java%E5%8A%A8%E6%80%81%E4%BB%A3%E7%90%86/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
       <meta itemprop="image" content="/notes/images/avatar.gif">
@@ -159,7 +159,7 @@
       <header class="post-header">
         <h2 class="post-title" itemprop="name headline">
           
-            <a href="/notes/2021/06/13/%E8%BD%AF%E4%BB%B6%E5%B7%A5%E7%A8%8B/%E7%B1%BB%E5%9B%BE/" class="post-title-link" itemprop="url">类图</a>
+            <a href="/notes/2021/06/15/JavaSE/java%E5%8A%A8%E6%80%81%E4%BB%A3%E7%90%86/" class="post-title-link" itemprop="url">Java动态代理</a>
         </h2>
 
         <div class="post-meta">
@@ -168,17 +168,23 @@
                 <i class="far fa-calendar"></i>
               </span>
               <span class="post-meta-item-text">发表于</span>
-              
 
-              <time title="创建时间：2021-06-13 16:52:02 / 修改时间：16:55:35" itemprop="dateCreated datePublished" datetime="2021-06-13T16:52:02+08:00">2021-06-13</time>
+              <time title="创建时间：2021-06-15 12:50:02" itemprop="dateCreated datePublished" datetime="2021-06-15T12:50:02+08:00">2021-06-15</time>
             </span>
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="far fa-calendar-check"></i>
+                </span>
+                <span class="post-meta-item-text">更新于</span>
+                <time title="修改时间：2021-06-16 16:25:07" itemprop="dateModified" datetime="2021-06-16T16:25:07+08:00">2021-06-16</time>
+              </span>
             <span class="post-meta-item">
               <span class="post-meta-item-icon">
                 <i class="far fa-folder"></i>
               </span>
               <span class="post-meta-item-text">分类于</span>
                 <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-                  <a href="/notes/categories/%E8%BD%AF%E4%BB%B6%E5%B7%A5%E7%A8%8B/" itemprop="url" rel="index"><span itemprop="name">软件工程</span></a>
+                  <a href="/notes/categories/JavaSE/" itemprop="url" rel="index"><span itemprop="name">JavaSE</span></a>
                 </span>
             </span>
 
@@ -193,42 +199,46 @@
     <div class="post-body" itemprop="articleBody">
 
       
-          <h2 id="什么是类图？"><a href="#什么是类图？" class="headerlink" title="什么是类图？"></a>什么是类图？</h2><p>UML类图是显示类、接口以及它们之间的静态结构和关系。</p>
-<h2 id="类之间的关系"><a href="#类之间的关系" class="headerlink" title="类之间的关系"></a>类之间的关系</h2><p><img src="/notes/2021/06/13/%E8%BD%AF%E4%BB%B6%E5%B7%A5%E7%A8%8B/%E7%B1%BB%E5%9B%BE/807775-20160723144134247-1743796764.png" alt="img"></p>
-<h3 id="关联关系-Association"><a href="#关联关系-Association" class="headerlink" title="关联关系(Association)"></a>关联关系(Association)</h3><p>关联关系是一个<strong>“HAS”关系</strong>。</p>
-<p>一个对象作为另一个对象的属性，这就是关联关系。</p>
-<p>关联关系可以是单向的也可以是双向的。双向的符号是没有方向标的，只是一条直线。</p>
-<p><strong>例：</strong></p>
-<p>单向：</p>
-<p><img src="/notes/2021/06/13/%E8%BD%AF%E4%BB%B6%E5%B7%A5%E7%A8%8B/%E7%B1%BB%E5%9B%BE/807775-20160723144237560-523170503.png" alt="img"></p>
-<p>双向：</p>
-<p><img src="/notes/2021/06/13/%E8%BD%AF%E4%BB%B6%E5%B7%A5%E7%A8%8B/%E7%B1%BB%E5%9B%BE/807775-20160723144249232-258531063.png" alt="img"></p>
-<p>自关联：</p>
-<p><img src="/notes/2021/06/13/%E8%BD%AF%E4%BB%B6%E5%B7%A5%E7%A8%8B/%E7%B1%BB%E5%9B%BE/807775-20160723144303419-630408989.png" alt="img"></p>
-<p>多重性关联关系：</p>
-<p><img src="/notes/2021/06/13/%E8%BD%AF%E4%BB%B6%E5%B7%A5%E7%A8%8B/%E7%B1%BB%E5%9B%BE/807775-20160723144350529-855486099.png" alt="img"></p>
-<p><strong>例：</strong></p>
-<p><img src="/notes/2021/06/13/%E8%BD%AF%E4%BB%B6%E5%B7%A5%E7%A8%8B/%E7%B1%BB%E5%9B%BE/807775-20160723144434013-1500135858.png" alt="img"></p>
-<h3 id="依赖关系-Dependency"><a href="#依赖关系-Dependency" class="headerlink" title="依赖关系(Dependency)"></a>依赖关系(Dependency)</h3><p>依赖是<strong>“USE”关系</strong>。</p>
-<p>一个类A使用到了另一个类B，这就是依赖关系。</p>
-<p>具体表现形式有：</p>
-<ul>
-<li>一个类作为另一个类的方法的<strong>形式参数</strong></li>
-<li>一个类作为另一个类的方法的<strong>局部变量</strong></li>
-<li>一个类作为另一个类的方法的<strong>返回值</strong></li>
-<li>一个类的方法调用了另一个类的<strong>静态变量</strong></li>
-</ul>
-<p><img src="/notes/2021/06/13/%E8%BD%AF%E4%BB%B6%E5%B7%A5%E7%A8%8B/%E7%B1%BB%E5%9B%BE/807775-20160723144633185-87772206.png" alt="img"></p>
-<h3 id="聚合关系-Aggregation"><a href="#聚合关系-Aggregation" class="headerlink" title="聚合关系(Aggregation)"></a>聚合关系(Aggregation)</h3><p>整体与部分的关系，即成员变量是整体对象的一部分，但是成员对象能够脱离整体单独存在。</p>
-<p><img src="/notes/2021/06/13/%E8%BD%AF%E4%BB%B6%E5%B7%A5%E7%A8%8B/%E7%B1%BB%E5%9B%BE/807775-20160723144510279-1844358604.png" alt="img"></p>
-<p>聚合关系有一个特点就是<strong>可替换</strong>。</p>
-<h3 id="组合关系-Composition"><a href="#组合关系-Composition" class="headerlink" title="组合关系(Composition)"></a>组合关系(Composition)</h3><p>整体与部分的关系，即成员变量是整体对象的一部分，但是部分对象不能脱离整体存在。当整体对象销毁的时候，部分对象也会销毁。</p>
-<p><img src="/notes/2021/06/13/%E8%BD%AF%E4%BB%B6%E5%B7%A5%E7%A8%8B/%E7%B1%BB%E5%9B%BE/807775-20160723144538529-541997244.png" alt="img"></p>
-<h3 id="泛化关系-Generalization"><a href="#泛化关系-Generalization" class="headerlink" title="泛化关系(Generalization)"></a>泛化关系(Generalization)</h3><p>泛化关系就是继承关系，即父类和子类的关系。</p>
-<p><img src="/notes/2021/06/13/%E8%BD%AF%E4%BB%B6%E5%B7%A5%E7%A8%8B/%E7%B1%BB%E5%9B%BE/807775-20160723144659935-1934295664.png" alt="img"></p>
-<h3 id="实现关系-Realization"><a href="#实现关系-Realization" class="headerlink" title="实现关系(Realization)"></a>实现关系(Realization)</h3><p>具体类和接口的关系，就是实现关系。</p>
-<p><img src="/notes/2021/06/13/%E8%BD%AF%E4%BB%B6%E5%B7%A5%E7%A8%8B/%E7%B1%BB%E5%9B%BE/807775-20160723144730763-1113801133.png" alt="img"></p>
-<h2 id="参考资料"><a href="#参考资料" class="headerlink" title="参考资料"></a>参考资料</h2><p><a target="_blank" rel="noopener" href="https://www.cnblogs.com/ubuntu1/p/9140055.html">类图 - 吴小凯 - 博客园 (cnblogs.com)</a></p>
+          <blockquote>
+<p>代理模式分为静态代理和动态代理。</p>
+<p>当代理类的class文件在程序运行之前就已经存在，这就是静态代理。</p>
+<p>动态代理的代理对象在程序运行期间通过反射动态生成。</p>
+</blockquote>
+<h2 id="静态代理"><a href="#静态代理" class="headerlink" title="静态代理"></a>静态代理</h2><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">interface</span> <span class="title">Human</span> </span>&#123;</span><br><span class="line">    </span><br><span class="line">    <span class="function"><span class="keyword">void</span> <span class="title">sing</span><span class="params">()</span></span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">SuperStar</span> <span class="keyword">implements</span> <span class="title">Human</span> </span>&#123;</span><br><span class="line">    </span><br><span class="line">    <span class="meta">@Override</span></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">sing</span><span class="params">()</span> </span>&#123;</span><br><span class="line">        System.out.println(<span class="string">&quot;SuperStar is singing&quot;</span>);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">@Data</span></span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">StarAgent</span> <span class="keyword">implements</span> <span class="title">Human</span> </span>&#123;</span><br><span class="line">    </span><br><span class="line">    <span class="keyword">private</span> Human human;</span><br><span class="line">    </span><br><span class="line">    <span class="meta">@Override</span></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">sing</span><span class="params">()</span> </span>&#123;</span><br><span class="line">        System.out.println(<span class="string">&quot;经纪人进行准备工作&quot;</span>);</span><br><span class="line">        human.sing();</span><br><span class="line">        System.out.println(<span class="string">&quot;经纪人进行收尾工作&quot;</span>);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">Client</span> </span>&#123;</span><br><span class="line">    </span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">main</span><span class="params">(String[] args)</span> </span>&#123;</span><br><span class="line">        StarAgent starAgent = <span class="keyword">new</span> StarAgent();</span><br><span class="line">        starAgent.setHuman(<span class="keyword">new</span> SuperStar());</span><br><span class="line">        starAgent.sing();</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>运行结果如下：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">经纪人进行准备工作</span><br><span class="line">SuperStar is singing</span><br><span class="line">经纪人进行收尾工作</span><br></pre></td></tr></table></figure>
+
+
+
+<h2 id="Java动态代理"><a href="#Java动态代理" class="headerlink" title="Java动态代理"></a>Java动态代理</h2><h3 id="Human"><a href="#Human" class="headerlink" title="Human"></a>Human</h3><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">interface</span> <span class="title">Human</span> </span>&#123;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">void</span> <span class="title">sing</span><span class="params">()</span></span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+
+
+<h3 id="SuperStar"><a href="#SuperStar" class="headerlink" title="SuperStar"></a>SuperStar</h3><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">SuperStar</span> <span class="keyword">implements</span> <span class="title">Human</span></span>&#123;</span><br><span class="line"></span><br><span class="line">    <span class="meta">@Override</span></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">sing</span><span class="params">()</span> </span>&#123;</span><br><span class="line">        System.out.println(<span class="string">&quot;SuperStar is singing&quot;</span>);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+
+
+<h3 id="ProxyFactory"><a href="#ProxyFactory" class="headerlink" title="ProxyFactory"></a>ProxyFactory</h3><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">/**</span></span><br><span class="line"><span class="comment"> * 代理工厂</span></span><br><span class="line"><span class="comment"> */</span></span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">ProxyFactory</span> </span>&#123;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">static</span> Object <span class="title">getProxyInstance</span><span class="params">(Object obj)</span> </span>&#123;</span><br><span class="line">        MyInvocationHandler handler = <span class="keyword">new</span> MyInvocationHandler();</span><br><span class="line">        handler.bind(obj);</span><br><span class="line"></span><br><span class="line">        <span class="comment">/*</span></span><br><span class="line"><span class="comment">        * Proxy.newProxyInstance方法参数说明</span></span><br><span class="line"><span class="comment">        * 第一个参数：用哪个类加载器加载代理对象</span></span><br><span class="line"><span class="comment">        * 第二个参数：代理类需要实现的接口</span></span><br><span class="line"><span class="comment">        * 第三个参数：InvocationHandler对象。当代理类对象的方法执行时，调用InvocationHandler对象的invoke方法执行。</span></span><br><span class="line"><span class="comment">         */</span></span><br><span class="line">        <span class="keyword">return</span> Proxy.newProxyInstance(</span><br><span class="line">                obj.getClass().getClassLoader(),</span><br><span class="line">                obj.getClass().getInterfaces(),</span><br><span class="line">                handler</span><br><span class="line">                );</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+
+
+<h3 id="MyInvocationHandler"><a href="#MyInvocationHandler" class="headerlink" title="MyInvocationHandler"></a>MyInvocationHandler</h3><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">MyInvocationHandler</span> <span class="keyword">implements</span> <span class="title">InvocationHandler</span> </span>&#123;</span><br><span class="line"></span><br><span class="line">    <span class="comment">//被代理对象</span></span><br><span class="line">    <span class="keyword">private</span> Object obj;</span><br><span class="line"></span><br><span class="line">    <span class="comment">//绑定被代理对象</span></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">bind</span><span class="params">(Object obj)</span> </span>&#123;</span><br><span class="line">        <span class="keyword">this</span>.obj = obj;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="comment">/**</span></span><br><span class="line"><span class="comment">     *</span></span><br><span class="line"><span class="comment">     * <span class="doctag">@param</span> proxy 代理对象</span></span><br><span class="line"><span class="comment">     * <span class="doctag">@param</span> method 代理对象调用的方法</span></span><br><span class="line"><span class="comment">     * <span class="doctag">@param</span> args 调用方法的参数</span></span><br><span class="line"><span class="comment">     * <span class="doctag">@return</span> 方法返回值</span></span><br><span class="line"><span class="comment">     * <span class="doctag">@throws</span> Throwable</span></span><br><span class="line"><span class="comment">     */</span></span><br><span class="line">    <span class="meta">@Override</span></span><br><span class="line">    <span class="function"><span class="keyword">public</span> Object <span class="title">invoke</span><span class="params">(Object proxy, Method method, Object[] args)</span> <span class="keyword">throws</span> Throwable </span>&#123;</span><br><span class="line">        System.out.println(<span class="string">&quot;经纪人进行准备工作&quot;</span>);</span><br><span class="line">        <span class="comment">/*</span></span><br><span class="line"><span class="comment">        * method.invoke方法介绍</span></span><br><span class="line"><span class="comment">        * 第一个参数：被代理对象</span></span><br><span class="line"><span class="comment">        * 第二个参数：传入到被代理对象同名方法的参数列表</span></span><br><span class="line"><span class="comment">        * 返回值：被代理对象调用方法的返回值</span></span><br><span class="line"><span class="comment">         */</span></span><br><span class="line">        Object result = method.invoke(obj, args);</span><br><span class="line">        System.out.println(<span class="string">&quot;经纪人进行收尾工作&quot;</span>);</span><br><span class="line">        <span class="keyword">return</span> result;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+
+
+<h3 id="Client"><a href="#Client" class="headerlink" title="Client"></a>Client</h3><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">Client</span> </span>&#123;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">main</span><span class="params">(String[] args)</span> </span>&#123;</span><br><span class="line">        Human starAgent = (Human) ProxyFactory.getProxyInstance(<span class="keyword">new</span> SuperStar());</span><br><span class="line">        starAgent.sing();</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>执行结果如下：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">经纪人进行准备工作</span><br><span class="line">SuperStar is singing</span><br><span class="line">经纪人进行收尾工作</span><br></pre></td></tr></table></figure>
+
+
 
       
     </div>
@@ -248,7 +258,7 @@
   
   
   <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
-    <link itemprop="mainEntityOfPage" href="https://singglexgc.github.io/notes/2021/06/11/MySQL/%E4%BB%80%E4%B9%88%E6%98%AFmysql%E7%9A%84only-full-group-by%E6%A8%A1%E5%BC%8F%EF%BC%9F/">
+    <link itemprop="mainEntityOfPage" href="https://singglexgc.github.io/notes/2021/06/13/%E8%AE%BE%E8%AE%A1%E6%A8%A1%E5%BC%8F/%E8%81%8C%E8%B4%A3%E9%93%BE%E6%A8%A1%E5%BC%8F-chain-of-responsibility/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
       <meta itemprop="image" content="/notes/images/avatar.gif">
@@ -262,7 +272,7 @@
       <header class="post-header">
         <h2 class="post-title" itemprop="name headline">
           
-            <a href="/notes/2021/06/11/MySQL/%E4%BB%80%E4%B9%88%E6%98%AFmysql%E7%9A%84only-full-group-by%E6%A8%A1%E5%BC%8F%EF%BC%9F/" class="post-title-link" itemprop="url">什么是MySQL的ONLY_FULL_GROUP_BY模式？</a>
+            <a href="/notes/2021/06/13/%E8%AE%BE%E8%AE%A1%E6%A8%A1%E5%BC%8F/%E8%81%8C%E8%B4%A3%E9%93%BE%E6%A8%A1%E5%BC%8F-chain-of-responsibility/" class="post-title-link" itemprop="url">职责链模式(Chain of Responsibility)</a>
         </h2>
 
         <div class="post-meta">
@@ -271,23 +281,17 @@
                 <i class="far fa-calendar"></i>
               </span>
               <span class="post-meta-item-text">发表于</span>
+              
 
-              <time title="创建时间：2021-06-11 22:05:56" itemprop="dateCreated datePublished" datetime="2021-06-11T22:05:56+08:00">2021-06-11</time>
+              <time title="创建时间：2021-06-13 18:17:08 / 修改时间：18:17:55" itemprop="dateCreated datePublished" datetime="2021-06-13T18:17:08+08:00">2021-06-13</time>
             </span>
-              <span class="post-meta-item">
-                <span class="post-meta-item-icon">
-                  <i class="far fa-calendar-check"></i>
-                </span>
-                <span class="post-meta-item-text">更新于</span>
-                <time title="修改时间：2021-06-12 19:49:11" itemprop="dateModified" datetime="2021-06-12T19:49:11+08:00">2021-06-12</time>
-              </span>
             <span class="post-meta-item">
               <span class="post-meta-item-icon">
                 <i class="far fa-folder"></i>
               </span>
               <span class="post-meta-item-text">分类于</span>
                 <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-                  <a href="/notes/categories/MySQL/" itemprop="url" rel="index"><span itemprop="name">MySQL</span></a>
+                  <a href="/notes/categories/%E8%AE%BE%E8%AE%A1%E6%A8%A1%E5%BC%8F/" itemprop="url" rel="index"><span itemprop="name">设计模式</span></a>
                 </span>
             </span>
 
@@ -302,30 +306,37 @@
     <div class="post-body" itemprop="articleBody">
 
       
-          <h2 id="ONLY-FULL-GROUP-BY模式讲解"><a href="#ONLY-FULL-GROUP-BY模式讲解" class="headerlink" title="ONLY_FULL_GROUP_BY模式讲解"></a>ONLY_FULL_GROUP_BY模式讲解</h2><p>MySQL从版本5.7开始就默认开启了<strong>ONLY_FULL_GROUP_BY</strong>的sql_mode。</p>
-<p>这个SQL模式是为了提供对SQL语句GROUP BY合法性的检查。</p>
-<p>只有满足了这个SQL模式的规则的SQL才被MySQL认为是合法的SQL，否则就会报错，无法执行。</p>
-<p><strong>SQL模式核心规则如下：</strong></p>
-<p>select 、having或order by后面的非聚合列必须全部在group by后面存在。</p>
-<h2 id="实例证明"><a href="#实例证明" class="headerlink" title="实例证明"></a>实例证明</h2><h3 id="测试表-orders"><a href="#测试表-orders" class="headerlink" title="测试表 orders"></a>测试表 orders</h3><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">CREATE TABLE orders  (</span><br><span class="line">  id int AUTO_INCREMENT PRIMARY KEY ,</span><br><span class="line">  user_id int ,</span><br><span class="line">  create_time datetime ,</span><br><span class="line">  price int</span><br><span class="line">);</span><br></pre></td></tr></table></figure>
+          <h2 id="类图"><a href="#类图" class="headerlink" title="类图"></a>类图</h2><p>职责链的类图如下：</p>
+<p><img src="/notes/2021/06/13/%E8%AE%BE%E8%AE%A1%E6%A8%A1%E5%BC%8F/%E8%81%8C%E8%B4%A3%E9%93%BE%E6%A8%A1%E5%BC%8F-chain-of-responsibility/20210601301.png" alt="职责链模式类图"></p>
+<p>职责链模式包含如下角色：</p>
+<ul>
+<li>抽象处理者(AbstractHandler)角色：定义一个处理请求的接口，包含抽象处理方法和后继连接</li>
+<li>具体处理者(ConcreteHandler)角色：实现抽象处理者的处理方法，判断能够处理本次请求，如果能处理则处理请求，否则将请求转给它的后继者。</li>
+<li>客户端(Client)角色：创建处理链，并将请求提交给链头的具体处理者</li>
+</ul>
+<h2 id="实例"><a href="#实例" class="headerlink" title="实例"></a>实例</h2><p>公司有两个角色，manager和boss。</p>
+<p>当员工需要报销，需要向manager提交申请。</p>
+<p>manager在500元以下可以同意报销。金额超出或等于500元，需要将报销请求提交给boss。</p>
+<p>boss在5000以下可以同意报销。</p>
+<h3 id="Handler"><a href="#Handler" class="headerlink" title="Handler"></a>Handler</h3><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">@Data</span></span><br><span class="line"><span class="keyword">public</span> <span class="keyword">abstract</span> <span class="class"><span class="keyword">class</span> <span class="title">Handler</span> </span>&#123;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">private</span> Handler processor;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">abstract</span> <span class="keyword">void</span> <span class="title">handleRequest</span><span class="params">(<span class="keyword">int</span> price)</span></span>;</span><br><span class="line"></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
 
 
 
-<h3 id="测试数据"><a href="#测试数据" class="headerlink" title="测试数据"></a>测试数据</h3><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">INSERT INTO `orders`(`id`, `user_id`, `create_time`, `price`) VALUES (1, 123, &#x27;2021-06-10 17:32:39&#x27;, 56);</span><br><span class="line">INSERT INTO `orders`(`id`, `user_id`, `create_time`, `price`) VALUES (2, 123, &#x27;2021-06-09 17:33:04&#x27;, 78);</span><br><span class="line">INSERT INTO `orders`(`id`, `user_id`, `create_time`, `price`) VALUES (3, 124, &#x27;2021-06-08 17:33:19&#x27;, 65);</span><br><span class="line">INSERT INTO `orders`(`id`, `user_id`, `create_time`, `price`) VALUES (4, 125, &#x27;2021-06-08 17:33:35&#x27;, 65);</span><br></pre></td></tr></table></figure>
+<h3 id="Manager"><a href="#Manager" class="headerlink" title="Manager"></a>Manager</h3><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">Manager</span> <span class="keyword">extends</span> <span class="title">Handler</span> </span>&#123;</span><br><span class="line"></span><br><span class="line">    <span class="meta">@Override</span></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">handleRequest</span><span class="params">(<span class="keyword">int</span> price)</span> </span>&#123;</span><br><span class="line">        <span class="keyword">if</span> (price &lt; <span class="number">500</span>) &#123;</span><br><span class="line">            System.out.println(<span class="string">&quot;经理同意报销成功&quot;</span>);</span><br><span class="line">        &#125; <span class="keyword">else</span> &#123;</span><br><span class="line">            <span class="keyword">if</span> (getProcessor() != <span class="keyword">null</span>) &#123;</span><br><span class="line">                getProcessor().handleRequest(price);</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
 
 
 
-<h3 id="证明"><a href="#证明" class="headerlink" title="证明"></a>证明</h3><p>经过上面SQL执行之后的表如下：</p>
-<p><img src="/notes/2021/06/11/MySQL/%E4%BB%80%E4%B9%88%E6%98%AFmysql%E7%9A%84only-full-group-by%E6%A8%A1%E5%BC%8F%EF%BC%9F/image-20210612193847075.png" alt="image-20210612193847075"></p>
-<p>要执行的SQL：(这条SQL，select后面存在group by后面不存在的非聚合列)</p>
-<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">select user_id, create_time from orders</span><br><span class="line">group by user_id;</span><br></pre></td></tr></table></figure>
+<h3 id="Boss"><a href="#Boss" class="headerlink" title="Boss"></a>Boss</h3><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">Boss</span> <span class="keyword">extends</span>  <span class="title">Handler</span> </span>&#123;</span><br><span class="line"></span><br><span class="line">    <span class="meta">@Override</span></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">handleRequest</span><span class="params">(<span class="keyword">int</span> price)</span> </span>&#123;</span><br><span class="line">        <span class="keyword">if</span> (price &lt; <span class="number">5000</span>) &#123;</span><br><span class="line">            System.out.println(<span class="string">&quot;boss同意报销&quot;</span>);</span><br><span class="line">        &#125; <span class="keyword">else</span> &#123;</span><br><span class="line">            System.out.println(<span class="string">&quot;boss不允许报销&quot;</span>);</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
 
-<p><strong>在MySQL5.6版本执行结果：</strong></p>
-<p><img src="/notes/2021/06/11/MySQL/%E4%BB%80%E4%B9%88%E6%98%AFmysql%E7%9A%84only-full-group-by%E6%A8%A1%E5%BC%8F%EF%BC%9F/image-20210612194321563.png" alt="image-20210612194321563"></p>
-<p><strong>在MySQL8.0版本执行结果：</strong></p>
-<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">select user_id, create_time from orders</span><br><span class="line">group by user_id</span><br><span class="line">&gt; 1055 - Expression #2 of SELECT list is not in GROUP BY clause and contains nonaggregated column &#x27;learntest.orders.create_time&#x27; which is not functionally dependent on columns in GROUP BY clause; this is incompatible with sql_mode=only_full_group_by</span><br><span class="line">&gt; 时间: 0.001s</span><br></pre></td></tr></table></figure>
 
-<p>可以看到这条执行结果执行错误。</p>
+
+<h3 id="Client"><a href="#Client" class="headerlink" title="Client"></a>Client</h3><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">Client</span> </span>&#123;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">main</span><span class="params">(String[] args)</span> </span>&#123;</span><br><span class="line"></span><br><span class="line">        <span class="comment">//创建职责链</span></span><br><span class="line">        Handler manager = <span class="keyword">new</span> Manager();</span><br><span class="line">        manager.setProcessor(<span class="keyword">new</span> Boss());</span><br><span class="line"></span><br><span class="line">        <span class="comment">//请求报销 100 元</span></span><br><span class="line">        manager.handleRequest(<span class="number">100</span>);</span><br><span class="line"></span><br><span class="line">        <span class="comment">//请求报销 600 元</span></span><br><span class="line">        manager.handleRequest(<span class="number">600</span>);</span><br><span class="line"></span><br><span class="line">        <span class="comment">//请求报销 5100 元</span></span><br><span class="line">        manager.handleRequest(<span class="number">5100</span>);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+
+
+<h3 id="执行结果"><a href="#执行结果" class="headerlink" title="执行结果"></a>执行结果</h3><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">经理同意报销成功</span><br><span class="line">boss同意报销</span><br><span class="line">boss不允许报销</span><br></pre></td></tr></table></figure>
+
+
 
       
     </div>
@@ -344,7 +355,7 @@
 
   
   <nav class="pagination">
-    <a class="extend prev" rel="prev" href="/notes/page/12/"><i class="fa fa-angle-left" aria-label="上一页"></i></a><a class="page-number" href="/notes/">1</a><span class="space">&hellip;</span><a class="page-number" href="/notes/page/12/">12</a><span class="page-number current">13</span><a class="page-number" href="/notes/page/14/">14</a><span class="space">&hellip;</span><a class="page-number" href="/notes/page/19/">19</a><a class="extend next" rel="next" href="/notes/page/14/"><i class="fa fa-angle-right" aria-label="下一页"></i></a>
+    <a class="extend prev" rel="prev" href="/notes/page/12/"><i class="fa fa-angle-left" aria-label="上一页"></i></a><a class="page-number" href="/notes/">1</a><span class="space">&hellip;</span><a class="page-number" href="/notes/page/12/">12</a><span class="page-number current">13</span><a class="page-number" href="/notes/page/14/">14</a><span class="space">&hellip;</span><a class="page-number" href="/notes/page/20/">20</a><a class="extend next" rel="next" href="/notes/page/14/"><i class="fa fa-angle-right" aria-label="下一页"></i></a>
   </nav>
 
 
@@ -410,18 +421,18 @@
       <div class="site-state-item site-state-posts">
           <a href="/notes/archives/">
         
-          <span class="site-state-item-count">37</span>
+          <span class="site-state-item-count">39</span>
           <span class="site-state-item-name">日志</span>
         </a>
       </div>
       <div class="site-state-item site-state-categories">
             <a href="/notes/categories/">
-        <span class="site-state-item-count">14</span>
+        <span class="site-state-item-count">15</span>
         <span class="site-state-item-name">分类</span></a>
       </div>
       <div class="site-state-item site-state-tags">
             <a href="/notes/tags/">
-        <span class="site-state-item-count">21</span>
+        <span class="site-state-item-count">23</span>
         <span class="site-state-item-name">标签</span></a>
       </div>
   </nav>

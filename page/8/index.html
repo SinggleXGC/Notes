@@ -145,7 +145,7 @@
   
   
   <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
-    <link itemprop="mainEntityOfPage" href="https://singglexgc.github.io/notes/2021/07/11/Netty/bio/">
+    <link itemprop="mainEntityOfPage" href="https://singglexgc.github.io/notes/2021/07/11/Netty/buffer/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
       <meta itemprop="image" content="/notes/images/avatar.gif">
@@ -159,7 +159,7 @@
       <header class="post-header">
         <h2 class="post-title" itemprop="name headline">
           
-            <a href="/notes/2021/07/11/Netty/bio/" class="post-title-link" itemprop="url">BIO</a>
+            <a href="/notes/2021/07/11/Netty/buffer/" class="post-title-link" itemprop="url">Buffer</a>
         </h2>
 
         <div class="post-meta">
@@ -170,7 +170,7 @@
               <span class="post-meta-item-text">发表于</span>
               
 
-              <time title="创建时间：2021-07-11 15:22:02 / 修改时间：15:23:43" itemprop="dateCreated datePublished" datetime="2021-07-11T15:22:02+08:00">2021-07-11</time>
+              <time title="创建时间：2021-07-11 15:27:11 / 修改时间：15:28:05" itemprop="dateCreated datePublished" datetime="2021-07-11T15:27:11+08:00">2021-07-11</time>
             </span>
             <span class="post-meta-item">
               <span class="post-meta-item-icon">
@@ -193,35 +193,65 @@
     <div class="post-body" itemprop="articleBody">
 
       
-          <h2 id="BIO基本介绍"><a href="#BIO基本介绍" class="headerlink" title="BIO基本介绍"></a>BIO基本介绍</h2><ol>
-<li><p>Java BIO就是<strong>传统的java io编程</strong>，其相关的类和接口在java.io。</p>
-</li>
-<li><p>BIO(blocking I/O)：<strong>同步阻塞</strong>，服务器实现模式为一个连接一个线程，即客户端有连接请求时服务器端就需要启动一个线程进行处理，如果这个连接不做任何事情会造成不必要的线程开销，可以通过线程池机制改善。</p>
-</li>
-<li><p>BIO方式适用于连接数目比较小且固定的架构，这种方式对服务器资源要求比较高，并发局限于应用中，JDK1.4之前唯一选择，程序简单易理解</p>
-</li>
-</ol>
-<h2 id="实例"><a href="#实例" class="headerlink" title="实例"></a>实例</h2><p>简单BIO实例程序如下：</p>
-<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">BIOServer</span> </span>&#123;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">main</span><span class="params">(String[] args)</span> <span class="keyword">throws</span> IOException </span>&#123;</span><br><span class="line">        <span class="comment">// 线程池机制</span></span><br><span class="line">        <span class="comment">// 思路:</span></span><br><span class="line">        <span class="comment">// 1.创建一个线程池</span></span><br><span class="line">        <span class="comment">// 2.如果有客户端连接，就创建一个线程，与之通信(单独写一个方法)</span></span><br><span class="line"></span><br><span class="line">        ExecutorService pool = Executors.newCachedThreadPool();</span><br><span class="line"></span><br><span class="line">        ServerSocket serverSocket =  <span class="keyword">new</span> ServerSocket(<span class="number">6666</span>);</span><br><span class="line">        System.out.println(<span class="string">&quot;服务器启动了&quot;</span>);</span><br><span class="line"></span><br><span class="line">        <span class="keyword">while</span>(<span class="keyword">true</span>) &#123;</span><br><span class="line">            <span class="keyword">final</span> Socket socket = serverSocket.accept();</span><br><span class="line">            System.out.println(<span class="string">&quot;连接到一个客户端&quot;</span>);</span><br><span class="line"></span><br><span class="line">            <span class="comment">//就创建一个线程，与之通信</span></span><br><span class="line">            pool.execute(<span class="keyword">new</span> Runnable() &#123;</span><br><span class="line">                <span class="meta">@Override</span></span><br><span class="line">                <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">run</span><span class="params">()</span> </span>&#123;</span><br><span class="line">                    handler(socket);</span><br><span class="line">                &#125;</span><br><span class="line">            &#125;);</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="comment">//编写一个handler方法，和客户端通讯</span></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">handler</span><span class="params">(Socket socket)</span> </span>&#123;</span><br><span class="line">        <span class="keyword">byte</span>[] bytes = <span class="keyword">new</span> <span class="keyword">byte</span>[<span class="number">1024</span>];</span><br><span class="line">        <span class="comment">//通过socket获取字节流</span></span><br><span class="line">        <span class="keyword">try</span> &#123;</span><br><span class="line">            InputStream inputStream = socket.getInputStream();</span><br><span class="line"></span><br><span class="line">            <span class="comment">//循环的读取客户端发送的数据</span></span><br><span class="line">            <span class="keyword">while</span> (<span class="keyword">true</span>) &#123;</span><br><span class="line">                <span class="keyword">int</span> read = inputStream.read(bytes);</span><br><span class="line">                <span class="keyword">if</span> (read != -<span class="number">1</span>) &#123;</span><br><span class="line">                    System.out.println(<span class="keyword">new</span> String(bytes, <span class="number">0</span>, bytes.length));</span><br><span class="line">                &#125; <span class="keyword">else</span> &#123;</span><br><span class="line">                    <span class="keyword">break</span>;</span><br><span class="line">                &#125;</span><br><span class="line">            &#125;</span><br><span class="line">        &#125; <span class="keyword">catch</span> (IOException e) &#123;</span><br><span class="line">            e.printStackTrace();</span><br><span class="line">        &#125; <span class="keyword">finally</span> &#123;</span><br><span class="line">            System.out.println(<span class="string">&quot;关闭和client的连接&quot;</span>);</span><br><span class="line">            <span class="keyword">try</span> &#123;</span><br><span class="line">                socket.close();</span><br><span class="line">            &#125; <span class="keyword">catch</span> (IOException e) &#123;</span><br><span class="line">                e.printStackTrace();</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+          <h2 id="基本介绍"><a href="#基本介绍" class="headerlink" title="基本介绍"></a>基本介绍</h2><p>缓冲区本质上是一个可以读写数据的内存块，可以理解成是一个<strong>容器对象(含数组)<strong>，该对象提供了</strong>一组方法</strong>，可以更轻松地使用内存块，缓冲区对象内置了一些机制，能够追踪和记录缓冲区的状态变化情况。Channel提供从文件、网络读取数据的渠道，但是读取或写入的数据都必须经由Buffer。</p>
+<p>在NIO中，Buffer是一个顶层父类，它是一个抽象类。</p>
+<p>常用子类如下：</p>
+<ul>
+<li>ByteBuffer，存储字节数据到缓冲区</li>
+<li>ShortBuffer，存储字符串数据到缓冲区</li>
+<li>CharBuffer，存储字符数据到缓冲区</li>
+<li>IntBuffer，存储整数数据到缓冲区</li>
+<li>LongBuffer，存储长整数数据到缓冲区</li>
+<li>FloatBuffer，存储小数到缓冲区</li>
+<li>DoubleBuffer，存储小数到缓冲区</li>
+</ul>
+<p>Buffer类定义了所有的缓冲区都具有的四个属性来提供关于其所包含的数据元素的信息</p>
+<table>
+<thead>
+<tr>
+<th>属性</th>
+<th>描述</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>Capacity</td>
+<td>容量，即可以容纳的最大数据量；在缓冲区创建时被设定并且不能改变</td>
+</tr>
+<tr>
+<td>Limit</td>
+<td>表示缓冲区的当前终点，不能对缓冲区超出极限的位置进行读写操作。且极限是可以修改的</td>
+</tr>
+<tr>
+<td>Position</td>
+<td>位置，下一个要被读或写的元素的索引，每次读写缓冲区数据时都会改变此值，为下次读写做准备</td>
+</tr>
+<tr>
+<td>Mark</td>
+<td>标记，调用mark()来设置mark = position，再调用reset()可以让position恢复到标记的位置</td>
+</tr>
+</tbody></table>
+<h2 id="基本使用"><a href="#基本使用" class="headerlink" title="基本使用"></a>基本使用</h2><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">BasicBuffer</span> </span>&#123;</span><br><span class="line"></span><br><span class="line">    <span class="comment">//举例说明Buffer的使用(说明)</span></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">main</span><span class="params">(String[] args)</span> </span>&#123;</span><br><span class="line">        <span class="comment">//创建一个Buffer，大小为5，即可以存放5个int</span></span><br><span class="line">        IntBuffer intBuffer = IntBuffer.allocate(<span class="number">5</span>);</span><br><span class="line"></span><br><span class="line">        <span class="comment">//向Buffer存放数据</span></span><br><span class="line">        <span class="keyword">for</span> (<span class="keyword">int</span> i = <span class="number">0</span>; i &lt; intBuffer.capacity(); i++) &#123;</span><br><span class="line">            intBuffer.put(i*<span class="number">2</span>);</span><br><span class="line">        &#125;</span><br><span class="line"></span><br><span class="line">        <span class="comment">//如何从buffer读取数据</span></span><br><span class="line">        <span class="comment">//将buffer切换，读写切换</span></span><br><span class="line">        intBuffer.flip();</span><br><span class="line"></span><br><span class="line">        <span class="keyword">while</span> (intBuffer.hasRemaining()) &#123;</span><br><span class="line">            System.out.println(intBuffer.get());</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
 
-<ol>
-<li><p>启动程序</p>
-</li>
-<li><p>打开cmd输入命令</p>
-<figure class="highlight cmd"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">telnet <span class="number">127</span>.<span class="number">0</span>.<span class="number">0</span>.<span class="number">1</span> <span class="number">6666</span></span><br></pre></td></tr></table></figure></li>
-<li><p>之后输入 ctrl + ]，进入交互界面</p>
-<p><img src="/notes/2021/07/11/Netty/bio/image-20201121181654292.png"></p>
-</li>
-<li><p>输入<code>send hello</code></p>
-<figure class="highlight cmd"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">Microsoft Telnet&gt; send hello</span><br><span class="line">发送字符串 hello</span><br></pre></td></tr></table></figure></li>
-<li><p>程序运行输出如下：</p>
-<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">服务器启动了</span><br><span class="line">连接到一个客户端</span><br><span class="line">hello</span><br></pre></td></tr></table></figure></li>
-</ol>
-<h2 id="BIO问题分析"><a href="#BIO问题分析" class="headerlink" title="BIO问题分析"></a>BIO问题分析</h2><ol>
-<li>每个请求都需要创建独立的线程，与对应的客户端进行数据Read，业务处理，数据write</li>
-<li>当并发量较大时，需要创建大量线程来处理连接，系统资源占用较大</li>
-<li>连接建立后，如果当前线程暂时没有数据可读，则线程就阻塞在Read操作上，造成线程资源浪费</li>
-</ol>
+<p>输出结果</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">0</span><br><span class="line">2</span><br><span class="line">4</span><br><span class="line">6</span><br><span class="line">8</span><br></pre></td></tr></table></figure>
+
+
+
+<h2 id="Buffer常用方法"><a href="#Buffer常用方法" class="headerlink" title="Buffer常用方法"></a>Buffer常用方法</h2><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="keyword">abstract</span> <span class="class"><span class="keyword">class</span> <span class="title">Buffer</span> </span>&#123;</span><br><span class="line">    <span class="comment">//JDK1.4时，引入的api</span></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">final</span> <span class="keyword">int</span> <span class="title">capacity</span><span class="params">()</span> <span class="comment">//返回此缓冲区的容量</span></span></span><br><span class="line"><span class="function">    <span class="keyword">public</span> <span class="keyword">final</span> <span class="keyword">int</span> <span class="title">position</span><span class="params">()</span> <span class="comment">//返回此缓冲区的位置</span></span></span><br><span class="line"><span class="function">    <span class="keyword">public</span> <span class="keyword">final</span> Buffer <span class="title">position</span><span class="params">(<span class="keyword">int</span> newPosition)</span> <span class="comment">//设置此缓冲区的位置</span></span></span><br><span class="line"><span class="function">    <span class="keyword">public</span> <span class="keyword">final</span> <span class="title">limit</span><span class="params">()</span> <span class="comment">//返回此缓冲区的限制</span></span></span><br><span class="line"><span class="function">    <span class="keyword">public</span> <span class="keyword">final</span> Buffer <span class="title">limit</span><span class="params">(<span class="keyword">int</span> newLimit)</span> <span class="comment">//设置此缓冲区的限制</span></span></span><br><span class="line"><span class="function">    <span class="keyword">public</span> <span class="keyword">final</span> Buffer <span class="title">mark</span><span class="params">()</span> <span class="comment">//在此缓冲区的位置设置标记</span></span></span><br><span class="line"><span class="function">    <span class="keyword">public</span> <span class="keyword">final</span> Buffer <span class="title">reset</span><span class="params">()</span> <span class="comment">//将此缓冲区的位置重置为之前标记的位置</span></span></span><br><span class="line"><span class="function">    <span class="keyword">public</span> <span class="keyword">final</span> Buffer <span class="title">clear</span><span class="params">()</span> <span class="comment">//清除此缓冲区，即将各个标记恢复到初始状态，但是数据并没有真正擦除</span></span></span><br><span class="line"><span class="function">    <span class="keyword">public</span> <span class="keyword">final</span> Buffer <span class="title">flip</span><span class="params">()</span> <span class="comment">//反转此缓冲区</span></span></span><br><span class="line"><span class="function">    <span class="keyword">public</span> <span class="keyword">final</span> Buffer <span class="title">rewind</span><span class="params">()</span> <span class="comment">//重绕此缓冲区</span></span></span><br><span class="line"><span class="function">    <span class="keyword">public</span> <span class="keyword">final</span> <span class="keyword">int</span> <span class="title">remaining</span><span class="params">()</span> <span class="comment">//返回当前位置与限制之间的元素值</span></span></span><br><span class="line"><span class="function">    <span class="keyword">public</span> <span class="keyword">final</span> <span class="keyword">boolean</span> <span class="title">hasRemaining</span><span class="params">()</span> <span class="comment">//在当前位置与限制之间是否有元素</span></span></span><br><span class="line"><span class="function">    <span class="keyword">public</span> <span class="keyword">abstract</span> <span class="keyword">boolean</span> <span class="title">isReadOnly</span><span class="params">()</span></span>; <span class="comment">//此缓冲区是否为只读缓冲区</span></span><br><span class="line">    </span><br><span class="line">    <span class="comment">//JDK1.6时引入的api</span></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">abstract</span> <span class="keyword">boolean</span> <span class="title">hasArray</span><span class="params">()</span></span>; <span class="comment">//此缓冲区是否具有可访问的底层实现数组</span></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">abstract</span> Object <span class="title">array</span><span class="params">()</span></span>; <span class="comment">//返回此缓冲区的底层实现数组</span></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">abstract</span> <span class="keyword">int</span> <span class="title">arrayOffset</span><span class="params">()</span></span>; <span class="comment">//返回此缓冲区的底层实现数组中第一个缓冲区元素的偏移量</span></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">abstract</span> <span class="keyword">boolean</span> <span class="title">isDirect</span><span class="params">()</span></span>; <span class="comment">//告知此缓冲区是否为直接缓冲区</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>​    </p>
+<h3 id="ByteBuffer常用方法"><a href="#ByteBuffer常用方法" class="headerlink" title="ByteBuffer常用方法"></a>ByteBuffer常用方法</h3><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="keyword">abstract</span> <span class="class"><span class="keyword">class</span> <span class="title">ByteBuffer</span> </span>&#123;</span><br><span class="line">    <span class="comment">//缓冲区创建相关api</span></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">static</span> ByteBuffer <span class="title">allocateDirect</span><span class="params">(<span class="keyword">int</span> capacity)</span> <span class="comment">//创建直接缓冲区</span></span></span><br><span class="line"><span class="function">    <span class="keyword">public</span> <span class="keyword">static</span> ByteBuffer <span class="title">allocate</span><span class="params">(<span class="keyword">int</span> capacity)</span> <span class="comment">//设置缓冲区的初始容量</span></span></span><br><span class="line"><span class="function">    <span class="keyword">public</span> <span class="keyword">static</span> ByteBuffer <span class="title">wrap</span><span class="params">(<span class="keyword">byte</span>[] array)</span> <span class="comment">//把一个数组放到缓冲区中使用</span></span></span><br><span class="line"><span class="function">    <span class="comment">//构建初始化位置offset和上界length的缓冲区</span></span></span><br><span class="line"><span class="function">    <span class="keyword">public</span> <span class="keyword">static</span> ByteBuffer <span class="title">wrap</span><span class="params">(<span class="keyword">byte</span>[] array, <span class="keyword">int</span> offset, <span class="keyword">int</span> length)</span></span></span><br><span class="line"><span class="function">    </span></span><br><span class="line"><span class="function">    <span class="comment">//缓存区存取相关api</span></span></span><br><span class="line"><span class="function">    <span class="keyword">public</span> <span class="keyword">abstract</span> <span class="keyword">byte</span> <span class="title">get</span><span class="params">()</span></span>; <span class="comment">//从当前位置position获取，获取之前position+1</span></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">abstract</span> <span class="keyword">byte</span> <span class="title">get</span><span class="params">(<span class="keyword">int</span> index)</span></span>; <span class="comment">//从绝对位置get</span></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">abstract</span> ByteBuffer <span class="title">put</span><span class="params">(<span class="keyword">byte</span> b)</span></span>; <span class="comment">//从当前位置增加，position自动+1</span></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">abstract</span> ByteBuffer <span class="title">put</span><span class="params">(<span class="keyword">int</span> index, <span class="keyword">byte</span> b)</span></span>; <span class="comment">//从绝对位置put</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+
+
+<h2 id="MappedByteBuffer"><a href="#MappedByteBuffer" class="headerlink" title="MappedByteBuffer"></a>MappedByteBuffer</h2><p>NIO提供了MappedByteBuffer，可以让文件直接在内存(堆外的内存)中进行修改，而如何同步到文件由NIO来完成。</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">MappedByteBufferTest</span> </span>&#123;</span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">main</span><span class="params">(String[] args)</span> <span class="keyword">throws</span> IOException </span>&#123;</span><br><span class="line">        RandomAccessFile randomAccessFile =</span><br><span class="line">                <span class="keyword">new</span> RandomAccessFile(<span class="string">&quot;1.txt&quot;</span>, <span class="string">&quot;rw&quot;</span>);</span><br><span class="line">        FileChannel fileChannel = randomAccessFile.getChannel();</span><br><span class="line"></span><br><span class="line">        <span class="comment">/**</span></span><br><span class="line"><span class="comment">         * 参数1：读写模式</span></span><br><span class="line"><span class="comment">         * 参数2：可以直接修改的起始位置</span></span><br><span class="line"><span class="comment">         * 参数3：文件映射到内存的大小，即1.txt的5个字节可以映射到内存</span></span><br><span class="line"><span class="comment">         */</span></span><br><span class="line">        MappedByteBuffer mappedByteBuffer = fileChannel.map(FileChannel.MapMode.READ_WRITE, <span class="number">0</span>, <span class="number">5</span>);</span><br><span class="line">        mappedByteBuffer.put(<span class="number">1</span>, (<span class="keyword">byte</span>) <span class="string">&#x27;a&#x27;</span>);</span><br><span class="line">        mappedByteBuffer.put(<span class="number">2</span>, (<span class="keyword">byte</span>) <span class="string">&#x27;9&#x27;</span>);</span><br><span class="line"></span><br><span class="line">        randomAccessFile.close();</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+
+
+<h2 id="Buffer的分散和聚集"><a href="#Buffer的分散和聚集" class="headerlink" title="Buffer的分散和聚集"></a>Buffer的分散和聚集</h2><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">/**</span></span><br><span class="line"><span class="comment"> * Scattering：将数据写入到buffer中。可以采用buffer数组，依次写入 [分散]</span></span><br><span class="line"><span class="comment"> * Gathering：从buffer读取数据时，可以采用Buffer数组，依次读</span></span><br><span class="line"><span class="comment"> */</span></span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">ScatteringAndGatheringTest</span> </span>&#123;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">main</span><span class="params">(String[] args)</span> <span class="keyword">throws</span> IOException </span>&#123;</span><br><span class="line">        <span class="comment">//使用ServerSocketChannel 和 SocketChannel 网络</span></span><br><span class="line">        ServerSocketChannel serverSocketChannel = ServerSocketChannel.open();</span><br><span class="line">        InetSocketAddress inetSocketAddress = <span class="keyword">new</span> InetSocketAddress(<span class="number">7000</span>);</span><br><span class="line"></span><br><span class="line">        <span class="comment">//绑定端口到socket，并启动</span></span><br><span class="line">        serverSocketChannel.socket().bind(inetSocketAddress);</span><br><span class="line"></span><br><span class="line">        <span class="comment">//创建buffer数组</span></span><br><span class="line">        ByteBuffer[] byteBuffers = <span class="keyword">new</span> ByteBuffer[<span class="number">2</span>];</span><br><span class="line">        byteBuffers[<span class="number">0</span>] = ByteBuffer.allocate(<span class="number">5</span>);</span><br><span class="line">        byteBuffers[<span class="number">1</span>] = ByteBuffer.allocate(<span class="number">3</span>);</span><br><span class="line"></span><br><span class="line">        <span class="comment">//等待客户端连接(telnet)</span></span><br><span class="line">        SocketChannel socketChannel = serverSocketChannel.accept();</span><br><span class="line">        <span class="keyword">int</span> messageLength = <span class="number">8</span>; <span class="comment">//假定从客户端接收8个字节</span></span><br><span class="line"></span><br><span class="line">        <span class="comment">//循环的读取</span></span><br><span class="line">        <span class="keyword">while</span>(<span class="keyword">true</span>) &#123;</span><br><span class="line">            <span class="keyword">int</span> byteRead = <span class="number">0</span>;</span><br><span class="line"></span><br><span class="line">            <span class="keyword">while</span> (byteRead &lt; messageLength) &#123;</span><br><span class="line">                <span class="keyword">long</span> l = socketChannel.read(byteBuffers);</span><br><span class="line">                byteRead += <span class="number">1</span>; <span class="comment">//累计读取的字节数</span></span><br><span class="line">                System.out.println(<span class="string">&quot;byteRead&quot;</span> + byteRead);</span><br><span class="line">                <span class="comment">//使用流打印，看看当前的这个buffer的position和limit</span></span><br><span class="line">                Arrays.asList(byteBuffers).stream()</span><br><span class="line">                        .map(buffer -&gt; <span class="string">&quot;position=&quot;</span> + buffer.position() + <span class="string">&quot;, limit=&quot;</span> + buffer.limit())</span><br><span class="line">                        .forEach(System.out::println);</span><br><span class="line">            &#125;</span><br><span class="line"></span><br><span class="line">            <span class="comment">//将所有的buffer进行flip</span></span><br><span class="line">            Arrays.asList(byteBuffers).forEach(buffer -&gt; &#123;</span><br><span class="line">                buffer.flip();</span><br><span class="line">            &#125;);</span><br><span class="line"></span><br><span class="line">            <span class="comment">//将数据读出显示到客户端</span></span><br><span class="line">            <span class="keyword">long</span> byteWrite = <span class="number">0</span>;</span><br><span class="line">            <span class="keyword">while</span> (byteWrite &lt; messageLength) &#123;</span><br><span class="line">                <span class="keyword">long</span> l = socketChannel.write(byteBuffers);</span><br><span class="line">                byteWrite += l;</span><br><span class="line">            &#125;</span><br><span class="line"></span><br><span class="line">            <span class="comment">//将所有的bufer进行clear</span></span><br><span class="line">            Arrays.asList(byteBuffers).forEach(buffer -&gt; &#123;</span><br><span class="line">                buffer.clear();</span><br><span class="line">            &#125;);</span><br><span class="line"></span><br><span class="line">            System.out.println(<span class="string">&quot;byteRead=&quot;</span> + byteRead + <span class="string">&quot; byteWrite=&quot;</span> + byteWrite);</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+
 
       
     </div>
@@ -241,7 +271,7 @@
   
   
   <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
-    <link itemprop="mainEntityOfPage" href="https://singglexgc.github.io/notes/2021/07/11/Netty/io%E6%A8%A1%E5%9E%8B/">
+    <link itemprop="mainEntityOfPage" href="https://singglexgc.github.io/notes/2021/07/11/Netty/nio/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
       <meta itemprop="image" content="/notes/images/avatar.gif">
@@ -255,7 +285,7 @@
       <header class="post-header">
         <h2 class="post-title" itemprop="name headline">
           
-            <a href="/notes/2021/07/11/Netty/io%E6%A8%A1%E5%9E%8B/" class="post-title-link" itemprop="url">IO模型</a>
+            <a href="/notes/2021/07/11/Netty/nio/" class="post-title-link" itemprop="url">NIO</a>
         </h2>
 
         <div class="post-meta">
@@ -266,7 +296,7 @@
               <span class="post-meta-item-text">发表于</span>
               
 
-              <time title="创建时间：2021-07-11 00:49:25 / 修改时间：00:50:35" itemprop="dateCreated datePublished" datetime="2021-07-11T00:49:25+08:00">2021-07-11</time>
+              <time title="创建时间：2021-07-11 15:25:38 / 修改时间：15:26:50" itemprop="dateCreated datePublished" datetime="2021-07-11T15:25:38+08:00">2021-07-11</time>
             </span>
             <span class="post-meta-item">
               <span class="post-meta-item-icon">
@@ -289,15 +319,30 @@
     <div class="post-body" itemprop="articleBody">
 
       
-          <p>IO模型的简单理解：就是用什么样的通道进行数据的接收和发送，很大程度上决定了程序通信的性能，</p>
-<p>Java共支持3种网络编程模型/IO模型：BIO、NIO、AIO.</p>
-<p>Java BIO：同步并阻塞(<strong>传统阻塞型</strong>)，服务器实现模式为一个连接一个线程，即客户端有连接请求时服务器端就需要启动一个线程进行处理，如果这个连接不做任何事情就会造成不必要的线程开销。</p>
-<p>Java NIO：<strong>同步非阻塞</strong>，服务器实现模型为一个线程处理多个请求(连接)，即客户端发送的连接请求都会注册在多路复用器上，多路复用器轮询到连接有I/O请求就进行处理。</p>
-<p>Java AIO：<strong>异步非阻塞</strong>，AIO引入异步通道的概念，采用了Proactor模式，简化了程序编写，有效的请求才启动线程，它的特点是先有操作系统完成后才通知服务端程序启动线程去处理，一般适用于连接数较多且连接时间较长的应用。</p>
-<h2 id="BIO、NIO、AIO使用场景分析"><a href="#BIO、NIO、AIO使用场景分析" class="headerlink" title="BIO、NIO、AIO使用场景分析"></a>BIO、NIO、AIO使用场景分析</h2><ol>
-<li>BIO方式适用于连接数目比较小且固定的架构，这种方式对服务器资源要求比较高，并发局限于应用中，JDK1.4以前的唯一选择，但程序简单易理解</li>
-<li>NIO方式适用于<strong>连接数目多且连接比较短</strong>(轻操作)的架构，比如聊天服务器，弹幕系统，服务器间通讯等。编程比较复杂，JDK1.4开始支持。</li>
-<li>AIO方式适用于<strong>连接数目多且连接比较长</strong>(重操作)的架构，比如相册服务器，充分调用OS参与并发操作，编程比较复杂，JDK7开始支持。</li>
+          <ol>
+<li><p>Java NIO全称java non-blocking IO，是指JDK提供的新API。从JDK1.4开始，Java提供了一系列改进的输入/输出的新特性，被统称为NIO(即New IO)，是<strong>同步非阻塞</strong>的。</p>
+</li>
+<li><p>NIO相关类都被放在java.nio包及子包下，并且对原java.io包中的很多类进行改写。</p>
+</li>
+<li><p>NIO有三大核心部分：<strong>Channel(通道)，Buffer(缓冲区)，Selector(选择器)</strong></p>
+</li>
+<li><p>NIO是面向<strong>缓存区</strong>，或者<strong>面向块</strong>编程的。数据读取到一个它稍后处理的缓冲区，需要时可在缓冲区中前后移动，这增加了处理过程中的灵活性，使用它可以提供非阻塞式的高伸缩性网络。</p>
+</li>
+<li><p>Java NIO的非阻塞模式，使一个线程从某通道发送请求读取数据，但是它仅能得到目前可用的数据。如果目前没有数据可用时，就什么都不会获取，而不是阻塞进程，所以直至数据变得可以读取之前，该线程可以继续做其他的事情。非阻塞写也是如此，一个线程请求写入一些数据到某通道，但不需要等待它完全写入，这个线程同时可以去做别的事情。</p>
+</li>
+<li><p>通俗理解：NIO是可以做到用一个线程处理多个操作的。假设有10000请求过来，根据实际情况，可以分配50或者100个线程来处理。不像之前的阻塞IO那样，非得分配10000个线程。</p>
+</li>
+<li><p>HTTP2.0使用了多路复用的技术，做到一个连接并发处理多个请求，而且并发请求的数量比HTTP1.1大了好几个数量级。</p>
+</li>
+</ol>
+<h2 id="NIO和BIO的比较"><a href="#NIO和BIO的比较" class="headerlink" title="NIO和BIO的比较"></a>NIO和BIO的比较</h2><ol>
+<li><p>BIO以流的方式处理数据，而NIO以块的方式处理数据，块I/O的效率比流I/O高很多</p>
+</li>
+<li><p>BIO是阻塞的，NIO是非阻塞的</p>
+</li>
+<li><p>BIO基于字节流和字符流进行操作，而NIO基于Channel(通道)和Buffer(缓冲区)进行操作，数据总是从通道读取到缓冲区中，或者从缓冲区中写入通道中。</p>
+<p>Selector(选择器)用于监听多个通道的事件(比如：连接请求，数据到达等)，因此使用<strong>单个线程就可以监听多个客户端通道</strong></p>
+</li>
 </ol>
 
       
@@ -317,7 +362,7 @@
 
   
   <nav class="pagination">
-    <a class="extend prev" rel="prev" href="/notes/page/7/"><i class="fa fa-angle-left" aria-label="上一页"></i></a><a class="page-number" href="/notes/">1</a><span class="space">&hellip;</span><a class="page-number" href="/notes/page/7/">7</a><span class="page-number current">8</span><a class="page-number" href="/notes/page/9/">9</a><span class="space">&hellip;</span><a class="page-number" href="/notes/page/19/">19</a><a class="extend next" rel="next" href="/notes/page/9/"><i class="fa fa-angle-right" aria-label="下一页"></i></a>
+    <a class="extend prev" rel="prev" href="/notes/page/7/"><i class="fa fa-angle-left" aria-label="上一页"></i></a><a class="page-number" href="/notes/">1</a><span class="space">&hellip;</span><a class="page-number" href="/notes/page/7/">7</a><span class="page-number current">8</span><a class="page-number" href="/notes/page/9/">9</a><span class="space">&hellip;</span><a class="page-number" href="/notes/page/20/">20</a><a class="extend next" rel="next" href="/notes/page/9/"><i class="fa fa-angle-right" aria-label="下一页"></i></a>
   </nav>
 
 
@@ -383,18 +428,18 @@
       <div class="site-state-item site-state-posts">
           <a href="/notes/archives/">
         
-          <span class="site-state-item-count">37</span>
+          <span class="site-state-item-count">39</span>
           <span class="site-state-item-name">日志</span>
         </a>
       </div>
       <div class="site-state-item site-state-categories">
             <a href="/notes/categories/">
-        <span class="site-state-item-count">14</span>
+        <span class="site-state-item-count">15</span>
         <span class="site-state-item-name">分类</span></a>
       </div>
       <div class="site-state-item site-state-tags">
             <a href="/notes/tags/">
-        <span class="site-state-item-count">21</span>
+        <span class="site-state-item-count">23</span>
         <span class="site-state-item-name">标签</span></a>
       </div>
   </nav>

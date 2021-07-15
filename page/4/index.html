@@ -145,6 +145,98 @@
   
   
   <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="https://singglexgc.github.io/notes/2021/07/12/Netty/protobuf/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/notes/images/avatar.gif">
+      <meta itemprop="name" content="Sinngle">
+      <meta itemprop="description" content="">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Notes">
+    </span>
+      <header class="post-header">
+        <h2 class="post-title" itemprop="name headline">
+          
+            <a href="/notes/2021/07/12/Netty/protobuf/" class="post-title-link" itemprop="url">ProtoBuf</a>
+        </h2>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+              
+
+              <time title="创建时间：2021-07-12 00:26:45 / 修改时间：00:28:34" itemprop="dateCreated datePublished" datetime="2021-07-12T00:26:45+08:00">2021-07-12</time>
+            </span>
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-folder"></i>
+              </span>
+              <span class="post-meta-item-text">分类于</span>
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/notes/categories/Netty/" itemprop="url" rel="index"><span itemprop="name">Netty</span></a>
+                </span>
+            </span>
+
+          
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+          <h2 id="ProtoBuf简介"><a href="#ProtoBuf简介" class="headerlink" title="ProtoBuf简介"></a>ProtoBuf简介</h2><ol>
+<li>ProtoBuf是Google发布的开源项目，全称Google Protocol Buffers，是一种轻便高效的结构化数据存储格式，可以用于结构化数据串行化，或者说序列化。它很适合做数据存储或PRC数据交换格式</li>
+<li>Protobuf是以message的方式来管理数据的</li>
+<li>支持跨平台、跨语言</li>
+<li>高性能，高可靠性</li>
+<li>使用protobuf编译器能自动生成代码，protobuf是将类的定义使用.proto文件进行描述。然后通过protoc.exe编译器根据.proto自动生成.java文件</li>
+</ol>
+<h2 id="ProtoBuf使用"><a href="#ProtoBuf使用" class="headerlink" title="ProtoBuf使用"></a>ProtoBuf使用</h2><ol>
+<li><p>引入依赖</p>
+<figure class="highlight xml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="tag">&lt;<span class="name">dependency</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">groupId</span>&gt;</span>com.google.protobuf<span class="tag">&lt;/<span class="name">groupId</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">artifactId</span>&gt;</span>protobuf-java<span class="tag">&lt;/<span class="name">artifactId</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">version</span>&gt;</span>3.6.1<span class="tag">&lt;/<span class="name">version</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;/<span class="name">dependency</span>&gt;</span></span><br></pre></td></tr></table></figure></li>
+<li><p>编写proto文件</p>
+<figure class="highlight protobuf"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">syntax = <span class="string">&quot;proto3&quot;</span>; <span class="comment">//版本</span></span><br><span class="line"><span class="keyword">option</span> java_outer_classname = <span class="string">&quot;StudentPOJO&quot;</span>; <span class="comment">//生成的外部类名，同时也是文件名</span></span><br><span class="line"><span class="comment">//protobuf 使用message管理数据</span></span><br><span class="line"><span class="class"><span class="keyword">message</span> <span class="title">Student</span> </span>&#123; <span class="comment">//会在StudentPOJO外部类生成一个内部类Student，它是正在发送的POJO对象</span></span><br><span class="line">    <span class="built_in">int32</span> id = <span class="number">1</span>; <span class="comment">//Student类中有一个属性 名字为id，类型为int32(protobuf类型) 1表示属性序号，不是值</span></span><br><span class="line">    <span class="built_in">string</span> name = <span class="number">2</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></li>
+<li><p>编译proto文件为java文件</p>
+<p>下载protoc.exe编译器，执行命令</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">protoc.exe --java_out=. Student.proto</span><br></pre></td></tr></table></figure>
+
+<p>就会生成StudentPOJO.java文件</p>
+</li>
+<li><p>为服务器端增加ProtobufDecoder解码器，为客户端增加ProtobufEncoder编码器</p>
+<p>服务器端需要指定传输的类型</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">pipeline.addLast(<span class="string">&quot;decoder&quot;</span>,</span><br><span class="line">                 <span class="keyword">new</span> ProtobufDecoder(StudentPOJO.Student.getDefaultInstance()));</span><br></pre></td></tr></table></figure>
+
+<p>客户端构建Student对象，并发送给服务器端</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">StudentPOJO.Student student = StudentPOJO.Student.newBuilder().setId(<span class="number">4</span>)</span><br><span class="line">    .setName(<span class="string">&quot;豹子头 林冲&quot;</span>).build();</span><br><span class="line">ctx.writeAndFlush(student);</span><br></pre></td></tr></table></figure></li>
+</ol>
+
+      
+    </div>
+
+    
+    
+    
+      <footer class="post-footer">
+        <div class="post-eof"></div>
+      </footer>
+  </article>
+  
+  
+  
+
+      
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
     <link itemprop="mainEntityOfPage" href="https://singglexgc.github.io/notes/2021/07/12/Netty/netty%E6%A0%B8%E5%BF%83%E7%BB%84%E4%BB%B6/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
@@ -334,85 +426,6 @@
   
   
 
-      
-  
-  
-  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
-    <link itemprop="mainEntityOfPage" href="https://singglexgc.github.io/notes/2021/07/12/Netty/%E5%BC%82%E6%AD%A5%E6%A8%A1%E5%9E%8B/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="image" content="/notes/images/avatar.gif">
-      <meta itemprop="name" content="Sinngle">
-      <meta itemprop="description" content="">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="Notes">
-    </span>
-      <header class="post-header">
-        <h2 class="post-title" itemprop="name headline">
-          
-            <a href="/notes/2021/07/12/Netty/%E5%BC%82%E6%AD%A5%E6%A8%A1%E5%9E%8B/" class="post-title-link" itemprop="url">异步模型</a>
-        </h2>
-
-        <div class="post-meta">
-            <span class="post-meta-item">
-              <span class="post-meta-item-icon">
-                <i class="far fa-calendar"></i>
-              </span>
-              <span class="post-meta-item-text">发表于</span>
-              
-
-              <time title="创建时间：2021-07-12 00:24:27 / 修改时间：00:24:49" itemprop="dateCreated datePublished" datetime="2021-07-12T00:24:27+08:00">2021-07-12</time>
-            </span>
-            <span class="post-meta-item">
-              <span class="post-meta-item-icon">
-                <i class="far fa-folder"></i>
-              </span>
-              <span class="post-meta-item-text">分类于</span>
-                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-                  <a href="/notes/categories/Netty/" itemprop="url" rel="index"><span itemprop="name">Netty</span></a>
-                </span>
-            </span>
-
-          
-
-        </div>
-      </header>
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-
-      
-          <h2 id="什么是异步模型"><a href="#什么是异步模型" class="headerlink" title="什么是异步模型"></a>什么是异步模型</h2><ol>
-<li>Netty的IO操作是异步的，Bind、Write、Connect等操作会简单的返回一个ChannelFuture</li>
-<li>调用者不能立即获得结果，而是通过Future-Listener机制，用户可以方便的主动获得或者通过通知机制获得IO操作结果</li>
-<li>Netty的异步模型是建立在Future和Callback之上的。Callback就是回调。重点说Future，它的核心思想是：假设一个fun方法耗时长，那么可以在调用Fun方法的时候立即返回一个Future对象，后续可以通过Future对象去监控fun方法的处理过程(即Future-Listener机制)</li>
-</ol>
-<h2 id="Future说明"><a href="#Future说明" class="headerlink" title="Future说明"></a>Future说明</h2><ol>
-<li><p>表示异步的执行结果，可以通过它提供的方法来检测执行是否完成，比如检索计算等。</p>
-</li>
-<li><p>ChannelFuture是一个接口，<code>public interface ChannelFuture extends Future&lt;Void&gt;</code></p>
-<p>我们可以添加监听器，当监听的事件发生时，就会通知监听器</p>
-<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line">ChannelFuture channelFuture = bootstrap.bind(<span class="number">6668</span>).sync();</span><br><span class="line"></span><br><span class="line"><span class="comment">//给ChannelFuture注册监听器，监控我们关心的事件</span></span><br><span class="line">channelFuture.addListener(<span class="keyword">new</span> ChannelFutureListener() &#123;</span><br><span class="line">    <span class="meta">@Override</span></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">operationComplete</span><span class="params">(ChannelFuture channelFuture)</span> <span class="keyword">throws</span> Exception </span>&#123;</span><br><span class="line">        <span class="keyword">if</span> (channelFuture.isSuccess()) &#123;</span><br><span class="line">            System.out.println(<span class="string">&quot;监听端口6668成功&quot;</span>);</span><br><span class="line">        &#125; <span class="keyword">else</span> &#123;</span><br><span class="line">            System.out.println(<span class="string">&quot;监听端口失败&quot;</span>);</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;);</span><br></pre></td></tr></table></figure></li>
-</ol>
-
-      
-    </div>
-
-    
-    
-    
-      <footer class="post-footer">
-        <div class="post-eof"></div>
-      </footer>
-  </article>
-  
-  
-  
-
 
   
   <nav class="pagination">
@@ -482,18 +495,18 @@
       <div class="site-state-item site-state-posts">
           <a href="/notes/archives/">
         
-          <span class="site-state-item-count">39</span>
+          <span class="site-state-item-count">40</span>
           <span class="site-state-item-name">日志</span>
         </a>
       </div>
       <div class="site-state-item site-state-categories">
             <a href="/notes/categories/">
-        <span class="site-state-item-count">15</span>
+        <span class="site-state-item-count">16</span>
         <span class="site-state-item-name">分类</span></a>
       </div>
       <div class="site-state-item site-state-tags">
             <a href="/notes/tags/">
-        <span class="site-state-item-count">23</span>
+        <span class="site-state-item-count">24</span>
         <span class="site-state-item-name">标签</span></a>
       </div>
   </nav>

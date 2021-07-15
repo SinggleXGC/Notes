@@ -170,7 +170,7 @@
               <span class="post-meta-item-text">发表于</span>
               
 
-              <time title="创建时间：2021-07-16 00:32:40 / 修改时间：00:35:07" itemprop="dateCreated datePublished" datetime="2021-07-16T00:32:40+08:00">2021-07-16</time>
+              <time title="创建时间：2021-07-16 00:32:40 / 修改时间：00:43:49" itemprop="dateCreated datePublished" datetime="2021-07-16T00:32:40+08:00">2021-07-16</time>
             </span>
             <span class="post-meta-item">
               <span class="post-meta-item-icon">
@@ -202,9 +202,9 @@
 <p>注：在JDK1.6以后，synchronized使用的锁是可升级的。级别从低到高分别是：无锁、偏向锁、轻量级锁、重量级锁。</p>
 </blockquote>
 <p>在32位JVM下，Mark Word在不同锁状态的存储结构如下：</p>
-<p><img src="/notes/2021/07/16/JVM/java%E5%AF%B9%E8%B1%A1%E7%9A%84%E5%86%85%E5%AD%98%E7%BB%93%E6%9E%84/.%5CJava%E5%AF%B9%E8%B1%A1%E7%9A%84%E5%86%85%E5%AD%98%E7%BB%93%E6%9E%84%5C1162587-20200918154115022-312986152.png" alt="Mark Word在32位虚拟机的内存结构"></p>
+<p><img src="/notes/2021/07/16/JVM/java%E5%AF%B9%E8%B1%A1%E7%9A%84%E5%86%85%E5%AD%98%E7%BB%93%E6%9E%84/1162587-20200918154115022-312986152.png" alt="Mark Word在32位虚拟机的内存结构"></p>
 <p>在64位JVM下，Mark Word在不同锁状态的存储结构如下：</p>
-<p><img src="/notes/2021/07/16/JVM/java%E5%AF%B9%E8%B1%A1%E7%9A%84%E5%86%85%E5%AD%98%E7%BB%93%E6%9E%84/.%5CJava%E5%AF%B9%E8%B1%A1%E7%9A%84%E5%86%85%E5%AD%98%E7%BB%93%E6%9E%84%5C1162587-20200918154125385-1537793659.png" alt="Mark Word在64位虚拟机的内存结构"></p>
+<p><img src="/notes/2021/07/16/JVM/java%E5%AF%B9%E8%B1%A1%E7%9A%84%E5%86%85%E5%AD%98%E7%BB%93%E6%9E%84/1162587-20200918154125385-1537793659.png" alt="Mark Word在64位虚拟机的内存结构"></p>
 <p>可以看到，Mard Word在不同位数的虚拟机长度不一样，但是基本组成内容是一致的。    </p>
 <ul>
 <li>锁标志位：区分锁状态。当值为11时，表示对象处于等待GC回收状态。</li>

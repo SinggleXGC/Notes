@@ -145,198 +145,6 @@
   
   
   <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
-    <link itemprop="mainEntityOfPage" href="https://singglexgc.github.io/notes/2021/07/13/juc/synchronized%E7%9A%84%E5%BA%95%E5%B1%82%E5%AE%9E%E7%8E%B0%E5%8E%9F%E7%90%86/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="image" content="/notes/images/avatar.gif">
-      <meta itemprop="name" content="Sinngle">
-      <meta itemprop="description" content="">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="Notes">
-    </span>
-      <header class="post-header">
-        <h2 class="post-title" itemprop="name headline">
-          
-            <a href="/notes/2021/07/13/juc/synchronized%E7%9A%84%E5%BA%95%E5%B1%82%E5%AE%9E%E7%8E%B0%E5%8E%9F%E7%90%86/" class="post-title-link" itemprop="url">synchronized的底层实现原理</a>
-        </h2>
-
-        <div class="post-meta">
-            <span class="post-meta-item">
-              <span class="post-meta-item-icon">
-                <i class="far fa-calendar"></i>
-              </span>
-              <span class="post-meta-item-text">发表于</span>
-              
-
-              <time title="创建时间：2021-07-13 01:00:39 / 修改时间：01:15:09" itemprop="dateCreated datePublished" datetime="2021-07-13T01:00:39+08:00">2021-07-13</time>
-            </span>
-            <span class="post-meta-item">
-              <span class="post-meta-item-icon">
-                <i class="far fa-folder"></i>
-              </span>
-              <span class="post-meta-item-text">分类于</span>
-                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-                  <a href="/notes/categories/juc/" itemprop="url" rel="index"><span itemprop="name">juc</span></a>
-                </span>
-            </span>
-
-          
-
-        </div>
-      </header>
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-
-      
-          <h2 id="synchronized的实现原理与应用"><a href="#synchronized的实现原理与应用" class="headerlink" title="synchronized的实现原理与应用"></a>synchronized的实现原理与应用</h2><p>当一个线程访问一个同步代码块，它必须先获得锁，退出和抛出异常时必须释放锁。</p>
-<p><strong>那么锁到底存在哪里？锁里存储了什么信息？</strong></p>
-<p>在JVM规范可以看到Synchronized的实现原理，JVM基于进入和退出Monitor对象来实现方法同步和代码块同步，但两者的实现原理不一样。方法同步通过<code>monitorenter</code>和<code>monitorexit</code>指令实现的，而代码块同步是使用另一种方法实现的。但是，代码块同步也可以使用这两个指令实现。</p>
-<p><code>monitorenter</code>指令是在编译后插入到同步代码块开始部分，<code>monitorexit</code>指令是插入到方法结束和异常处，JVM要保证每个<code>monitorenter</code>都有一个<code>monitorexit</code>与之对应。每个对象都有一个<code>monitor</code>对象与之关联，当monitor被持有后，对象被锁定。</p>
-<p>当线程运行到<code>monitorenter</code>指令，会尝试获取对象的monitor的持有权，即获取锁。</p>
-<h3 id="Java对象头"><a href="#Java对象头" class="headerlink" title="Java对象头"></a>Java对象头</h3><p><strong>synchronized用的锁是存在Java对象头里的。</strong></p>
-<p>如果对象是数组类型，则虚拟机用3个字宽(word)存储对象头。如果对象是非数组类型，则用2字宽存储对象头。</p>
-<p>在32位虚拟机中，1字宽等于4个字节，即32bit。对象头各组成部分长度如下：</p>
-<table>
-<thead>
-<tr>
-<th>长度</th>
-<th>内容</th>
-<th>说明</th>
-</tr>
-</thead>
-<tbody><tr>
-<td>32/64bit</td>
-<td>Mark Word</td>
-<td>存储对象的hashCode或锁信息等</td>
-</tr>
-<tr>
-<td>32/64bit</td>
-<td>Class Metadata Address</td>
-<td>存储到对象类型数据的指针</td>
-</tr>
-<tr>
-<td>32/32bit</td>
-<td>Array Length</td>
-<td>数组的长度(如果当前对象是数组)</td>
-</tr>
-</tbody></table>
-<p>Java对象头的Mark Word里默认存储对象的hashCode，分代年龄和锁标记位。32位JVM里的Mark Word的默认存储结构如下：</p>
-<table>
-<thead>
-<tr>
-<th>锁状态</th>
-<th>25bit</th>
-<th>4bit</th>
-<th>1bit 是否是偏向锁</th>
-<th>2bit 锁标志位</th>
-</tr>
-</thead>
-<tbody><tr>
-<td>无锁状态</td>
-<td>对象的hashCode</td>
-<td>对象分代年龄</td>
-<td>0</td>
-<td>01</td>
-</tr>
-</tbody></table>
-<p>在运行期间，Mark Word里存储的数据会随着锁标志位的改变而改变。Mark Word可能会变化为存储以下4种数据：</p>
-<p><img src="/notes/2021/07/13/juc/synchronized%E7%9A%84%E5%BA%95%E5%B1%82%E5%AE%9E%E7%8E%B0%E5%8E%9F%E7%90%86/epub_681633_11.jpg"></p>
-<p>在64位虚拟机下，Mark Word是64bit大小的，其存储结构如下：</p>
-<p><img src="/notes/2021/07/13/juc/synchronized%E7%9A%84%E5%BA%95%E5%B1%82%E5%AE%9E%E7%8E%B0%E5%8E%9F%E7%90%86/epub_681633_12.jpg"></p>
-<h3 id="锁的升级与对比"><a href="#锁的升级与对比" class="headerlink" title="锁的升级与对比"></a>锁的升级与对比</h3><p>java1.6为了减少获得锁和释放锁带来的性能开销，引入了偏向锁和轻量锁。</p>
-<p>在java1.6中，锁一共有4种状态，级别从低到高是：无锁状态、偏向锁状态、轻量级锁状态和重量级锁。这几个状态会随着竞争情况逐渐升级，但锁可以升级而不能降级，这是为了提高获得锁和释放锁的效率。</p>
-<h4 id="偏向锁"><a href="#偏向锁" class="headerlink" title="偏向锁"></a>偏向锁</h4><p>HotSpot的作者发现，<strong>大多数情况下，锁不仅不存在多线程竞争，而且还总是由同一个线程多次获得</strong>，为了让线程获得锁的代价降低引入了偏向锁。</p>
-<p>当一个线程访问同步块并获得锁的时候，会在对象头和栈帧中的锁记录里存储锁偏向的线程ID，以后该线程在进入和退出代码块的时候不需要进行CAS操作来加锁和解锁，只需要测试一下对象头的Mark Word里是否存储着指向当前线程的偏向锁。</p>
-<h5 id="偏向锁的获取"><a href="#偏向锁的获取" class="headerlink" title="偏向锁的获取"></a>偏向锁的获取</h5><p>当线程执行到同步块，尝试获取锁：</p>
-<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">1.先查看对象头的Mark Word里是否存在当前线程的id</span><br><span class="line">	1.1 如果存在，表示当前线程已经获取到了偏向锁</span><br><span class="line">	1.2 如果不存在，执行步骤2</span><br><span class="line">2.查看Mark Word中偏向锁的标记是否为1(表示当前是偏向锁)</span><br><span class="line">	1.1 不为1，则使用CAS竞争锁</span><br><span class="line">	1.2 为1，则尝试使用CAS将当前对象头的偏向锁指向当前线程。</span><br><span class="line">		1.2.1 成功，表示线程获取到了偏向锁</span><br><span class="line">		1.2.2 失败，表示存在竞争，进行偏向锁的撤销</span><br></pre></td></tr></table></figure>
-
-
-
-<h5 id="偏向锁的撤销"><a href="#偏向锁的撤销" class="headerlink" title="偏向锁的撤销"></a>偏向锁的撤销</h5><p>偏向锁使用了一种等到竞争出现才释放锁的机制。</p>
-<p>当有两个线程同时竞争同一个偏向锁的时候，如下图所示：</p>
-<p><img src="/notes/2021/07/13/juc/synchronized%E7%9A%84%E5%BA%95%E5%B1%82%E5%AE%9E%E7%8E%B0%E5%8E%9F%E7%90%86/epub_681633_14.jpg"></p>
-<p>上图的线程1演示了偏向锁初始化的流程，线程2演示了偏向锁撤销的流程。</p>
-<p>线程1获取偏向锁的步骤上面已经讲解过了，下面来介绍偏向锁撤销的流程(从线程2尝试获取锁开始，此时线程1持有偏向锁)：</p>
-<ol>
-<li>判断对象头的Mark Word是否存在当前线程的id，否(此时存在的线程1的id)</li>
-<li>查看Mark Word中的偏向锁标记是否为1，是。</li>
-<li>线程2尝试使用CAS来将对象头的偏向锁指向当前线程，失败(此时线程1还存活)，进行<strong>偏向锁的撤销</strong></li>
-<li>等待<strong>全局安全点</strong>(在这个时间点上没有正在执行的字节码)。</li>
-<li>暂停拥有偏向锁的线程(线程1)，然后检查这个线程是否存活。如果线程不处于活动状态，则将对象头设置成无锁状态。如果线程存活，栈中的锁记录和对象头的Mark Word要么重新偏向于其他线程，要么恢复到无锁状态，或者标志对象不适合作为偏向锁</li>
-<li>唤醒暂停的线程</li>
-</ol>
-<p><strong>注：</strong></p>
-<ol>
-<li><p>步骤5中，线程存活，那么栈中的锁记录和对象头的Mark Word会变成三种状态之一。这是通过判断对象Mark Word中的Epoch值。若该值大于40直接升级为轻量级锁，不论线程1是否继续竞争锁。</p>
-<blockquote>
-<p>偏向锁头部Epoch字段值：表示该对象偏向锁的撤销次数，默认撤销次数40次以上，表示此对象不再适合于偏向锁，当下次线程再次获取此对象时，直接变为轻量级锁</p>
-</blockquote>
-</li>
-</ol>
-<h5 id="关闭偏向锁"><a href="#关闭偏向锁" class="headerlink" title="关闭偏向锁"></a>关闭偏向锁</h5><p>偏向锁在Java6和Java7里默认是启用的，但是它在应用程序启动几秒钟之后才激活。</p>
-<p>可以使用JVM参数来关闭延迟：<code>-XX:BiasedLockingStartupDelay=0</code></p>
-<p>如果确定应用程序中所有的锁通常情况下都处于竞争的状态，可以通过JVM参数关闭偏向锁：<code>-XX:-UseBiasedLocking=false</code>，那么程序默认就会进入轻量级锁状态</p>
-<h4 id="轻量级锁"><a href="#轻量级锁" class="headerlink" title="轻量级锁"></a>轻量级锁</h4><h5 id="轻量级锁加锁"><a href="#轻量级锁加锁" class="headerlink" title="轻量级锁加锁"></a>轻量级锁加锁</h5><ol>
-<li>线程在执行同步块之前，JVM会先在当前线程的栈帧中创建用于存储锁记录的空间</li>
-<li>将对象头的Mark Word复制到锁记录中，官方称之为Displaced Mark Word</li>
-<li>然后线程尝试使用CAS将对象头的Mark Word替换为指向锁记录的指针。如果成功，表示当前线程获得锁。如果失败，表示其他线程竞争锁，当前线程便尝试使用自旋来获取锁。</li>
-</ol>
-<h5 id="轻量级锁解锁"><a href="#轻量级锁解锁" class="headerlink" title="轻量级锁解锁"></a>轻量级锁解锁</h5><p>轻量级解锁时，会使用原子的CAS操作将Displaced Mark Word替回到对象头中。如果成功，则表示没有竞争发生。如果失败，表示当前锁存在竞争，锁就会膨胀成重量级锁。</p>
-<p>下图是两个线程同时争夺锁，导致锁膨胀的流程图：</p>
-<p><img src="/notes/2021/07/13/juc/synchronized%E7%9A%84%E5%BA%95%E5%B1%82%E5%AE%9E%E7%8E%B0%E5%8E%9F%E7%90%86/epub_681633_15.jpg"></p>
-<p>因为自旋会消耗CPU，为了避免无用的自旋(比如获得锁的线程被阻塞住了)，一旦锁升级成重量级锁，就不能恢复到轻量级锁。当锁处于这种状态下，其他线程试图获取锁，会被阻塞。当持有锁的线程释放锁，就会唤醒这些线程，被唤醒的线程就会开启下一轮的夺锁之争。</p>
-<h4 id="锁的优缺点对比"><a href="#锁的优缺点对比" class="headerlink" title="锁的优缺点对比"></a>锁的优缺点对比</h4><table>
-<thead>
-<tr>
-<th>锁</th>
-<th>优点</th>
-<th>缺点</th>
-<th>适用场景</th>
-</tr>
-</thead>
-<tbody><tr>
-<td>偏向锁</td>
-<td>加速和解锁不需要额外的消耗，和执行非同步方法相比仅存在纳秒级的差距</td>
-<td>存在线程竞争时，会带来额外的偏向锁撤销的开销</td>
-<td>适用于仅有一个线程访问同步块场景</td>
-</tr>
-<tr>
-<td>轻量级锁</td>
-<td>竞争的线程不会阻塞，提高了程序的响应速度</td>
-<td>如果始终得不到锁的线程，会自旋，消耗CPU</td>
-<td>追求响应速度，同步块执行速度非常快</td>
-</tr>
-<tr>
-<td>重量级锁</td>
-<td>线程竞争不会使用自旋，不会使用CPU</td>
-<td></td>
-<td></td>
-</tr>
-</tbody></table>
-
-      
-    </div>
-
-    
-    
-    
-      <footer class="post-footer">
-        <div class="post-eof"></div>
-      </footer>
-  </article>
-  
-  
-  
-
-      
-  
-  
-  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
     <link itemprop="mainEntityOfPage" href="https://singglexgc.github.io/notes/2021/07/12/Netty/netty%E6%95%B4%E5%90%88%E5%88%B0log4j/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
@@ -406,10 +214,102 @@
   
   
 
+      
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="https://singglexgc.github.io/notes/2021/07/12/Netty/protobuf/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/notes/images/avatar.gif">
+      <meta itemprop="name" content="Sinngle">
+      <meta itemprop="description" content="">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Notes">
+    </span>
+      <header class="post-header">
+        <h2 class="post-title" itemprop="name headline">
+          
+            <a href="/notes/2021/07/12/Netty/protobuf/" class="post-title-link" itemprop="url">ProtoBuf</a>
+        </h2>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+              
+
+              <time title="创建时间：2021-07-12 00:26:45 / 修改时间：00:28:34" itemprop="dateCreated datePublished" datetime="2021-07-12T00:26:45+08:00">2021-07-12</time>
+            </span>
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-folder"></i>
+              </span>
+              <span class="post-meta-item-text">分类于</span>
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/notes/categories/Netty/" itemprop="url" rel="index"><span itemprop="name">Netty</span></a>
+                </span>
+            </span>
+
+          
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+          <h2 id="ProtoBuf简介"><a href="#ProtoBuf简介" class="headerlink" title="ProtoBuf简介"></a>ProtoBuf简介</h2><ol>
+<li>ProtoBuf是Google发布的开源项目，全称Google Protocol Buffers，是一种轻便高效的结构化数据存储格式，可以用于结构化数据串行化，或者说序列化。它很适合做数据存储或PRC数据交换格式</li>
+<li>Protobuf是以message的方式来管理数据的</li>
+<li>支持跨平台、跨语言</li>
+<li>高性能，高可靠性</li>
+<li>使用protobuf编译器能自动生成代码，protobuf是将类的定义使用.proto文件进行描述。然后通过protoc.exe编译器根据.proto自动生成.java文件</li>
+</ol>
+<h2 id="ProtoBuf使用"><a href="#ProtoBuf使用" class="headerlink" title="ProtoBuf使用"></a>ProtoBuf使用</h2><ol>
+<li><p>引入依赖</p>
+<figure class="highlight xml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="tag">&lt;<span class="name">dependency</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">groupId</span>&gt;</span>com.google.protobuf<span class="tag">&lt;/<span class="name">groupId</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">artifactId</span>&gt;</span>protobuf-java<span class="tag">&lt;/<span class="name">artifactId</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">version</span>&gt;</span>3.6.1<span class="tag">&lt;/<span class="name">version</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;/<span class="name">dependency</span>&gt;</span></span><br></pre></td></tr></table></figure></li>
+<li><p>编写proto文件</p>
+<figure class="highlight protobuf"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">syntax = <span class="string">&quot;proto3&quot;</span>; <span class="comment">//版本</span></span><br><span class="line"><span class="keyword">option</span> java_outer_classname = <span class="string">&quot;StudentPOJO&quot;</span>; <span class="comment">//生成的外部类名，同时也是文件名</span></span><br><span class="line"><span class="comment">//protobuf 使用message管理数据</span></span><br><span class="line"><span class="class"><span class="keyword">message</span> <span class="title">Student</span> </span>&#123; <span class="comment">//会在StudentPOJO外部类生成一个内部类Student，它是正在发送的POJO对象</span></span><br><span class="line">    <span class="built_in">int32</span> id = <span class="number">1</span>; <span class="comment">//Student类中有一个属性 名字为id，类型为int32(protobuf类型) 1表示属性序号，不是值</span></span><br><span class="line">    <span class="built_in">string</span> name = <span class="number">2</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></li>
+<li><p>编译proto文件为java文件</p>
+<p>下载protoc.exe编译器，执行命令</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">protoc.exe --java_out=. Student.proto</span><br></pre></td></tr></table></figure>
+
+<p>就会生成StudentPOJO.java文件</p>
+</li>
+<li><p>为服务器端增加ProtobufDecoder解码器，为客户端增加ProtobufEncoder编码器</p>
+<p>服务器端需要指定传输的类型</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">pipeline.addLast(<span class="string">&quot;decoder&quot;</span>,</span><br><span class="line">                 <span class="keyword">new</span> ProtobufDecoder(StudentPOJO.Student.getDefaultInstance()));</span><br></pre></td></tr></table></figure>
+
+<p>客户端构建Student对象，并发送给服务器端</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">StudentPOJO.Student student = StudentPOJO.Student.newBuilder().setId(<span class="number">4</span>)</span><br><span class="line">    .setName(<span class="string">&quot;豹子头 林冲&quot;</span>).build();</span><br><span class="line">ctx.writeAndFlush(student);</span><br></pre></td></tr></table></figure></li>
+</ol>
+
+      
+    </div>
+
+    
+    
+    
+      <footer class="post-footer">
+        <div class="post-eof"></div>
+      </footer>
+  </article>
+  
+  
+  
+
 
   
   <nav class="pagination">
-    <a class="extend prev" rel="prev" href="/notes/page/2/"><i class="fa fa-angle-left" aria-label="上一页"></i></a><a class="page-number" href="/notes/">1</a><a class="page-number" href="/notes/page/2/">2</a><span class="page-number current">3</span><a class="page-number" href="/notes/page/4/">4</a><span class="space">&hellip;</span><a class="page-number" href="/notes/page/20/">20</a><a class="extend next" rel="next" href="/notes/page/4/"><i class="fa fa-angle-right" aria-label="下一页"></i></a>
+    <a class="extend prev" rel="prev" href="/notes/page/2/"><i class="fa fa-angle-left" aria-label="上一页"></i></a><a class="page-number" href="/notes/">1</a><a class="page-number" href="/notes/page/2/">2</a><span class="page-number current">3</span><a class="page-number" href="/notes/page/4/">4</a><span class="space">&hellip;</span><a class="page-number" href="/notes/page/19/">19</a><a class="extend next" rel="next" href="/notes/page/4/"><i class="fa fa-angle-right" aria-label="下一页"></i></a>
   </nav>
 
 
@@ -475,18 +375,18 @@
       <div class="site-state-item site-state-posts">
           <a href="/notes/archives/">
         
-          <span class="site-state-item-count">40</span>
+          <span class="site-state-item-count">38</span>
           <span class="site-state-item-name">日志</span>
         </a>
       </div>
       <div class="site-state-item site-state-categories">
             <a href="/notes/categories/">
-        <span class="site-state-item-count">16</span>
+        <span class="site-state-item-count">15</span>
         <span class="site-state-item-name">分类</span></a>
       </div>
       <div class="site-state-item site-state-tags">
             <a href="/notes/tags/">
-        <span class="site-state-item-count">24</span>
+        <span class="site-state-item-count">22</span>
         <span class="site-state-item-name">标签</span></a>
       </div>
   </nav>
